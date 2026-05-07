@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Command, X, ArrowRight, Sparkle } from "@phosphor-icons/react"
+import { Command, X, ArrowRight, Sparkles } from "lucide-react"
 import type { TourPhase } from "@/lib/first-day-data"
 
 // ── Preset commands shown when bar opens ─────────────────────────────────────
@@ -140,7 +140,7 @@ export default function AICommandBar({ phase }: AICommandBarProps) {
         transition={{ duration: 2.5, repeat: open ? 0 : Infinity }}
         title="AI Assistant (Cmd+K)"
       >
-        <Sparkle weight="fill" className="w-5 h-5" />
+        <Sparkles className="w-5 h-5" />
       </motion.button>
 
       {/* Cmd+K hint tooltip (shows once briefly) */}
@@ -177,7 +177,7 @@ export default function AICommandBar({ phase }: AICommandBarProps) {
               <div className="rounded-sm border border-[#a86f44]/30 bg-[#0A0A0A] overflow-hidden shadow-2xl shadow-black/80">
                 {/* Search input */}
                 <div className="flex items-center gap-3 px-4 py-3.5 border-b border-[#171717]">
-                  <Sparkle weight="fill" className="text-[#a86f44] w-4 h-4 shrink-0" />
+                  <Sparkles className="text-[#a86f44] w-4 h-4 shrink-0" />
                   <input
                     ref={inputRef}
                     value={query}
@@ -236,7 +236,7 @@ export default function AICommandBar({ phase }: AICommandBarProps) {
                       animate={{ opacity: 1 }}
                       className="px-5 py-6 flex items-center gap-3"
                     >
-                      <Sparkle weight="fill" className="text-[#a86f44] w-4 h-4 animate-pulse" />
+                      <Sparkles className="text-[#a86f44] w-4 h-4 animate-pulse" />
                       <div className="flex gap-1">
                         {[0, 1, 2].map((i) => (
                           <motion.div
@@ -258,7 +258,7 @@ export default function AICommandBar({ phase }: AICommandBarProps) {
                       className="px-5 py-5"
                     >
                       <div className="flex items-start gap-3 mb-4">
-                        <Sparkle weight="fill" className="text-[#a86f44] w-4 h-4 mt-0.5 shrink-0" />
+                        <Sparkles className="text-[#a86f44] w-4 h-4 mt-0.5 shrink-0" />
                         <p className="text-sm text-white/70 leading-relaxed">{response}</p>
                       </div>
                       <button

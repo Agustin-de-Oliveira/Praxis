@@ -1,4 +1,4 @@
-import { ArrowRight } from "@phosphor-icons/react"
+import { ArrowRight } from "lucide-react"
 import { useState, Suspense, lazy } from "react"
 
 const Dithering = lazy(() =>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { TerminalWindow, ArrowRight, GithubLogo, GoogleLogo, Envelope, Lock } from "@phosphor-icons/react";
+import { Terminal, ArrowRight, Github, Chrome, Mail, Lock } from "lucide-react";
 import { Dithering } from "@paper-design/shaders-react";
 import ThermodynamicGrid from "@/components/interactive-thermodynamic-grid";
 
@@ -40,7 +40,7 @@ export default function LoginPage() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 self-start group mb-10">
             <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-foreground">
-              <TerminalWindow weight="bold" className="h-3.5 w-3.5 text-background" />
+              <Terminal className="h-3.5 w-3.5 text-background" />
             </div>
             <span className="font-sans text-sm font-medium tracking-tight text-foreground">
               praxis
@@ -64,11 +64,11 @@ export default function LoginPage() {
           {/* OAuth */}
           <div className="space-y-2 mb-6">
             <button className="w-full flex items-center justify-center gap-3 h-10 rounded-sm border border-border bg-secondary hover:bg-secondary/60 text-xs font-medium text-foreground transition-colors cursor-pointer">
-              <GithubLogo className="h-4 w-4" weight="bold" />
+              <Github className="h-4 w-4" />
               Continue with GitHub
             </button>
             <button className="w-full flex items-center justify-center gap-3 h-10 rounded-sm border border-border bg-secondary hover:bg-secondary/60 text-xs font-medium text-foreground transition-colors cursor-pointer">
-              <GoogleLogo className="h-4 w-4" weight="bold" />
+              <Chrome className="h-4 w-4" />
               Continue with Google
             </button>
           </div>
@@ -92,7 +92,7 @@ export default function LoginPage() {
                 Email
               </label>
               <div className="relative">
-                <Envelope weight="bold" className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <input
                   type="email"
                   value={email}
@@ -108,7 +108,7 @@ export default function LoginPage() {
                 Password
               </label>
               <div className="relative">
-                <Lock weight="bold" className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <input
                   type="password"
                   value={password}

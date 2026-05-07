@@ -1,6 +1,6 @@
 'use client';
 
-import { Timer, Code, Trophy, Heartbeat } from "@phosphor-icons/react";
+import { Timer, Code, Trophy, Activity } from "lucide-react";
 
 const highlights = [
   {
@@ -19,7 +19,7 @@ const highlights = [
     description: "Automated validators grade your work. Progress is tracked, skills are mapped to industry frameworks.",
   },
   {
-    icon: Heartbeat,
+    icon: Activity,
     title: "Fail safely",
     description: "Break things without consequences. Roll back, retry, learn from the blast radius — that's the point.",
   },
@@ -47,7 +47,7 @@ export function HighlightsSection() {
               className="rounded-sm border border-border bg-card p-7 card-hover group flex flex-col"
             >
               <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-sm border border-border bg-secondary">
-                <Icon className="h-5 w-5 text-muted-foreground group-hover:text-[#a86f44] transition-colors duration-300" weight="bold" />
+                <Icon className="h-5 w-5 text-muted-foreground group-hover:text-[#a86f44] transition-colors duration-300" />
               </div>
               <p className="font-serif text-[9px] uppercase tracking-widest text-muted-foreground mb-3">
                 0{index + 1}

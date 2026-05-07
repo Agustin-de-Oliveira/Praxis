@@ -2,10 +2,12 @@
 
 import Link from "next/link"
 import {
-  Lightning, Fire, CheckCircle, ArrowRight,
-  BookOpen, ShieldCheck, Clock, Play, Lock, Database, Cube,
-  Globe, GraduationCap, Gear, Bell,
-} from "@phosphor-icons/react"
+  Zap, Flame, CheckCircle, ArrowRight,
+  BookOpen, ShieldCheck, Clock, Play, Lock, Database, Box,
+  Globe, GraduationCap, Settings, Bell,
+  ZapIcon,
+  BoxIcon,
+} from "lucide-react"
 
 const user = {
   handle: "agus",
@@ -41,13 +43,13 @@ const scenarios = [
     id: "SCN-002", title: "Build a Redis-backed Rate Limiter",
     description: "Implement sliding window rate limiting with Redis. Handle edge cases like burst traffic and distributed locks.",
     category: "Backend", difficulty: "INTERMEDIATE", xp: 650, duration: "~1.5h",
-    tags: ["Redis", "Express", "Lua"], icon: Lightning,
+    tags: ["Redis", "Express", "Lua"], icon: ZapIcon,
   },
   {
     id: "SCN-001", title: "Deploy a Node.js API to Kubernetes",
     description: "Configure deployments, services, and ingress. Handle rolling updates and health checks in a live cluster.",
     category: "DevOps", difficulty: "ADVANCED", xp: 850, duration: "~2h",
-    tags: ["Node.js", "K8s", "Docker"], icon: Cube,
+    tags: ["Node.js", "K8s", "Docker"], icon: BoxIcon,
   },
   {
     id: "SCN-005", title: "Optimize a Cold PostgreSQL Query",
@@ -105,13 +107,13 @@ export default function DashboardPage() {
               <Link href="/learning" className="font-serif text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors">Learning</Link>
               <div className="w-px h-4 bg-border" />
               <Bell size={16} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
-              <Gear size={16} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
+              <Settings size={16} className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
             </div>
           </div>
           <div className="flex items-center gap-6 ml-[88px]">
-            <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Lightning size={12} className="text-[#a86f44]" weight="bold" /><span className="text-foreground font-medium">{user.xp}</span> XP</span>
-            <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Fire size={12} className="text-orange-500" weight="bold" /><span className="text-foreground font-medium">{user.streak}</span> day streak</span>
-            <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><CheckCircle size={12} className="text-emerald-500" weight="bold" /><span className="text-foreground font-medium">{user.completed}</span> completed</span>
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Zap size={12} className="text-[#a86f44]" /><span className="text-foreground font-medium">{user.xp}</span> XP</span>
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Flame size={12} className="text-orange-500" /><span className="text-foreground font-medium">{user.streak}</span> day streak</span>
+            <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><CheckCircle size={12} className="text-emerald-500" /><span className="text-foreground font-medium">{user.completed}</span> completed</span>
           </div>
         </div>
 
@@ -120,7 +122,7 @@ export default function DashboardPage() {
           <div className="mb-14 rounded-sm border border-border bg-card p-6 flex items-center justify-between">
             <div className="flex items-center gap-5">
               <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-border bg-secondary shrink-0">
-                <ShieldCheck size={20} weight="bold" className="text-muted-foreground" />
+                <ShieldCheck size={20} className="text-muted-foreground" />
               </div>
               <div>
                 <p className="font-serif text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
@@ -136,7 +138,7 @@ export default function DashboardPage() {
             </div>
             <Link href="/scenario">
               <button className="h-10 px-6 rounded-sm bg-foreground text-background text-xs font-medium hover:bg-foreground/90 transition-colors flex items-center gap-2 cursor-pointer">
-                <Play size={14} weight="fill" /> Resume
+                <Play size={14} /> Resume
               </button>
             </Link>
           </div>
@@ -166,7 +168,7 @@ export default function DashboardPage() {
                     <div className="group card-hover rounded-sm border border-border bg-card p-6 cursor-pointer grid md:grid-cols-[auto_1fr_auto] gap-6 items-start">
                       <div className="flex items-center gap-4">
                         <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-border bg-secondary shrink-0">
-                          <Icon className="h-5 w-5 text-muted-foreground group-hover:text-[#a86f44] transition-colors duration-300" weight="bold" />
+                          <Icon className="h-5 w-5 text-muted-foreground group-hover:text-[#a86f44] transition-colors duration-300" />
                         </div>
                       </div>
                       <div className="flex flex-col gap-2">
@@ -185,7 +187,7 @@ export default function DashboardPage() {
                       <div className="flex md:flex-col items-end gap-3 md:gap-2 shrink-0">
                         <span className={`rounded-sm border px-2 py-0.5 font-serif text-[9px] uppercase tracking-wider ${getDifficultyStyle(s.difficulty)}`}>{s.difficulty}</span>
                         <div className="flex items-center gap-1 text-muted-foreground">
-                          <Clock className="h-3 w-3" weight="bold" />
+                          <Clock className="h-3 w-3" />
                           <span className="font-serif text-[10px]">{s.duration}</span>
                         </div>
                         <span className="font-serif text-xs text-[#a86f44] font-medium">+{s.xp} XP</span>

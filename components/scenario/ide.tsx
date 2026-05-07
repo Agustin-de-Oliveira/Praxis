@@ -2,9 +2,9 @@
 
 import { useState } from "react"
 import {
-  CaretRight, CaretDown, Circle, Clock, GitBranch, Terminal, File, Folder, FolderOpen,
-  Play, X, ArrowsOut, Minus, PaperPlaneTilt, CheckCircle, XCircle, Warning, Robot,
-} from "@phosphor-icons/react"
+  ChevronRight, ChevronDown, Circle, Clock, GitBranch, Terminal, File, Folder, FolderOpen,
+  Play, X, Maximize, Minus, Send, CheckCircle, XCircle, TriangleAlert, Bot,
+} from "lucide-react"
 
 const fileTree = [
   { name: "src", type: "folder" as const, children: [
@@ -86,7 +86,7 @@ function FileTreeNode({ node, depth = 0 }: { node: typeof fileTree[0]; depth?: n
     return (
       <div>
         <button onClick={() => setOpen(!open)} className="w-full flex items-center gap-1.5 py-1 text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors" style={{ paddingLeft: `${depth * 12 + 8}px` }}>
-          {open ? <><CaretDown className="w-3 h-3" weight="bold" /><FolderOpen className="w-3.5 h-3.5 text-amber-500/70" weight="bold" /></> : <><CaretRight className="w-3 h-3" weight="bold" /><Folder className="w-3.5 h-3.5 text-amber-500/70" weight="bold" /></>}
+          {open ? <><ChevronDown className="w-3 h-3" /><FolderOpen className="w-3.5 h-3.5 text-amber-500/70" /></> : <><ChevronRight className="w-3 h-3" /><Folder className="w-3.5 h-3.5 text-amber-500/70" /></>}
           <span className="font-mono text-[11px]">{node.name}</span>
         </button>
         {open && (node as any).children?.map((c: any, i: number) => <FileTreeNode key={i} node={c} depth={depth + 1} />)}
@@ -95,7 +95,7 @@ function FileTreeNode({ node, depth = 0 }: { node: typeof fileTree[0]; depth?: n
   }
   return (
     <button className={`w-full flex items-center gap-1.5 py-1 text-xs transition-colors ${(node as any).active ? "text-foreground bg-secondary border-l-2 border-blue-400" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}`} style={{ paddingLeft: `${depth * 12 + 20}px` }}>
-      <File className="w-3 h-3 shrink-0" weight="bold" />
+      <File className="w-3 h-3 shrink-0" />
       <span className="font-mono text-[11px]">{node.name}</span>
     </button>
   )
@@ -119,11 +119,11 @@ export default function ScenarioIDE() {
       <div className="flex-1 flex flex-col min-w-0">
         <div className="flex items-center border-b border-border bg-card shrink-0">
           <div className="flex items-center gap-2 px-4 py-2 border-r border-border bg-[#050505] text-foreground text-xs border-b-2 border-b-blue-400">
-            <File className="w-3 h-3" weight="bold" /><span className="font-mono text-[11px]">oauth.ts</span>
+            <File className="w-3 h-3" /><span className="font-mono text-[11px]">oauth.ts</span>
             <button className="p-0.5 hover:bg-secondary rounded-sm"><X className="w-2.5 h-2.5" /></button>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 border-r border-border text-muted-foreground text-xs hover:text-foreground cursor-pointer">
-            <File className="w-3 h-3" weight="bold" /><span className="font-mono text-[11px]">providers.ts</span>
+            <File className="w-3 h-3" /><span className="font-mono text-[11px]">providers.ts</span>
           </div>
         </div>
         <div className="flex-1 overflow-auto bg-[#050505] font-mono">
@@ -138,8 +138,8 @@ export default function ScenarioIDE() {
         </div>
         <div className="h-44 bg-[#050505] border-t border-border flex flex-col shrink-0">
           <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-card shrink-0">
-            <div className="flex items-center gap-2"><Terminal className="w-3.5 h-3.5 text-muted-foreground" weight="bold" /><span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Terminal</span></div>
-            <div className="flex items-center gap-1"><Minus className="w-3 h-3 text-muted-foreground" /><ArrowsOut className="w-3 h-3 text-muted-foreground" /><X className="w-3 h-3 text-muted-foreground" /></div>
+            <div className="flex items-center gap-2"><Terminal className="w-3.5 h-3.5 text-muted-foreground" /><span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Terminal</span></div>
+            <div className="flex items-center gap-1"><Minus className="w-3 h-3 text-muted-foreground" /><Maximize className="w-3 h-3 text-muted-foreground" /><X className="w-3 h-3 text-muted-foreground" /></div>
           </div>
           <div className="flex-1 overflow-auto p-3 font-mono text-xs space-y-0.5">
             <div className="text-foreground/90">$ npm run dev</div>
@@ -169,7 +169,7 @@ export default function ScenarioIDE() {
           <div className="grid grid-cols-2 gap-1.5">
             {validations.map(v => (
               <div key={v.label} className="flex items-center gap-2 px-2 py-1.5 rounded-sm bg-secondary border border-border">
-                {v.status === "passing" ? <CheckCircle className="w-3.5 h-3.5 text-emerald-500" weight="bold" /> : <Warning className="w-3.5 h-3.5 text-amber-500" weight="bold" />}
+                {v.status === "passing" ? <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> : <TriangleAlert className="w-3.5 h-3.5 text-amber-500" />}
                 <span className="font-mono text-[10px] text-foreground">{v.label}</span>
               </div>
             ))}
@@ -184,7 +184,7 @@ export default function ScenarioIDE() {
           <div className="space-y-0.5">
             {checklist.map(item => (
               <div key={item.id} className={`flex items-start gap-2.5 p-2 rounded-sm ${item.done ? "opacity-40" : "hover:bg-secondary/50"}`}>
-                {item.done ? <CheckCircle className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" weight="bold" /> : <Circle className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" weight="bold" />}
+                {item.done ? <CheckCircle className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" /> : <Circle className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />}
                 <span className={`text-xs leading-relaxed ${item.done ? "line-through text-muted-foreground" : "text-foreground"}`}>{item.label}</span>
               </div>
             ))}
@@ -199,7 +199,7 @@ export default function ScenarioIDE() {
             <p className="font-mono text-[11px] text-muted-foreground leading-relaxed italic">Use Octokit for the GitHub provider. Check the access token refresh logic.</p>
           </div>
           <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-1.5"><Robot className="w-3 h-3 text-blue-400" weight="bold" /><span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">Credits</span></div>
+            <div className="flex items-center gap-1.5"><Bot className="w-3 h-3 text-blue-400" /><span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">Credits</span></div>
             <div className="flex items-center gap-1">
               {[1,2,3,4,5].map(i => <div key={i} className={`w-1.5 h-1.5 rounded-full ${i <= 2 ? "bg-blue-400" : "bg-secondary border border-border"}`} />)}
               <span className="font-mono text-[9px] text-muted-foreground ml-1">3 left</span>
@@ -207,7 +207,7 @@ export default function ScenarioIDE() {
           </div>
           <div className="flex gap-2">
             <input type="text" placeholder="Ask your team..." value={msg} onChange={e => setMsg(e.target.value)} className="flex-1 h-8 px-3 rounded-sm border border-border bg-secondary text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-blue-400/50 transition-colors" />
-            <button className="h-8 w-8 flex items-center justify-center rounded-sm bg-foreground text-background hover:bg-foreground/90 cursor-pointer shrink-0"><PaperPlaneTilt className="w-3.5 h-3.5" weight="bold" /></button>
+            <button className="h-8 w-8 flex items-center justify-center rounded-sm bg-foreground text-background hover:bg-foreground/90 cursor-pointer shrink-0"><Send className="w-3.5 h-3.5" /></button>
           </div>
         </div>
       </div>

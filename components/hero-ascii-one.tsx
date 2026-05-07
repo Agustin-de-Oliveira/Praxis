@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, BookOpen } from "@phosphor-icons/react";
+import { ArrowRight, BookOpen } from "lucide-react";
 
 export default function AboutSection() {
   return (
@@ -9,7 +9,7 @@ export default function AboutSection() {
         {/* Left Side: Text Content */}
         <div className="p-8 md:p-12 flex flex-col justify-center border-r border-border/40">
           <div className="mb-6 inline-flex items-center gap-2 font-serif text-[10px] uppercase tracking-widest text-[#a86f44]">
-            <BookOpen weight="bold" className="h-3 w-3" />
+            <BookOpen className="h-3 w-3" />
             The Learning Environment
           </div>
 

@@ -3,10 +3,10 @@
 import { useState } from "react"
 import Link from "next/link"
 import {
-  ArrowLeft, ArrowSquareOut, Clock, BookOpen, Lock, Database,
-  Cloud, Globe, ShieldCheck, Lightning, Cube, MagnifyingGlass,
-  ArrowRight, Warning,
-} from "@phosphor-icons/react"
+  ArrowLeft, ExternalLink, Clock, BookOpen, Lock, Database,
+  Cloud, Globe, ShieldCheck, Zap, Box, Search,
+  ArrowRight, TriangleAlert,
+} from "lucide-react"
 
 interface Guide {
   id: string
@@ -43,7 +43,7 @@ const guides: Guide[] = [
     summary: "Rate limiting controls how many requests a client can make in a given time window. Common algorithms include fixed window, sliding window, and token bucket.",
     why: "Without rate limiting, a single bad actor can take down your API. It's one of the first things a senior engineer checks in a production service review.",
     time: "8 min",
-    icon: Lightning,
+    icon: Zap,
     resources: [
       { label: "Rate Limiting Algorithms", url: "https://blog.bytebytego.com/p/rate-limiting-fundamentals", source: "ByteByteGo" },
       { label: "Backend Developer Roadmap", url: "https://roadmap.sh/backend", source: "roadmap.sh" },
@@ -58,7 +58,7 @@ const guides: Guide[] = [
     summary: "Docker packages applications into isolated containers that include everything needed to run — code, runtime, libraries. It ensures consistency across environments.",
     why: "Containers are the foundation of modern deployment. If you can't Dockerize an app, you can't deploy it to Kubernetes, AWS ECS, or any modern orchestration platform.",
     time: "12 min",
-    icon: Cube,
+    icon: Box,
     resources: [
       { label: "Docker Getting Started", url: "https://docs.docker.com/get-started/", source: "Docker Docs" },
       { label: "DevOps Roadmap", url: "https://roadmap.sh/devops", source: "roadmap.sh" },
@@ -146,7 +146,7 @@ export default function LearningPage() {
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-4 mb-8 pb-8 border-b border-border">
           <div className="flex items-center gap-2 px-3 h-9 rounded-sm bg-secondary/50 border border-border text-muted-foreground flex-1 max-w-xs">
-            <MagnifyingGlass size={14} />
+            <Search size={14} />
             <input type="text" placeholder="Search guides..." value={search} onChange={e => setSearch(e.target.value)} className="bg-transparent text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none w-full font-mono" />
           </div>
           <div className="flex items-center gap-1.5">
@@ -173,7 +173,7 @@ export default function LearningPage() {
                   className="w-full p-6 grid md:grid-cols-[auto_1fr_auto] gap-6 items-start text-left cursor-pointer group"
                 >
                   <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-border bg-secondary shrink-0">
-                    <Icon className="h-5 w-5 text-muted-foreground group-hover:text-[#a86f44] transition-colors duration-300" weight="bold" />
+                    <Icon className="h-5 w-5 text-muted-foreground group-hover:text-[#a86f44] transition-colors duration-300" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <p className="font-serif text-[10px] text-muted-foreground uppercase tracking-widest">{guide.category}</p>
@@ -182,7 +182,7 @@ export default function LearningPage() {
                   </div>
                   <div className="flex md:flex-col items-end gap-2 shrink-0">
                     <div className="flex items-center gap-1 text-muted-foreground">
-                      <Clock className="h-3 w-3" weight="bold" />
+                      <Clock className="h-3 w-3" />
                       <span className="font-serif text-[10px]">{guide.time}</span>
                     </div>
                     <span className="font-serif text-[10px] text-muted-foreground">{guide.resources.length} resources</span>
@@ -211,7 +211,7 @@ export default function LearningPage() {
                                 <p className="font-serif text-[9px] text-muted-foreground/60 uppercase tracking-widest">{r.source}</p>
                               </div>
                             </div>
-                            <ArrowSquareOut size={14} className="text-muted-foreground/30 group-hover/link:text-muted-foreground shrink-0" />
+                            <ExternalLink size={14} className="text-muted-foreground/30 group-hover/link:text-muted-foreground shrink-0" />
                           </a>
                         ))}
                       </div>

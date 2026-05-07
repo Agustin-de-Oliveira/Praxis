@@ -17,7 +17,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence, type Variants } from "framer-motion"
-import { ArrowLeft, Compass } from "@phosphor-icons/react"
+import { ArrowLeft, Compass } from "lucide-react"
 import { Dithering } from "@paper-design/shaders-react"
 
 import TourProgressBar from "@/components/tour/tour-progress-bar"
@@ -99,7 +99,7 @@ export default function TourPage() {
       {/* ── Global: Tour mode badge ─────────────────────────────────────── */}
       <div className="fixed top-[52px] right-6 z-50">
         <div className="flex items-center gap-2 px-3 py-2 rounded-sm border border-[#a86f44]/20 bg-[#a86f44]/5">
-          <Compass weight="fill" className="w-3.5 h-3.5 text-[#a86f44]" />
+          <Compass className="w-3.5 h-3.5 text-[#a86f44]" />
           <span className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44]/60">
             Tour Mode · SCN-008
           </span>

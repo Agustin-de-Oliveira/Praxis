@@ -9,10 +9,10 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence, type Variants } from "framer-motion"
 import {
-  GitMerge, ChatCircle, CheckCircle, ArrowRight, Warning,
+  GitMerge, MessageCircle, CheckCircle, ArrowRight, TriangleAlert,
   FileCode, Users, Clock, ShieldCheck,
   Lightbulb
-} from "@phosphor-icons/react"
+} from "lucide-react"
 import { SCN008_PR_REVIEW, SCN008_TEAM } from "@/lib/first-day-data"
 
 const tourVariants: Variants = {
@@ -177,12 +177,12 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
               {/* Checklist */}
               <div className="space-y-3 py-4 border-y border-white/5">
                 <div className="flex items-center gap-3 opacity-60">
-                  <CheckCircle size={14} weight="fill" className="text-emerald-500" />
+                  <CheckCircle size={14} className="text-emerald-500" />
                   <span className="text-[11px] text-white/80">Implementation verified by CI</span>
                 </div>
                 <div className="flex items-center gap-3">
                   {prState === 'approved' ? (
-                    <CheckCircle size={14} weight="fill" className="text-emerald-500" />
+                    <CheckCircle size={14} className="text-emerald-500" />
                   ) : (
                     <Clock size={14} className="text-[#a86f44]" />
                   )}
@@ -199,7 +199,7 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                     <p className="text-xs font-bold text-white">Sarah Chen</p>
                     <p className="text-[10px] text-white/30">Senior Lead · Engineering</p>
                   </div>
-                  {prState === 'approved' && <ShieldCheck size={18} weight="fill" className="text-emerald-500" />}
+                  {prState === 'approved' && <ShieldCheck size={18} className="text-emerald-500" />}
                 </div>
               </div>
             </div>

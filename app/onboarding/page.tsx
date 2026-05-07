@@ -3,15 +3,15 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  TerminalWindow, ArrowRight, ArrowLeft, Check, Code, ShieldCheck,
-  Database, Cloud, Browser, IdentificationBadge, GraduationCap,
-  Briefcase, Laptop, Repeat, Lightning,
-} from "@phosphor-icons/react"
+  Terminal, ArrowRight, ArrowLeft, Check, Code, ShieldCheck,
+  Database, Cloud, Globe, GraduationCap,
+  Briefcase, Laptop, Repeat, Zap,
+} from "lucide-react"
 import Link from "next/link"
 import { Dithering } from "@paper-design/shaders-react"
 
 const roles = [
-  { id: "frontend", title: "Frontend Engineer", icon: Browser, desc: "UI/UX implementation, component architecture, and browser performance.", skills: ["React", "CSS", "Accessibility", "Performance"] },
+  { id: "frontend", title: "Frontend Engineer", icon: Globe, desc: "UI/UX implementation, component architecture, and browser performance.", skills: ["React", "CSS", "Accessibility", "Performance"] },
   { id: "backend", title: "Backend Engineer", icon: Database, desc: "API design, database architecture, and server-side logic.", skills: ["Node.js", "PostgreSQL", "Redis", "REST"] },
   { id: "fullstack", title: "Full-Stack Engineer", icon: Code, desc: "End-to-end features across the frontend and backend.", skills: ["React", "Node.js", "SQL", "APIs"] },
   { id: "devops", title: "DevOps / SRE", icon: Cloud, desc: "Infrastructure as code, CI/CD pipelines, and cloud orchestration.", skills: ["Docker", "Kubernetes", "Terraform", "CI/CD"] },
@@ -20,7 +20,7 @@ const roles = [
 
 const backgrounds = [
   { id: "student", label: "CS Student", icon: GraduationCap },
-  { id: "bootcamp", label: "Bootcamp Grad", icon: Lightning },
+  { id: "bootcamp", label: "Bootcamp Grad", icon: Zap },
   { id: "selftaught", label: "Self-taught", icon: Laptop },
   { id: "switcher", label: "Career Switcher", icon: Repeat },
   { id: "working", label: "Working Dev", icon: Briefcase },
@@ -59,8 +59,8 @@ export default function OnboardingPage() {
   const canAdvance = step === 1
     ? handle.trim().length > 0
     : step === 2
-    ? selectedBg && selectedExp && selectedLang
-    : selectedRole !== null
+      ? selectedBg && selectedExp && selectedLang
+      : selectedRole !== null
 
   const toggleGoal = (g: string) => {
     setSelectedGoals(prev => prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g])
@@ -84,7 +84,7 @@ export default function OnboardingPage() {
           <div className="flex items-center justify-between mb-10">
             <div className="flex items-center gap-2.5">
               <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-foreground text-background">
-                <TerminalWindow weight="bold" className="h-4 w-4" />
+                <Terminal className="h-4 w-4" />
               </div>
               <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Placement & Onboarding</span>
             </div>
@@ -147,7 +147,7 @@ export default function OnboardingPage() {
                       const active = selectedBg === bg.id
                       return (
                         <button key={bg.id} onClick={() => setSelectedBg(bg.id)} className={`flex items-center gap-2 px-4 py-2.5 rounded-sm border text-xs font-mono transition-all ${active ? "bg-[#a86f44]/10 border-[#a86f44] text-foreground" : "bg-secondary/50 border-border text-muted-foreground hover:border-muted-foreground/40"}`}>
-                          <Icon size={16} weight={active ? "bold" : "regular"} />
+                          <Icon size={16} />
                           {bg.label}
                         </button>
                       )
@@ -204,12 +204,12 @@ export default function OnboardingPage() {
                     return (
                       <button key={role.id} onClick={() => setSelectedRole(role.id)} className={`w-full flex items-start gap-4 p-4 rounded-sm border transition-all text-left group ${active ? "bg-[#a86f44]/5 border-[#a86f44] ring-1 ring-[#a86f44]/20" : "bg-secondary/50 border-border hover:border-muted-foreground/40"}`}>
                         <div className={`mt-0.5 p-2 rounded-sm border ${active ? "border-[#a86f44] text-[#a86f44]" : "border-border text-muted-foreground group-hover:text-foreground"}`}>
-                          <Icon size={18} weight="bold" />
+                          <Icon size={18} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-0.5">
                             <h3 className="font-mono text-sm font-medium text-foreground">{role.title}</h3>
-                            {active && <Check size={16} weight="bold" className="text-[#a86f44]" />}
+                            {active && <Check size={16} className="text-[#a86f44]" />}
                           </div>
                           <p className="text-xs text-muted-foreground leading-relaxed mb-2">{role.desc}</p>
                           <div className="flex flex-wrap gap-1.5">

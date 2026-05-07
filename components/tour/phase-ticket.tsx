@@ -7,7 +7,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { motion, type Variants } from "framer-motion"
-import { Bell, Check, ArrowRight } from "@phosphor-icons/react"
+import { Bell, Check, ArrowRight } from "lucide-react"
 import { SCN008_TICKET, SCN008_TEAM } from "@/lib/first-day-data"
 
 // ── Variants ──────────────────────────────────────────────────────────────────
@@ -73,7 +73,7 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
           animate={{ scale: [1, 1.25, 1] }}
           transition={{ duration: 0.6, repeat: 3, delay: 0.2 }}
         >
-          <Bell weight="fill" className="text-[#a86f44] w-4 h-4" />
+          <Bell className="text-[#a86f44] w-4 h-4" />
         </motion.div>
         <span className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44]">
           New ticket assigned · {SCN008_TICKET.id}

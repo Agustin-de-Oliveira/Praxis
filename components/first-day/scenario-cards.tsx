@@ -9,8 +9,8 @@
 import { motion, type Variants } from "framer-motion"
 import {
   Clock, Star, ArrowRight, Compass,
-  Database, Browser, Cloud, ShieldCheck, Code,
-} from "@phosphor-icons/react"
+  Database, Globe, Cloud, ShieldCheck, Code,
+} from "lucide-react"
 import { Dithering } from "@paper-design/shaders-react"
 import type { SimpleScenario } from "@/lib/first-day-data"
 
@@ -18,7 +18,7 @@ import type { SimpleScenario } from "@/lib/first-day-data"
 
 const CATEGORY_ICON: Record<string, React.ElementType> = {
   Backend: Database,
-  Frontend: Browser,
+  Frontend: Globe,
   DevOps: Cloud,
   Security: ShieldCheck,
   "Full-Stack": Code,
@@ -89,7 +89,7 @@ function ScenarioCard({ scenario, onSelect }: ScenarioCardProps) {
                   : "border-white/8 text-white/30 group-hover:text-white/50"
               }`}
             >
-              <Icon size={15} weight="bold" />
+              <Icon size={15} />
             </div>
             <div>
               <p className="font-mono text-[9px] uppercase tracking-widest text-white/25">
@@ -97,7 +97,7 @@ function ScenarioCard({ scenario, onSelect }: ScenarioCardProps) {
               </p>
               {isFeatured && (
                 <p className="font-mono text-[9px] text-[#a86f44]/70 flex items-center gap-1 mt-0.5">
-                  <Star weight="fill" className="w-2.5 h-2.5" />
+                  <Star className="w-2.5 h-2.5" />
                   Best match
                 </p>
               )}
@@ -107,7 +107,7 @@ function ScenarioCard({ scenario, onSelect }: ScenarioCardProps) {
           {/* Tour badge — featured only */}
           {isFeatured && (
             <span className="px-2 py-0.5 rounded-sm border border-[#a86f44]/20 bg-[#a86f44]/5 font-mono text-[8px] uppercase tracking-widest text-[#a86f44]/70 flex items-center gap-1.5">
-              <Compass weight="fill" className="w-2.5 h-2.5" />
+              <Compass className="w-2.5 h-2.5" />
               Tour
             </span>
           )}

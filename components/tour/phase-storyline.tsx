@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence, type Variants } from "framer-motion"
-import { ArrowRight, Hash, User, PaperPlaneTilt, Link as LinkIcon } from "@phosphor-icons/react"
+import { ArrowRight, Hash, User, Send, Link as LinkIcon } from "lucide-react"
 import { SCN008_TEAM } from "@/lib/first-day-data"
 
 const tourVariants: Variants = {
@@ -212,7 +212,7 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
         <div className="px-5 py-3 border-b border-[#171717] bg-[#0F0F0F] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5 text-white/40">
-              {view === "channel" ? <Hash size={14} weight="bold" /> : <User size={14} weight="bold" />}
+              {view === "channel" ? <Hash size={14} /> : <User size={14} />}
               <span className="font-mono text-[10px] uppercase tracking-widest">
                 {view === "channel" ? "eng-general" : `Sarah Chen`}
               </span>
@@ -264,7 +264,7 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
                       className="mt-4 flex items-center gap-3 p-3 rounded-sm border border-[#a86f44]/30 bg-[#a86f44]/5 hover:bg-[#a86f44]/10 transition-colors group cursor-pointer w-full text-left"
                     >
                       <div className="p-2 rounded-sm bg-[#a86f44]/10 border border-[#a86f44]/20 text-[#a86f44]">
-                        <LinkIcon size={16} weight="bold" />
+                        <LinkIcon size={16} />
                       </div>
                       <div className="flex-1">
                         <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-0.5">Internal Ticket</p>
@@ -303,7 +303,7 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
              {userResponse || "Type a message..."}
            </div>
            <button disabled className="w-10 h-10 flex items-center justify-center rounded-sm border border-white/5 text-white/10">
-             <PaperPlaneTilt size={18} />
+             <Send size={18} />
            </button>
         </div>
       </div>

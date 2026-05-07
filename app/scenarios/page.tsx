@@ -3,22 +3,22 @@
 import { useState } from "react"
 import Link from "next/link"
 import {
-  ArrowLeft, Clock, Lightning, Lock, Database, Cube, Globe,
-  ShieldCheck, Cloud, Funnel, MagnifyingGlass,
-} from "@phosphor-icons/react"
+  ArrowLeft, Clock, Zap, Lock, Database, Box, Globe,
+  ShieldCheck, Cloud, Filter, Search,
+} from "lucide-react"
 
 const allScenarios = [
   {
     id: "SCN-001", title: "Deploy a Node.js API to Kubernetes",
     description: "Configure deployments, services, and ingress. Handle rolling updates and health checks in a live cluster.",
     category: "DevOps", type: "Complex", difficulty: "ADVANCED", xp: 850, duration: "~2h",
-    tags: ["Node.js", "K8s", "Docker"], icon: Cube,
+    tags: ["Node.js", "K8s", "Docker"], icon: Box,
   },
   {
     id: "SCN-002", title: "Build a Redis-backed Rate Limiter",
     description: "Implement sliding window rate limiting with Redis. Handle edge cases like burst traffic and distributed locks.",
     category: "Backend", type: "Simple", difficulty: "INTERMEDIATE", xp: 650, duration: "~1.5h",
-    tags: ["Redis", "Express", "Lua"], icon: Lightning,
+    tags: ["Redis", "Express", "Lua"], icon: Zap,
   },
   {
     id: "SCN-003", title: "Implement JWT Auth with Refresh Tokens",
@@ -105,7 +105,7 @@ export default function ScenariosPage() {
         <div className="flex flex-wrap items-center gap-4 mb-8 pb-8 border-b border-border">
           {/* Search */}
           <div className="flex items-center gap-2 px-3 h-9 rounded-sm bg-secondary/50 border border-border text-muted-foreground flex-1 max-w-xs">
-            <MagnifyingGlass size={14} />
+            <Search size={14} />
             <input
               type="text"
               placeholder="Search scenarios..."
@@ -146,7 +146,7 @@ export default function ScenariosPage() {
                   {/* Icon */}
                   <div className="flex items-center gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-border bg-secondary shrink-0">
-                      <Icon className="h-5 w-5 text-muted-foreground group-hover:text-[#a86f44] transition-colors duration-300" weight="bold" />
+                      <Icon className="h-5 w-5 text-muted-foreground group-hover:text-[#a86f44] transition-colors duration-300" />
                     </div>
                   </div>
 
@@ -172,7 +172,7 @@ export default function ScenariosPage() {
                   <div className="flex md:flex-col items-end md:items-end gap-3 md:gap-2 shrink-0">
                     <span className={`rounded-sm border px-2 py-0.5 font-serif text-[9px] uppercase tracking-wider ${getDifficultyStyle(s.difficulty)}`}>{s.difficulty}</span>
                     <div className="flex items-center gap-1 text-muted-foreground">
-                      <Clock className="h-3 w-3" weight="bold" />
+                      <Clock className="h-3 w-3" />
                       <span className="font-serif text-[10px]">{s.duration}</span>
                     </div>
                     <span className="font-serif text-xs text-[#a86f44] font-medium">+{s.xp} XP</span>

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import {
-  Clock, GitBranch, ChatText, Funnel, X, Eye,
-} from "@phosphor-icons/react"
+  Clock, GitBranch, MessageSquareText, Filter, X, Eye,
+} from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -335,7 +335,7 @@ export default function ScenarioBoard() {
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" className="rounded-sm font-serif text-[10px] uppercase tracking-widest gap-1.5">
-                  <Funnel size={12} /> Filter
+                  <Filter size={12} /> Filter
                 </Button>
                 <div className="flex bg-secondary/50 rounded-sm border border-border p-0.5">
                   <Button variant="default" size="sm" className="rounded-sm font-serif text-[10px] uppercase tracking-widest h-7">Board</Button>
@@ -403,7 +403,7 @@ export default function ScenarioBoard() {
                             {/* Footer */}
                             <div className="flex items-center gap-3 text-muted-foreground font-mono text-[10px]">
                               <span className="flex items-center gap-1"><Clock size={11} /> {ticket.time}</span>
-                              {ticket.comments > 0 && <span className="flex items-center gap-1"><ChatText size={11} /> {ticket.comments}</span>}
+                              {ticket.comments > 0 && <span className="flex items-center gap-1"><MessageSquareText size={11} /> {ticket.comments}</span>}
                               {ticket.branch && <GitBranch size={11} />}
                             </div>
                           </div>

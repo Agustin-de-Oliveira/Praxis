@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence, type Variants } from "framer-motion"
-import { Lightbulb, ArrowRight, CheckCircle, TerminalWindow, Monitor, Code } from "@phosphor-icons/react"
+import { Lightbulb, ArrowRight, CheckCircle, Terminal, Monitor, Code } from "lucide-react"
 import { Beaker } from "lucide-react"
 
 const tourVariants: Variants = {
@@ -152,7 +152,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
               >
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44]">Test {currentStep + 1} / {TEST_STEPS.length}</span>
-                  {isCorrect && <CheckCircle size={18} weight="fill" className="text-emerald-500" />}
+                  {isCorrect && <CheckCircle size={18} className="text-emerald-500" />}
                 </div>
                 <h3 className="text-base font-bold text-white mb-3">{step.title}</h3>
                 <p className="text-xs text-white/50 leading-relaxed mb-6">{step.instruction}</p>
@@ -162,7 +162,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
                     onClick={() => setShowHint(!showHint)}
                     className="text-[10px] font-mono text-[#a86f44] hover:text-[#c88f64] transition-colors flex items-center gap-2"
                   >
-                    <Lightbulb weight="fill" size={14} />
+                    <Lightbulb size={14} />
                     {showHint ? "Hide Snippet" : "Show Snippet"}
                   </button>
                   <AnimatePresence>
@@ -190,7 +190,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
                 animate={{ opacity: 1, scale: 1 }}
                 className="p-8 rounded-sm border border-emerald-500/20 bg-emerald-500/5 text-center shadow-2xl"
               >
-                <CheckCircle size={40} weight="fill" className="text-emerald-500 mx-auto mb-4" />
+                <CheckCircle size={40} className="text-emerald-500 mx-auto mb-4" />
                 <h3 className="text-lg font-bold text-white mb-2">Tests Passing</h3>
                 <p className="text-xs text-white/50 leading-relaxed mb-6">Your endpoint is now officially bulletproof. The team will appreciate the coverage.</p>
                 <button
@@ -205,7 +205,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
 
           <div className="rounded-sm border border-[#171717] bg-[#050505] overflow-hidden shadow-xl">
             <div className="px-4 py-2 border-b border-[#171717] bg-[#0A0A0A] flex items-center gap-2">
-              <TerminalWindow size={14} className="text-white/20" />
+              <Terminal size={14} className="text-white/20" />
               <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">Jest Runner</span>
             </div>
             <div className="p-4 font-mono text-[10px] space-y-1.5 h-[140px] overflow-y-auto scrollbar-hide">

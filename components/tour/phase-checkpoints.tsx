@@ -9,8 +9,8 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence, type Variants } from "framer-motion"
 import {
-  CheckCircle, Play, ArrowRight, Star, TerminalWindow, ActivityIcon, ShieldCheck, Cpu
-} from "@phosphor-icons/react"
+  CheckCircle, Play, ArrowRight, Star, Terminal, Activity, ShieldCheck, Cpu
+} from "lucide-react"
 import { SCN008_CHECKPOINTS } from "@/lib/first-day-data"
 
 const tourVariants: Variants = {
@@ -136,7 +136,7 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
         <div className="col-span-5 space-y-3">
           <div className="px-4 py-2 flex items-center justify-between border-b border-white/5 mb-2">
             <span className="font-mono text-[9px] uppercase tracking-widest text-white/20">Pipeline Stages</span>
-            <ActivityIcon size={14} className="text-white/10" />
+            <Activity size={14} className="text-white/10" />
           </div>
 
           {SCN008_CHECKPOINTS.map((c, i) => {
@@ -151,10 +151,10 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
                 transition={{ delay: i * 0.1 }}
                 onClick={() => status === "idle" && runCheckpoint(c.id)}
                 className={`group relative p-4 rounded-sm border transition-all duration-300 cursor-pointer overflow-hidden ${status === "passed"
-                    ? "border-emerald-500/20 bg-emerald-500/[0.03]"
-                    : status === "running"
-                      ? "border-[#a86f44]/40 bg-[#a86f44]/5"
-                      : "border-white/5 bg-white/[0.02] hover:border-white/10"
+                  ? "border-emerald-500/20 bg-emerald-500/[0.03]"
+                  : status === "running"
+                    ? "border-[#a86f44]/40 bg-[#a86f44]/5"
+                    : "border-white/5 bg-white/[0.02] hover:border-white/10"
                   }`}
               >
                 {status === "running" && (
@@ -168,7 +168,7 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
                 <div className="flex items-start gap-4">
                   <div className="mt-1">
                     {status === "passed" ? (
-                      <CheckCircle weight="fill" className="text-emerald-500 w-5 h-5" />
+                      <CheckCircle className="text-emerald-500 w-5 h-5" />
                     ) : status === "running" ? (
                       <motion.div
                         className="w-5 h-5 rounded-full border-2 border-[#a86f44] border-t-transparent"
@@ -188,7 +188,7 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
                   </div>
 
                   {status === "idle" && (
-                    <Play weight="fill" className="text-white/10 group-hover:text-[#a86f44] transition-colors" />
+                    <Play className="text-white/10 group-hover:text-[#a86f44] transition-colors" />
                   )}
                 </div>
               </motion.div>
@@ -199,8 +199,8 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
             onClick={runAll}
             disabled={allPassed}
             className={`w-full h-11 rounded-sm border border-white/5 font-mono text-[10px] uppercase tracking-widest transition-all ${allPassed
-                ? "opacity-0 pointer-events-none"
-                : "bg-white/[0.02] text-white/30 hover:text-white/60 hover:bg-white/5"
+              ? "opacity-0 pointer-events-none"
+              : "bg-white/[0.02] text-white/30 hover:text-white/60 hover:bg-white/5"
               }`}
           >
             Trigger Full Pipeline
@@ -213,7 +213,7 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
           <div className="rounded-sm border border-[#171717] bg-[#0A0A0A] overflow-hidden shadow-2xl h-[360px] flex flex-col">
             <div className="px-5 py-3 border-b border-[#171717] bg-[#0F0F0F] flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <TerminalWindow size={16} className="text-[#a86f44]" />
+                <Terminal size={16} className="text-[#a86f44]" />
                 <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest">praxis-ci-runner v2.4.0</span>
               </div>
               <div className="flex gap-1.5">
@@ -225,7 +225,7 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
             <div className="flex-1 p-6 font-mono text-[11px] leading-loose text-white/40 overflow-y-auto scrollbar-hide">
               {activeLogs.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center opacity-10">
-                  <Cpu size={40} weight="thin" className="mb-4" />
+                  <Cpu size={40} className="mb-4" />
                   <p className="uppercase tracking-widest">Select a stage to view diagnostics</p>
                 </div>
               ) : (

@@ -6,7 +6,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { motion, type Variants } from "framer-motion"
-import { Lightning, SkipForward } from "@phosphor-icons/react"
+import { Zap, SkipForward } from "lucide-react"
 import { Dithering } from "@paper-design/shaders-react"
 
 interface ScenarioPromptProps {
@@ -89,7 +89,7 @@ export default function ScenarioPrompt({ onStart, onSkip }: ScenarioPromptProps)
             onClick={onStart}
             className="w-full h-12 flex items-center justify-center gap-2.5 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer hover:bg-[#b87f54] transition-colors"
           >
-            <Lightning weight="fill" className="w-4 h-4" />
+            <Zap className="w-4 h-4" />
             Yes, start my introductory scenario
           </button>
 

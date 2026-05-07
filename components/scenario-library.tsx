@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, Clock, Lightning, Lock, Database, Cube, Globe } from "@phosphor-icons/react";
+import { ArrowRight, Clock, Zap, Lock, Database, Box, Globe } from "lucide-react";
 import Link from "next/link";
 
 const scenarios = [
@@ -13,7 +13,7 @@ const scenarios = [
     xp: 850,
     duration: "~2h",
     tags: ["Node.js", "K8s", "Docker"],
-    icon: Cube,
+    icon: Box,
   },
   {
     id: "SCN-002",
@@ -24,7 +24,7 @@ const scenarios = [
     xp: 650,
     duration: "~1.5h",
     tags: ["Redis", "Express", "Lua"],
-    icon: Lightning,
+    icon: Zap,
   },
   {
     id: "SCN-003",
@@ -109,7 +109,7 @@ export function ScenarioLibrary() {
               {/* Icon + ID */}
               <div className="flex items-center gap-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-sm border border-border bg-secondary shrink-0">
-                  <Icon className="h-5 w-5 text-muted-foreground group-hover:text-[#a86f44] transition-colors duration-300" weight="bold" />
+                  <Icon className="h-5 w-5 text-muted-foreground group-hover:text-[#a86f44] transition-colors duration-300" />
                 </div>
                 <div className="md:hidden">
                   <p className="text-sm font-medium text-foreground">{scenario.title}</p>
@@ -147,7 +147,7 @@ export function ScenarioLibrary() {
                   {scenario.difficulty}
                 </span>
                 <div className="flex items-center gap-1 text-muted-foreground">
-                  <Clock className="h-3 w-3" weight="bold" />
+                  <Clock className="h-3 w-3" />
                   <span className="font-serif text-[10px]">{scenario.duration}</span>
                 </div>
                 <span className="font-serif text-xs text-[#a86f44] font-medium">

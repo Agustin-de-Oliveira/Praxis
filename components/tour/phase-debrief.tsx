@@ -8,9 +8,10 @@
 
 import { motion, type Variants } from "framer-motion"
 import {
-  CheckCircle, Warning, Lightbulb, Trophy, ArrowRight, House,
-  ShieldCheck, Database, Key
-} from "@phosphor-icons/react"
+  CheckCircle, TriangleAlert, Lightbulb, Trophy, ArrowRight, Home,
+  ShieldCheck, Database, Key,
+  FileWarning
+} from "lucide-react"
 import Link from "next/link"
 import { Beaker } from "lucide-react"
 
@@ -65,7 +66,7 @@ const SENIOR_INSIGHTS = [
   },
   {
     type: 'warning',
-    icon: Warning,
+    icon: FileWarning,
     color: 'text-amber-400',
     borderColor: 'border-amber-500/15',
     bgColor: 'bg-amber-500/5',
@@ -101,7 +102,7 @@ export default function PhaseDebrief() {
           transition={{ delay: 0.1, type: "spring" }}
           className="w-16 h-16 rounded-sm border border-[#a86f44]/30 bg-[#a86f44]/10 flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-[#a86f44]/10"
         >
-          <Trophy size={32} weight="fill" className="text-[#a86f44]" />
+          <Trophy size={32} className="text-[#a86f44]" />
         </motion.div>
         <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
           SCN-008 · Mission Complete
@@ -159,7 +160,7 @@ export default function PhaseDebrief() {
 
           {/* Level Progress */}
           <motion.div variants={item} className="p-4 rounded-sm border border-emerald-500/10 bg-emerald-500/[0.03] flex items-center gap-4">
-            <ShieldCheck size={24} weight="fill" className="text-emerald-500/60" />
+            <ShieldCheck size={24} className="text-emerald-500/60" />
             <div>
               <p className="text-[10px] uppercase tracking-widest font-mono text-emerald-500/60 mb-0.5">Skill Acquired</p>
               <p className="text-xs font-bold text-white">Advanced Data Sanitization</p>
@@ -183,7 +184,7 @@ export default function PhaseDebrief() {
                 className={`p-6 rounded-sm border ${insight.borderColor} ${insight.bgColor} space-y-4`}
               >
                 <div className="flex items-center gap-3">
-                  <insight.icon size={18} weight="fill" className={insight.color} />
+                  <insight.icon size={18} className={insight.color} />
                   <span className={`font-mono text-[10px] uppercase tracking-widest ${insight.color}`}>{insight.title}</span>
                 </div>
                 <ul className="space-y-3">
@@ -200,7 +201,7 @@ export default function PhaseDebrief() {
 
           {/* Senior Approach Card */}
           <motion.div variants={item} className="p-8 rounded-sm border border-[#a86f44]/20 bg-[#a86f44]/[0.03] space-y-6 relative overflow-hidden">
-            <Lightbulb size={120} weight="thin" className="absolute -right-10 -bottom-10 text-[#a86f44]/5" />
+            <Lightbulb size={120} className="absolute -right-10 -bottom-10 text-[#a86f44]/5" />
 
             <div>
               <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-1">Senior Perspective</p>
@@ -221,7 +222,7 @@ export default function PhaseDebrief() {
           <motion.div variants={item} className="flex gap-4 pt-4">
             <Link href="/dashboard" className="flex-1">
               <div className="h-14 flex items-center justify-center gap-3 rounded-sm border border-white/10 bg-white/[0.02] text-sm font-medium text-white/60 hover:bg-white/[0.05] hover:text-white transition-all cursor-pointer">
-                <House size={18} />
+                <Home size={18} />
                 Return to Dashboard
               </div>
             </Link>

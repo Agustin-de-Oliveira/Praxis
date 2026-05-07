@@ -5,9 +5,10 @@ import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import {
   ArrowRight,
-  TerminalWindow,
+  Terminal,
   Play,
-} from "@phosphor-icons/react";
+  TerminalSquare,
+} from "lucide-react";
 import { HeroCard } from "@/components/hero-card";
 import AboutSection from "@/components/hero-ascii-one";
 import { Dithering } from "@paper-design/shaders-react";
@@ -141,7 +142,7 @@ export default function LandingPage() {
               href="/dashboard"
               className="interactive inline-flex items-center gap-2 rounded-sm bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >
-              <Play weight="bold" className="h-4 w-4" />
+              <Play className="h-4 w-4" />
               Start Practicing
             </Link>
             <Link
@@ -161,7 +162,7 @@ export default function LandingPage() {
         >
           <div className="flex items-center gap-2">
             <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-foreground">
-              <TerminalWindow weight="bold" className="h-3.5 w-3.5 text-background" />
+              <TerminalSquare className="h-3.5 w-3.5 text-background" />
             </div>
             <span className="font-sans text-sm font-medium tracking-tight">
               praxis

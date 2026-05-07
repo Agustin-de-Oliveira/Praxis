@@ -1,6 +1,6 @@
 'use client';
 
-import { Quotes } from "@phosphor-icons/react";
+import { Quote } from "lucide-react";
 
 const testimonials = [
   {
@@ -46,7 +46,7 @@ export function TestimonialsSection() {
             className="rounded-sm border border-border bg-card p-8 flex flex-col justify-between card-hover group"
           >
             <div>
-              <Quotes className="h-5 w-5 text-[#a86f44]/40 mb-5" weight="fill" />
+              <Quote className="h-5 w-5 text-[#a86f44]/40 mb-5" />
               <blockquote className="text-sm text-muted-foreground leading-relaxed">
                 {t.quote}
               </blockquote>

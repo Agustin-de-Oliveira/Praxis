@@ -3,10 +3,10 @@
 import Link from "next/link"
 import { useState } from "react"
 import {
-  SquaresFour, Users, Code, Layout,
+  LayoutGrid, Users, Code, Layout,
   ArrowLeft, Clock, ArrowRight, ShieldCheck,
-  ChatCircle, CheckCircle,
-} from "@phosphor-icons/react"
+  MessageCircle, CheckCircle,
+} from "lucide-react"
 import ScenarioBoard from "@/components/scenario/board"
 import ScenarioIDE from "@/components/scenario/ide"
 import { Dithering } from "@paper-design/shaders-react"
@@ -131,7 +131,7 @@ function HubView({ onNavigate }: { onNavigate: (v: ViewMode) => void }) {
             { id: "team" as ViewMode, icon: Users, title: "Team", desc: "Meet your colleagues" },
           ].map(card => (
             <button key={card.id} onClick={() => onNavigate(card.id)} className="group p-6 rounded-sm border border-border bg-card text-left hover:border-muted-foreground/30 transition-all cursor-pointer">
-              <card.icon size={20} weight="bold" className="text-muted-foreground group-hover:text-[#a86f44] transition-colors mb-3" />
+              <card.icon size={20} className="text-muted-foreground group-hover:text-[#a86f44] transition-colors mb-3" />
               <h3 className="text-sm font-medium text-foreground mb-1">{card.title}</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">{card.desc}</p>
             </button>
@@ -160,7 +160,7 @@ function TeamView() {
                 <h3 className="text-sm font-medium text-foreground mb-0.5">{m.name}</h3>
                 <p className="text-xs text-muted-foreground font-mono mb-4">{m.role}</p>
                 <button className="flex items-center gap-2 font-serif text-[10px] uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors">
-                  <ChatCircle size={14} /> Message
+                  <MessageCircle size={14} /> Message
                 </button>
               </div>
             </div>
@@ -202,13 +202,13 @@ export default function ScenarioPage() {
       {view !== "hub" && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center bg-card/80 backdrop-blur-sm p-1 rounded-sm border border-border">
           {([
-            { id: "hub", label: "Overview", icon: SquaresFour },
+            { id: "hub", label: "Overview", icon: LayoutGrid },
             { id: "board", label: "Board", icon: Layout },
             { id: "ide", label: "Codebase", icon: Code },
             { id: "team", label: "Team", icon: Users },
           ] as const).map(tab => (
             <button key={tab.id} onClick={() => setView(tab.id)} className={`flex items-center gap-2 px-4 py-1.5 rounded-sm font-serif text-[10px] uppercase tracking-widest transition-all ${view === tab.id ? "bg-foreground text-background font-bold" : "text-muted-foreground hover:text-foreground"}`}>
-              <tab.icon size={14} weight={view === tab.id ? "bold" : "regular"} />
+              <tab.icon size={14} />
               {tab.label}
             </button>
           ))}

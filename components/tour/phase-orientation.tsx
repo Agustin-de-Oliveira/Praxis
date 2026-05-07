@@ -8,7 +8,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence, type Variants } from "framer-motion"
-import { Folder, File, ArrowRight, ArrowLeft, Lightbulb, Code, Monitor } from "@phosphor-icons/react"
+import { Folder, File, ArrowRight, ArrowLeft, Lightbulb, Code, Monitor } from "lucide-react"
 import { SCN008_FILE_TREE } from "@/lib/first-day-data"
 
 const tourVariants: Variants = {
@@ -196,12 +196,10 @@ export default function PhaseOrientation({ onContinue }: PhaseOrientationProps) 
                   >
                     {entry.isDir ? (
                       <Folder
-                        weight={isActive ? "fill" : "regular"}
                         className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-[#a86f44]" : "text-white/15"}`}
                       />
                     ) : (
                       <File
-                        weight="regular"
                         className={`w-3.5 h-3.5 shrink-0 ${isActive ? "text-[#a86f44]" : "text-white/15"}`}
                       />
                     )}
@@ -268,7 +266,7 @@ export default function PhaseOrientation({ onContinue }: PhaseOrientationProps) 
                   >
                     <div className="flex items-start gap-3">
                       <div className="p-1.5 rounded-sm bg-[#a86f44]/10 text-[#a86f44] border border-[#a86f44]/20">
-                        <Lightbulb weight="fill" size={14} />
+                        <Lightbulb size={14} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-mono text-[8px] uppercase tracking-widest text-[#a86f44] mb-1">Step {tooltipStep + 1} of {TOOLTIPS.length}</p>
@@ -311,7 +309,7 @@ export default function PhaseOrientation({ onContinue }: PhaseOrientationProps) 
                    animate={{ opacity: 1 }} 
                    className="h-full flex flex-col items-center justify-center text-center opacity-10"
                  >
-                    <Code size={40} weight="thin" className="mb-4" />
+                    <Code size={40} className="mb-4" />
                     <p className="font-mono text-[9px] uppercase tracking-widest">Select a file to preview its contents</p>
                  </motion.div>
                )}

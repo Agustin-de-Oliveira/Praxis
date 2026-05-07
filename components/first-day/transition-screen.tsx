@@ -8,7 +8,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { motion, type Variants } from "framer-motion"
-import { CheckCircle, ArrowRight } from "@phosphor-icons/react"
+import { CheckCircle, ArrowRight } from "lucide-react"
 import { Dithering } from "@paper-design/shaders-react"
 
 // ── Animation system ──────────────────────────────────────────────────────────
@@ -70,7 +70,7 @@ export default function TransitionScreen({ role, stack, handle, onContinue }: Tr
         {/* Status badge */}
         <motion.div variants={reveal} className="flex justify-center mb-10">
           <span className="flex items-center gap-2 px-3 py-1.5 rounded-sm border border-[#a86f44]/25 bg-[#a86f44]/8 font-mono text-[9px] uppercase tracking-widest text-[#a86f44]">
-            <CheckCircle weight="fill" className="w-3 h-3" />
+            <CheckCircle className="w-3 h-3" />
             Placement complete
           </span>
         </motion.div>
