@@ -36,6 +36,7 @@ const DIFFICULTY_COLOR: Record<string, string> = {
 const container: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+  exit: { transition: { staggerChildren: 0.04, staggerDirection: -1 } },
 }
 
 const reveal: Variants = {
@@ -44,6 +45,11 @@ const reveal: Variants = {
     opacity: 1,
     filter: "blur(0px)",
     transition: { duration: 0.3, ease: "easeOut" as const },
+  },
+  exit: {
+    opacity: 0,
+    filter: "blur(4px)",
+    transition: { duration: 0.2, ease: "easeIn" as const },
   },
 }
 
@@ -199,8 +205,8 @@ export default function ScenarioCards({ scenarios, role, stack, onSelect }: Scen
             <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
               Personalised for you
             </p>
-            <h2 className="font-serif text-3xl font-medium text-white mb-2">
-              Your first scenarios
+            <h2 className="font-serif text-3xl font-medium text-white mb-2 text-center md:text-left">
+              Select your first scenario
             </h2>
             <p className="text-sm text-white/35 max-w-md leading-relaxed">
               Curated for a{" "}

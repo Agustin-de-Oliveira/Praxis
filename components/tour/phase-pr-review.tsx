@@ -2,113 +2,51 @@
 
 // ─────────────────────────────────────────────────────────────────────────────
 // components/tour/phase-pr-review.tsx
-// Phase 4: PR creation + simulated @senior_dev review with typing effect.
-// Submit button → loading state → review loads line by line.
+// Phase 4: High-Fidelity Pull Request Dashboard.
+// Side-by-side view with Diff Viewer and Contextual Inline Comments.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence, type Variants } from "framer-motion"
-import { GitMerge, ChatCircle, CheckCircle, ArrowRight, Warning } from "@phosphor-icons/react"
+import {
+  GitMerge, ChatCircle, CheckCircle, ArrowRight, Warning,
+  FileCode, Users, Clock, ShieldCheck,
+  Lightbulb
+} from "@phosphor-icons/react"
 import { SCN008_PR_REVIEW, SCN008_TEAM } from "@/lib/first-day-data"
 
 const tourVariants: Variants = {
-  hidden: { opacity: 0, filter: "blur(4px)" },
+  hidden: { opacity: 0, filter: "blur(8px)", scale: 0.98 },
   visible: {
     opacity: 1,
     filter: "blur(0px)",
-    transition: { duration: 0.3, ease: "easeOut" as const },
+    scale: 1,
+    transition: { duration: 0.4, ease: "easeOut" as const },
   },
-  exit: { opacity: 0, transition: { duration: 0.18 } },
+  exit: {
+    opacity: 0,
+    filter: "blur(6px)",
+    scale: 0.98,
+    transition: { duration: 0.25, ease: "easeIn" as const },
+  },
 }
-
-// ── Typing indicator ──────────────────────────────────────────────────────────
-
-function TypingDots() {
-  return (
-    <div className="flex items-center gap-1 h-4">
-      {[0, 1, 2].map((i) => (
-        <motion.div
-          key={i}
-          className="w-1 h-1 rounded-full bg-[#a86f44]"
-          animate={{ opacity: [0.3, 1, 0.3], y: [0, -2, 0] }}
-          transition={{ duration: 1.2, delay: i * 0.2, repeat: Infinity }}
-        />
-      ))}
-    </div>
-  )
-}
-
-// ── Review comment card ───────────────────────────────────────────────────────
 
 const senior = SCN008_TEAM.find((t) => t.handle === "senior_dev")!
 
-type CommentType = "comment" | "suggestion" | "approve"
+// ── Diff Data ────────────────────────────────────────────────────────────────
 
-interface ReviewComment {
-  author: string
-  type: CommentType
-  line: number
-  text: string
-}
-
-function ReviewCard({ comment, index }: { comment: ReviewComment; index: number }) {
-  const isApproval = comment.type === "approve"
-  const isSuggestion = comment.type === "suggestion"
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, filter: "blur(4px)" }}
-      animate={{ opacity: 1, filter: "blur(0px)" }}
-      transition={{ delay: index * 0.2, duration: 0.3, ease: "easeOut" }}
-      className={`rounded-sm border overflow-hidden ${
-        isApproval
-          ? "border-emerald-500/30 bg-emerald-500/5"
-          : isSuggestion
-          ? "border-[#a86f44]/25 bg-[#a86f44]/5"
-          : "border-[#171717] bg-[#0A0A0A]"
-      }`}
-    >
-      {/* Comment line indicator */}
-      {comment.line > 0 && (
-        <div className="px-4 py-2 border-b border-white/5 bg-white/2 flex items-center gap-2">
-          <span className="font-mono text-[9px] text-white/20">profile.ts</span>
-          <span className="font-mono text-[9px] text-white/15">·</span>
-          <span className="font-mono text-[9px] text-white/20">line {comment.line}</span>
-          {isSuggestion && (
-            <span className="ml-auto flex items-center gap-1 font-mono text-[9px] text-[#a86f44]/50">
-              <Warning className="w-2.5 h-2.5" />
-              suggestion
-            </span>
-          )}
-        </div>
-      )}
-
-      <div className="p-4 flex items-start gap-3">
-        {/* Avatar */}
-        <div
-          className={`w-8 h-8 rounded-sm flex items-center justify-center font-mono text-[10px] font-bold border shrink-0 ${senior.color} ${senior.textColor}`}
-        >
-          SC
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-medium text-white">{senior.name}</span>
-            <span className="font-mono text-[9px] text-white/25">{senior.role}</span>
-            {isApproval && (
-              <span className="ml-auto flex items-center gap-1 font-mono text-[9px] text-emerald-400">
-                <CheckCircle weight="fill" className="w-3 h-3" />
-                Approved
-              </span>
-            )}
-          </div>
-          <p className="text-xs text-white/55 leading-relaxed">{comment.text}</p>
-        </div>
-      </div>
-    </motion.div>
-  )
-}
-
-// ── PR Form ───────────────────────────────────────────────────────────────────
+const DIFF_LINES = [
+  { type: 'old', content: "  // TODO: implement this", line: 9 },
+  { type: 'old', content: "  return res.status(501).json({ error: 'Not implemented' })", line: 10 },
+  { type: 'new', content: "  try {", line: 9 },
+  { type: 'new', content: "    const user = await getUserById(req.user.id)", line: 10 },
+  { type: 'new', content: "    if (!user) return res.status(404).json({ error: 'User not found' })", line: 11 },
+  { type: 'new', content: "    const { passwordHash, ...safeUser } = user", line: 12, hasComment: true },
+  { type: 'new', content: "    return res.json(safeUser)", line: 13 },
+  { type: 'new', content: "  } catch (err) {", line: 14 },
+  { type: 'new', content: "    return res.status(500).json({ error: 'Internal server error' })", line: 15 },
+  { type: 'new', content: "  }", line: 16 },
+]
 
 interface PhasePRReviewProps {
   onContinue: () => void
@@ -118,29 +56,28 @@ type PRState = "form" | "submitting" | "reviewing" | "approved"
 
 export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
   const [prState, setPrState] = useState<PRState>("form")
-  const [visibleReviews, setVisibleReviews] = useState(0)
+  const [visibleCommentIdx, setVisibleCommentIdx] = useState(-1)
 
-  // Simulate review loading after submit
+  // Interactive Form State
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("## Changes\n- Implemented GET /api/profile\n- Added auth middleware validation\n- Sanitized sensitive fields")
+
+  const isValidTitle = /^(feat|fix|chore|docs|refactor|test|style|ci|perf|build)(\(.*\))?: .+/i.test(title)
+
   useEffect(() => {
-    if (prState !== "reviewing") return
-    // Typing delay before first comment
-    const timers: ReturnType<typeof setTimeout>[] = []
-    SCN008_PR_REVIEW.forEach((_, i) => {
-      timers.push(
-        setTimeout(() => {
-          setVisibleReviews(i + 1)
-          if (i === SCN008_PR_REVIEW.length - 1) {
-            setTimeout(() => setPrState("approved"), 600)
-          }
-        }, 1800 + i * 2200)
-      )
-    })
-    return () => timers.forEach(clearTimeout)
+    if (prState === "reviewing") {
+      const timer = setTimeout(() => {
+        setVisibleCommentIdx(0) // Show Sarah's first comment
+        setTimeout(() => setPrState("approved"), 2500)
+      }, 1500)
+      return () => clearTimeout(timer)
+    }
   }, [prState])
 
   const handleSubmit = () => {
+    if (!isValidTitle) return
     setPrState("submitting")
-    setTimeout(() => setPrState("reviewing"), 1200)
+    setTimeout(() => setPrState("reviewing"), 1500)
   }
 
   return (
@@ -150,153 +87,215 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="w-full max-w-2xl mx-auto"
+      className="w-full max-w-5xl mx-auto flex flex-col items-center"
     >
       {/* Header */}
-      <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
-        Phase 4 · PR &amp; Review
-      </p>
-      <h2 className="font-serif text-2xl font-medium text-white mb-2">
-        Create your pull request
-      </h2>
-      <p className="text-sm text-white/40 mb-6">
-        @senior_dev reviews every PR. Be prepared for feedback — that's the job.
-      </p>
+      <div className="text-center mb-10">
+        <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
+          Phase 4 · PR Review
+        </p>
+        <h2 className="font-serif text-3xl font-medium text-white mb-3">
+          Propose your Changes
+        </h2>
+        <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
+          Submit your implementation for review. The senior engineering team will audit your code for patterns and security.
+        </p>
+      </div>
 
-      {/* PR Form */}
-      <AnimatePresence mode="wait">
-        {prState === "form" && (
-          <motion.div
-            key="form"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, y: -10 }}
-          >
-            <div className="rounded-sm border border-[#171717] bg-[#0A0A0A] overflow-hidden mb-4">
-              {/* Branch info */}
-              <div className="px-5 py-3 border-b border-[#171717] bg-[#0F0F0F] flex items-center gap-2">
-                <GitMerge className="w-3.5 h-3.5 text-white/20" />
-                <span className="font-mono text-[10px] text-white/25">
-                  feat/add-profile-endpoint → main
-                </span>
+      {/* Main PR Dashboard */}
+      <div className="w-full grid grid-cols-12 gap-8 items-start">
+
+        {/* Left: PR Meta & Form (5 cols) */}
+        <div className="col-span-5 space-y-4">
+          {prState === 'form' ? (
+            <div className="p-6 rounded-sm border border-[#a86f44]/20 bg-[#0F0F0F]/80 shadow-2xl space-y-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Lightbulb size={16} className="text-[#a86f44]" />
+                <span className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44]">Sarah's Tip: Conventional Commits</span>
+              </div>
+              <p className="text-[11px] text-white/40 leading-relaxed italic">
+                "At Praxis, we follow Conventional Commits. Start your title with <span className="text-white/60">feat:</span>, <span className="text-white/60">fix:</span>, or <span className="text-white/60">chore:</span> so our changelog remains clean."
+              </p>
+
+              <div className="space-y-4 pt-4 border-t border-white/5">
+                <div>
+                  <label className="block font-mono text-[9px] uppercase tracking-widest text-white/20 mb-2">PR Title</label>
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="e.g. feat: add profile endpoint"
+                    className={`w-full h-10 px-4 rounded-sm border bg-[#050505] font-mono text-xs text-white outline-none transition-all ${title && !isValidTitle ? 'border-red-500/30' : title && isValidTitle ? 'border-emerald-500/30' : 'border-white/5 focus:border-[#a86f44]/40'
+                      }`}
+                  />
+                  {title && !isValidTitle && (
+                    <p className="mt-2 text-[9px] text-red-400/60 font-mono italic">Invalid convention. Try starting with 'feat: ' or 'fix: '</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block font-mono text-[9px] uppercase tracking-widest text-white/20 mb-2">Description</label>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full h-32 p-4 rounded-sm border border-white/5 bg-[#050505] font-mono text-[11px] text-white/40 outline-none focus:border-[#a86f44]/40 transition-all resize-none"
+                  />
+                </div>
+
+                <button
+                  onClick={handleSubmit}
+                  disabled={!isValidTitle}
+                  className={`w-full h-12 rounded-sm text-sm font-medium transition-all shadow-xl cursor-pointer ${isValidTitle
+                      ? 'bg-[#a86f44] text-white hover:bg-[#b87f54] shadow-[#a86f44]/10'
+                      : 'bg-white/5 text-white/20 border border-white/5 cursor-not-allowed'
+                    }`}
+                >
+                  Create Pull Request
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="p-6 rounded-sm border border-white/5 bg-[#0F0F0F]/80 shadow-2xl space-y-6">
+              {/* Branch Status */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <GitMerge size={16} className="text-[#a86f44]" />
+                  <span className="font-mono text-[10px] text-white uppercase tracking-widest">PR-428</span>
+                </div>
+                <div className={`px-2 py-0.5 rounded-full font-mono text-[8px] uppercase border ${prState === 'approved' ? 'border-emerald-500/30 text-emerald-500 bg-emerald-500/5' : 'border-[#a86f44]/30 text-[#a86f44] bg-[#a86f44]/5'
+                  }`}>
+                  {prState === 'approved' ? 'Merged' : 'Open'}
+                </div>
               </div>
 
-              <div className="p-5 space-y-4">
-                {/* Title */}
-                <div>
-                  <label className="block font-mono text-[9px] uppercase tracking-widest text-white/25 mb-2">
-                    Title
-                  </label>
-                  <div className="h-10 px-4 rounded-sm border border-[#171717] bg-[#050505] flex items-center font-mono text-xs text-white/60">
-                    feat: implement GET /api/profile endpoint
-                  </div>
-                </div>
+              {/* Title */}
+              <div>
+                <h3 className="text-base font-bold text-white mb-1 truncate">{title || "feat: Profile data endpoint"}</h3>
+                <p className="text-[10px] text-white/30 font-mono">Created by You · 2m ago</p>
+              </div>
 
-                {/* Description */}
-                <div>
-                  <label className="block font-mono text-[9px] uppercase tracking-widest text-white/25 mb-2">
-                    Description
-                  </label>
-                  <div className="p-4 rounded-sm border border-[#171717] bg-[#050505] font-mono text-xs text-white/40 leading-relaxed space-y-1 min-h-[100px]">
-                    <p className="text-white/60">## Changes</p>
-                    <p>- Implemented `GET /api/profile` handler in `src/routes/profile.ts`</p>
-                    <p>- Uses existing `authenticate` middleware for JWT validation</p>
-                    <p>- Excludes sensitive fields (passwordHash) from response</p>
-                    <p>- Returns 401 for unauthenticated, 404 if user not found</p>
-                    <p className="pt-2 text-white/60">## Checklist</p>
-                    <p>- [x] All 4 acceptance criteria met</p>
-                    <p>- [x] No raw SQL — using `getUserById()` from db/queries</p>
+              {/* Checklist */}
+              <div className="space-y-3 py-4 border-y border-white/5">
+                <div className="flex items-center gap-3 opacity-60">
+                  <CheckCircle size={14} weight="fill" className="text-emerald-500" />
+                  <span className="text-[11px] text-white/80">Implementation verified by CI</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  {prState === 'approved' ? (
+                    <CheckCircle size={14} weight="fill" className="text-emerald-500" />
+                  ) : (
+                    <Clock size={14} className="text-[#a86f44]" />
+                  )}
+                  <span className="text-[11px] text-white/80">Pending Senior Approval (@sarah)</span>
+                </div>
+              </div>
+
+              {/* Reviewers */}
+              <div>
+                <p className="font-mono text-[9px] uppercase tracking-widest text-white/20 mb-3">Reviewers</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-sm bg-[#a86f44] flex items-center justify-center font-mono text-[10px] font-bold text-white">SC</div>
+                  <div className="flex-1">
+                    <p className="text-xs font-bold text-white">Sarah Chen</p>
+                    <p className="text-[10px] text-white/30">Senior Lead · Engineering</p>
                   </div>
+                  {prState === 'approved' && <ShieldCheck size={18} weight="fill" className="text-emerald-500" />}
                 </div>
               </div>
             </div>
+          )}
 
-            {/* Submit */}
-            <button
-              onClick={handleSubmit}
-              className="w-full h-12 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer relative overflow-hidden transition-colors hover:bg-[#b87f54]"
-            >
-              {/* Shimmer */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12"
-                animate={{ x: ["-120%", "120%"] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 1, ease: "easeInOut" }}
-              />
-              <GitMerge className="w-4 h-4 relative z-10" />
-              <span className="relative z-10">Create Pull Request</span>
-            </button>
-          </motion.div>
-        )}
+          {/* Discussion / Status Area */}
+          <AnimatePresence mode="wait">
+            {prState === 'submitting' && (
+              <div className="w-full h-12 flex items-center justify-center gap-3 font-mono text-[10px] text-white/20 uppercase tracking-widest">
+                <div className="w-4 h-4 border-2 border-[#a86f44] border-t-transparent rounded-full animate-spin" />
+                Pushing changes...
+              </div>
+            )}
 
-        {prState === "submitting" && (
-          <motion.div
-            key="submitting"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center py-16 gap-4"
-          >
-            <motion.div
-              className="w-10 h-10 rounded-full border-2 border-[#a86f44] border-t-transparent"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-            />
-            <p className="font-mono text-xs text-white/40">Submitting PR…</p>
-          </motion.div>
-        )}
+            {prState === 'approved' && (
+              <motion.button
+                key="continue-btn"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={onContinue}
+                className="w-full h-12 flex items-center justify-center gap-3 rounded-sm bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-900/20 cursor-pointer"
+              >
+                View Scenario Debrief
+                <ArrowRight size={16} />
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </div>
 
-        {(prState === "reviewing" || prState === "approved") && (
-          <motion.div
-            key="reviewing"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            {/* PR submitted badge */}
-            <div className="flex items-center gap-3 px-4 py-3 rounded-sm border border-[#a86f44]/25 bg-[#a86f44]/5 mb-6">
-              <GitMerge className="text-[#a86f44] w-4 h-4" />
-              <span className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44]">
-                PR #42 · Open
-              </span>
-              <span className="ml-auto font-mono text-[10px] text-white/25">feat/add-profile-endpoint</span>
+        {/* Right: Code Diff (7 cols) */}
+        <div className="col-span-7 rounded-sm border border-[#171717] bg-[#0A0A0A] overflow-hidden shadow-2xl flex flex-col min-h-[520px]">
+          <div className="px-5 py-3 border-b border-[#171717] bg-[#0F0F0F] flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <FileCode size={16} className="text-[#a86f44]" />
+              <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest">src / routes / profile.ts</span>
+            </div>
+            <div className="flex gap-4 font-mono text-[9px] uppercase text-white/20">
+              <span className="text-emerald-500/40">+8 lines</span>
+              <span className="text-red-500/40">-2 lines</span>
+            </div>
+          </div>
+
+          <div className="flex-1 font-mono text-[11px] leading-relaxed overflow-y-auto bg-[#050505]">
+            {/* Context lines (muted) */}
+            <div className="p-4 py-2 text-white/10 opacity-30 select-none">
+              {`7  // GET /api/profile — returns current user's public data\n8  router.get('/', authenticate, async (req, res) => {`}
             </div>
 
-            {/* Review section header */}
-            <div className="flex items-center gap-2 mb-4">
-              <ChatCircle className="w-3.5 h-3.5 text-white/30" />
-              <span className="font-mono text-[10px] uppercase tracking-widest text-white/30">
-                Code review · @senior_dev
-              </span>
-              {prState === "reviewing" && visibleReviews < SCN008_PR_REVIEW.length && (
-                <div className="ml-2">
-                  <TypingDots />
+            {/* Diff lines */}
+            <div className="relative">
+              {DIFF_LINES.map((line, i) => (
+                <div key={i} className="flex flex-col">
+                  <div className={`flex items-center gap-6 px-4 py-0.5 ${line.type === 'new' ? 'bg-emerald-500/10 border-l-2 border-emerald-500/30' : 'bg-red-500/10 border-l-2 border-red-500/30 opacity-40'
+                    }`}>
+                    <span className="w-6 text-white/10 text-right select-none">{line.line}</span>
+                    <span className="w-4 text-white/20 select-none">{line.type === 'new' ? '+' : '-'}</span>
+                    <span className={line.type === 'new' ? 'text-white/80' : 'text-white/40 line-through'}>{line.content}</span>
+                  </div>
+
+                  {/* Inline Comment Simulation */}
+                  <AnimatePresence>
+                    {line.hasComment && visibleCommentIdx >= 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, filter: "blur(8px)" }}
+                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        className="ml-16 mr-6 my-3 p-4 rounded-sm border border-[#a86f44]/25 bg-[#0F0F0F] shadow-2xl relative"
+                      >
+                        {/* Speech bubble arrow */}
+                        <div className="absolute -top-1 left-4 w-2 h-2 bg-[#0F0F0F] border-l border-t border-[#a86f44]/25 rotate-45" />
+
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-sm bg-[#a86f44] flex items-center justify-center font-mono text-[10px] font-bold text-white shrink-0">SC</div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-bold text-white">Sarah Chen</span>
+                              <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-mono text-[8px] uppercase tracking-tighter">Senior Review</span>
+                            </div>
+                            <p className="text-[11px] text-white/50 leading-relaxed italic">
+                              "Great catch on the destructuring here. Keeping sensitive fields like passwordHash out of the response is a critical part of our API security standards. Nice work."
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              )}
-            </div>
-
-            {/* Review comments */}
-            <div className="space-y-3 mb-6">
-              {SCN008_PR_REVIEW.slice(0, visibleReviews).map((comment, i) => (
-                <ReviewCard key={i} comment={comment} index={0} />
               ))}
             </div>
 
-            {/* Continue when approved */}
-            <AnimatePresence>
-              {prState === "approved" && (
-                <button
-                  key="debrief-btn"
-                  onClick={onContinue}
-                  className="w-full h-11 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer hover:bg-[#b87f54] transition-colors"
-                >
-                  <CheckCircle weight="fill" className="w-4 h-4" />
-                  View debrief
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {/* Context lines footer */}
+            <div className="p-4 py-2 text-white/10 opacity-30 select-none">
+              {`17 })\n18\n19 export default router`}
+            </div>
+          </div>
+        </div>
+      </div>
     </motion.div>
   )
 }

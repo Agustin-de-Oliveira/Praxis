@@ -22,9 +22,11 @@ import { Dithering } from "@paper-design/shaders-react"
 
 import TourProgressBar from "@/components/tour/tour-progress-bar"
 import AICommandBar from "@/components/tour/ai-command-bar"
+import PhaseStoryline from "@/components/tour/phase-storyline"
 import PhaseTicket from "@/components/tour/phase-ticket"
 import PhaseOrientation from "@/components/tour/phase-orientation"
 import PhaseImplement from "@/components/tour/phase-implement"
+import PhaseTesting from "@/components/tour/phase-testing"
 import PhaseCheckpoints from "@/components/tour/phase-checkpoints"
 import PhasePRReview from "@/components/tour/phase-pr-review"
 import PhaseDebrief from "@/components/tour/phase-debrief"
@@ -48,7 +50,7 @@ const phaseVariants: Variants = {
 // ── Tour page ─────────────────────────────────────────────────────────────────
 
 export default function TourPage() {
-  const [phase, setPhase] = useState<TourPhase>("ticket")
+  const [phase, setPhase] = useState<TourPhase>("storyline")
   const [checkpointsDone, setCheckpointsDone] = useState(0)
 
   // ── Phase advance ───────────────────────────────────────────────────────
@@ -107,6 +109,12 @@ export default function TourPage() {
       {/* ── Phase content area ───────────────────────────────────────────── */}
       <div className="pt-[88px] pb-24 px-6 flex justify-center">
         <AnimatePresence mode="wait">
+          {phase === "storyline" && (
+            <motion.div key="storyline" variants={phaseVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
+              <PhaseStoryline onContinue={() => advance("ticket")} />
+            </motion.div>
+          )}
+
           {phase === "ticket" && (
             <motion.div key="ticket" variants={phaseVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
               <PhaseTicket onContinue={() => advance("orientation")} />
@@ -121,7 +129,13 @@ export default function TourPage() {
 
           {phase === "implement" && (
             <motion.div key="implement" variants={phaseVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
-              <PhaseImplement onContinue={() => advance("checkpoint")} />
+              <PhaseImplement onContinue={(target) => advance(target)} />
+            </motion.div>
+          )}
+
+          {phase === "testing" && (
+            <motion.div key="testing" variants={phaseVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
+              <PhaseTesting onContinue={() => advance("checkpoint")} />
             </motion.div>
           )}
 

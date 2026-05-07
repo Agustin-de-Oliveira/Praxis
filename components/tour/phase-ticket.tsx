@@ -13,18 +13,23 @@ import { SCN008_TICKET, SCN008_TEAM } from "@/lib/first-day-data"
 // ── Variants ──────────────────────────────────────────────────────────────────
 
 const tourVariants: Variants = {
-  hidden: { opacity: 0, filter: "blur(4px)" },
+  hidden: { opacity: 0, filter: "blur(6px)" },
   visible: {
     opacity: 1,
     filter: "blur(0px)",
-    transition: { duration: 0.3, ease: "easeOut" as const },
+    transition: { duration: 0.35, ease: "easeOut" as const },
   },
-  exit: { opacity: 0, transition: { duration: 0.18 } },
+  exit: {
+    opacity: 0,
+    filter: "blur(4px)",
+    transition: { duration: 0.2, ease: "easeIn" as const },
+  },
 }
 
 const stagger: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.25 } },
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+  exit: { transition: { staggerChildren: 0.04, staggerDirection: -1 } },
 }
 
 const listItem: Variants = {
@@ -152,20 +157,18 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
 
       {/* CTA */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, filter: "blur(6px)" }}
+        animate={{ opacity: 1, filter: "blur(0px)" }}
         transition={{ delay: 1.2, duration: 0.4 }}
         className="mt-6"
       >
-        <motion.button
+        <button
           onClick={onContinue}
-          className="w-full h-12 flex items-center justify-center gap-3 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer relative overflow-hidden"
-          whileHover={{ scale: 1.01, backgroundColor: "#b87f54" }}
-          whileTap={{ scale: 0.985 }}
+          className="w-full h-12 flex items-center justify-center gap-3 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer transition-colors hover:bg-[#b87f54]"
         >
           <span>Explore the codebase</span>
           <ArrowRight className="w-4 h-4" />
-        </motion.button>
+        </button>
       </motion.div>
     </motion.div>
   )

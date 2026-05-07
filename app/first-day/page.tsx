@@ -25,10 +25,9 @@ import { getRecommendedScenarios, type RoleId } from "@/lib/first-day-data"
 
 // ── Flow step type ────────────────────────────────────────────────────────────
 
-type Step = "transition" | "prompt" | "browse"
+type Step = "welcome" | "selection"
 
-// ── Page transition: pure opacity fade — no Y, no scale ─────────────────────
-// Eliminates the "coming from bottom-right" artifact entirely.
+// ── Page transition: pure opacity fade ──────────────────────────────────────
 
 const pageVariants: Variants = {
   hidden: { opacity: 0 },
@@ -42,7 +41,7 @@ const pageVariants: Variants = {
   },
 }
 
-// ── Role label map (matches onboarding IDs) ───────────────────────────────────
+// ── Role labels ──────────────────────────────────────────────────────────────
 
 const ROLE_LABELS: Record<string, string> = {
   frontend: "Frontend Engineer",
@@ -62,40 +61,23 @@ const STACK_LABELS: Record<string, string> = {
   Other: "your stack",
 }
 
-// ── Inner component (uses hooks that require Suspense) ────────────────────────
-
 function FirstDayInner() {
   const router = useRouter()
   const params = useSearchParams()
 
-  // Read profile from query params (onboarding page passes these on redirect)
-  // Fallback values let the page render standalone for dev/demo purposes.
   const roleId = (params.get("role") ?? "backend") as RoleId
   const langRaw = params.get("lang") ?? "JavaScript / TypeScript"
   const handle = params.get("handle") ?? "engineer"
 
   const roleLabel = ROLE_LABELS[roleId] ?? "Backend Engineer"
   const stackLabel = STACK_LABELS[langRaw] ?? langRaw
-
-  // Derive personalised scenario list
   const scenarios = getRecommendedScenarios(roleId)
 
-  // Flow state machine
-  const [step, setStep] = useState<Step>("transition")
+  const [step, setStep] = useState<Step>("welcome")
 
-  // ── Handlers ─────────────────────────────────────────────────────────────
-
-  const handleTransitionContinue = () => setStep("prompt")
-
-  const handleStart = () => {
-    // Navigate to the immersive SCN-008 tour (the best match for this flow)
-    router.push("/tour/SCN-008")
-  }
-
-  const handleSkip = () => setStep("browse")
+  const handleTransitionContinue = () => setStep("selection")
 
   const handleSelectScenario = (id: string) => {
-    // For Tour-enabled scenarios, push to /tour/:id; others go to /scenario
     const tourEnabled = ["SCN-008"]
     if (tourEnabled.includes(id)) {
       router.push(`/tour/${id}`)
@@ -104,56 +86,42 @@ function FirstDayInner() {
     }
   }
 
-  // ── Render ────────────────────────────────────────────────────────────────
-
   return (
     <div className="relative min-h-screen bg-[#050505] overflow-x-hidden">
       <AnimatePresence mode="wait">
-      {step === "transition" && (
-        <motion.div
-          key="transition"
-          variants={pageVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
-          <TransitionScreen
-            role={roleLabel}
-            stack={stackLabel}
-            handle={handle}
-            onContinue={handleTransitionContinue}
-          />
-        </motion.div>
-      )}
+        {step === "welcome" && (
+          <motion.div
+            key="welcome"
+            variants={pageVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <TransitionScreen
+              role={roleLabel}
+              stack={stackLabel}
+              handle={handle}
+              onContinue={handleTransitionContinue}
+            />
+          </motion.div>
+        )}
 
-      {step === "prompt" && (
-        <motion.div
-          key="prompt"
-          variants={pageVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
-          <ScenarioPrompt onStart={handleStart} onSkip={handleSkip} />
-        </motion.div>
-      )}
-
-      {step === "browse" && (
-        <motion.div
-          key="browse"
-          variants={pageVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-        >
-          <ScenarioCards
-            scenarios={scenarios}
-            role={roleLabel}
-            stack={stackLabel}
-            onSelect={handleSelectScenario}
-          />
-        </motion.div>
-      )}
+        {step === "selection" && (
+          <motion.div
+            key="selection"
+            variants={pageVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <ScenarioCards
+              scenarios={scenarios}
+              role={roleLabel}
+              stack={stackLabel}
+              onSelect={handleSelectScenario}
+            />
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   )

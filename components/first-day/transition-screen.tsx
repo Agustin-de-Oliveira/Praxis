@@ -16,7 +16,8 @@ import { Dithering } from "@paper-design/shaders-react"
 
 const container: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+  exit: { transition: { staggerChildren: 0.04, staggerDirection: -1 } },
 }
 
 const reveal: Variants = {
@@ -25,6 +26,11 @@ const reveal: Variants = {
     opacity: 1,
     filter: "blur(0px)",
     transition: { duration: 0.35, ease: "easeOut" as const },
+  },
+  exit: {
+    opacity: 0,
+    filter: "blur(4px)",
+    transition: { duration: 0.2, ease: "easeIn" as const },
   },
 }
 
@@ -116,7 +122,7 @@ export default function TransitionScreen({ role, stack, handle, onContinue }: Tr
         <motion.div variants={reveal}>
           <button
             onClick={onContinue}
-            className="w-full h-12 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer hover:bg-[#b87f54] transition-colors group"
+            className="w-full h-12 flex items-center justify-center gap-2 rounded-sm bg-primary text-sm font-medium text-primary-foreground cursor-pointer hover:bg-primary transition-colors group"
           >
             See your first scenarios
             <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />

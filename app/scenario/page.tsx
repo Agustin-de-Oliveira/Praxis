@@ -220,6 +220,7 @@ export default function ScenarioPage() {
       {view === "board" && <ScenarioBoard />}
       {view === "ide" && <ScenarioIDE />}
       {view === "team" && <TeamView />}
+      </div>
     </div>
   )
 }

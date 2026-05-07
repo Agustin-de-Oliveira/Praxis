@@ -142,9 +142,11 @@ export interface TeamMember {
 
 // Tour phases enum
 export type TourPhase =
+  | "storyline"    // Phase -1: Storyline / Context
   | "ticket"       // Phase 0: @pm_bot ticket reveal
   | "orientation"  // Phase 1: Codebase tour
   | "implement"    // Phase 2: Implementation guidance
+  | "testing"      // Phase 2.5: Automated testing
   | "checkpoint"   // Phase 3: Checkpoint moments
   | "pr"           // Phase 4: PR & Review
   | "debrief"      // Phase 5: Scenario debrief
@@ -173,6 +175,13 @@ export const SCN008_TEAM: TeamMember[] = [
     role: "Senior Engineer",
     color: "bg-emerald-500/15 border-emerald-500/25",
     textColor: "text-emerald-400",
+  },
+  {
+    handle: "frontend_dev",
+    name: "Jordan Park",
+    role: "Frontend Engineer",
+    color: "bg-sky-500/15 border-sky-500/25",
+    textColor: "text-sky-400",
   },
 ]
 

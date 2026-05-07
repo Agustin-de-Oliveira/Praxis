@@ -2,60 +2,86 @@
 
 // ─────────────────────────────────────────────────────────────────────────────
 // components/tour/phase-debrief.tsx
-// Final debrief screen: What went well, common pitfalls, senior approach.
-// Celebratory completion state + navigation back to dashboard.
+// Phase 5: High-Fidelity Scenario Debrief.
+// Immersive performance dashboard with senior insights and skill progression.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { motion, type Variants } from "framer-motion"
 import {
   CheckCircle, Warning, Lightbulb, Trophy, ArrowRight, House,
+  ShieldCheck, Database, Key
 } from "@phosphor-icons/react"
 import Link from "next/link"
+import { Beaker } from "lucide-react"
 
 const tourVariants: Variants = {
-  hidden: { opacity: 0, filter: "blur(4px)" },
+  hidden: { opacity: 0, filter: "blur(8px)", scale: 0.98 },
   visible: {
     opacity: 1,
     filter: "blur(0px)",
-    transition: { duration: 0.3, ease: "easeOut" as const },
+    scale: 1,
+    transition: { duration: 0.5, ease: "easeOut" as const },
   },
-  exit: { opacity: 0, transition: { duration: 0.18 } },
+  exit: {
+    opacity: 0,
+    filter: "blur(6px)",
+    scale: 0.98,
+    transition: { duration: 0.25, ease: "easeIn" as const },
+  },
 }
 
 const stagger: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
 }
 
 const item: Variants = {
-  hidden: { opacity: 0, filter: "blur(4px)" },
-  visible: { opacity: 1, filter: "blur(0px)", transition: { duration: 0.3, ease: "easeOut" as const } },
+  hidden: { opacity: 0, y: 10, filter: "blur(4px)" },
+  visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.4, ease: "easeOut" as const } },
 }
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const WENT_WELL = [
-  "Used the auth middleware correctly — no re-implementation needed.",
-  "Field exclusion via destructuring is clean and idiomatic.",
-  "Returned structured JSON errors (not raw strings).",
-  "Covered the null user case with a proper 404.",
+const PERFORMANCE_METRICS = [
+  { id: 'auth', label: 'Auth Middleware', icon: Key, status: 'Optimal' },
+  { id: 'db', label: 'Query Pattern', icon: Database, status: 'Optimal' },
+  { id: 'sec', label: 'Data Sanitization', icon: ShieldCheck, status: 'Secure' },
+  { id: 'test', label: 'Test Coverage', icon: Beaker, status: 'Verified' },
 ]
 
-const PITFALLS = [
-  "Over-fetching: selecting `SELECT *` instead of specific columns.",
-  "Forgetting the null check — returning 500 when user doesn't exist.",
-  "Exposing `passwordHash` in the response (checkpoint CP-3 catches this).",
-  "N+1 queries — making multiple DB calls instead of one `getUserById()`.",
+const SENIOR_INSIGHTS = [
+  {
+    type: 'success',
+    icon: CheckCircle,
+    color: 'text-emerald-400',
+    borderColor: 'border-emerald-500/15',
+    bgColor: 'bg-emerald-500/5',
+    title: 'Key Strengths',
+    items: [
+      "Correct utilization of standard 'authenticate' middleware.",
+      "Clean implementation of field exclusion via destructuring.",
+      "Proper error handling for non-existent resource IDs (404)."
+    ]
+  },
+  {
+    type: 'warning',
+    icon: Warning,
+    color: 'text-amber-400',
+    borderColor: 'border-amber-500/15',
+    bgColor: 'bg-amber-500/5',
+    title: 'Common Pitfalls to Avoid',
+    items: [
+      "Over-fetching with 'SELECT *' instead of specific columns.",
+      "Leaking internal database structure in error messages.",
+      "Ignoring N+1 query patterns in higher-traffic endpoints."
+    ]
+  }
 ]
 
 const SENIOR_APPROACH = [
-  { label: "Rate limiting early", detail: "Add `express-rate-limit` to /api/profile immediately — profile endpoints are commonly scraped." },
-  { label: "DTO pattern", detail: "Create a `UserProfileDTO` type that explicitly defines the safe response shape, not just destructuring." },
-  { label: "Correlation IDs", detail: "Pass a request ID through to error responses — makes production debugging dramatically faster." },
-  { label: "Integration test", detail: "Write a supertest case for the 401 path and 200 path before merging. Prevents regressions." },
+  { label: "Rate Limiting", detail: "In production, profile endpoints are high-value targets for scrapers. Always wrap these with rate-limiters." },
+  { label: "DTO Abstraction", detail: "Instead of just destructuring, a Senior Dev uses Data Transfer Objects (DTOs) to strictly enforce response contracts." },
 ]
-
-// ── Component ─────────────────────────────────────────────────────────────────
 
 export default function PhaseDebrief() {
   return (
@@ -65,128 +91,149 @@ export default function PhaseDebrief() {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="w-full max-w-2xl mx-auto pb-20"
+      className="w-full max-w-5xl mx-auto pb-20"
     >
-      {/* Trophy header */}
-      <motion.div
-        className="flex flex-col items-center text-center mb-12"
-        variants={stagger}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div variants={item} className="mb-5">
-          <div className="relative">
-            <motion.div
-              className="w-20 h-20 rounded-full border-2 border-[#a86f44]/40 flex items-center justify-center bg-[#a86f44]/8"
-              animate={{ boxShadow: ["0 0 0 0px rgba(168,111,68,0.2)", "0 0 0 16px rgba(168,111,68,0)", "0 0 0 0px rgba(168,111,68,0.2)"] }}
-              transition={{ duration: 2.5, repeat: Infinity }}
-            >
-              <Trophy weight="fill" className="text-[#a86f44] w-9 h-9" />
-            </motion.div>
+      {/* ── Top Header ────────────────────────────────────────────────────────── */}
+      <div className="text-center mb-16">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.1, type: "spring" }}
+          className="w-16 h-16 rounded-sm border border-[#a86f44]/30 bg-[#a86f44]/10 flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-[#a86f44]/10"
+        >
+          <Trophy size={32} weight="fill" className="text-[#a86f44]" />
+        </motion.div>
+        <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
+          SCN-008 · Mission Complete
+        </p>
+        <h2 className="font-serif text-4xl font-medium text-white mb-4">
+          Exceptional Work, Engineer.
+        </h2>
+        <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
+          You've successfully implemented, tested, and merged the User Profile endpoint. Here is your final performance diagnostic and team feedback.
+        </p>
+      </div>
+
+      {/* ── Main Dashboard ────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-12 gap-8 items-start">
+
+        {/* Left: Performance Scorecard (4 cols) */}
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          animate="visible"
+          className="col-span-4 space-y-4"
+        >
+          <div className="p-6 rounded-sm border border-white/5 bg-[#0F0F0F]/80 shadow-2xl">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-white/20 mb-6">Performance Matrix</p>
+
+            <div className="space-y-6">
+              {PERFORMANCE_METRICS.map((m, i) => (
+                <motion.div key={m.id} variants={item} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-sm bg-white/5 flex items-center justify-center">
+                      <m.icon size={16} className="text-[#a86f44]" />
+                    </div>
+                    <span className="text-xs text-white/60">{m.label}</span>
+                  </div>
+                  <span className="font-mono text-[10px] text-emerald-500 uppercase tracking-tighter">{m.status}</span>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-10 pt-6 border-t border-white/5">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs text-white/40">Overall Score</span>
+                <span className="font-serif text-2xl text-white">96%</span>
+              </div>
+              <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-[#8a5a35] to-[#a86f44]"
+                  initial={{ width: 0 }}
+                  animate={{ width: "96%" }}
+                  transition={{ delay: 0.8, duration: 1 }}
+                />
+              </div>
+            </div>
           </div>
+
+          {/* Level Progress */}
+          <motion.div variants={item} className="p-4 rounded-sm border border-emerald-500/10 bg-emerald-500/[0.03] flex items-center gap-4">
+            <ShieldCheck size={24} weight="fill" className="text-emerald-500/60" />
+            <div>
+              <p className="text-[10px] uppercase tracking-widest font-mono text-emerald-500/60 mb-0.5">Skill Acquired</p>
+              <p className="text-xs font-bold text-white">Advanced Data Sanitization</p>
+            </div>
+          </motion.div>
         </motion.div>
 
-        <motion.p variants={item} className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-2">
-          SCN-008 complete
-        </motion.p>
-        <motion.h2 variants={item} className="font-serif text-3xl font-medium text-white mb-3">
-          Scenario complete. Well done.
-        </motion.h2>
-        <motion.p variants={item} className="text-sm text-white/40 max-w-sm leading-relaxed">
-          You've shipped your first feature in Praxis. Here's how it went, and what to watch for next time.
-        </motion.p>
-      </motion.div>
-
-      {/* What went well */}
-      <motion.div
-        className="mb-6"
-        variants={stagger}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div variants={item} className="flex items-center gap-2 mb-3">
-          <CheckCircle weight="fill" className="text-emerald-400 w-4 h-4" />
-          <p className="font-mono text-[10px] uppercase tracking-widest text-emerald-400">What went well</p>
-        </motion.div>
-        <div className="rounded-sm border border-emerald-500/15 bg-emerald-500/4 p-4 space-y-2.5">
-          {WENT_WELL.map((w, i) => (
-            <motion.div key={i} variants={item} className="flex items-start gap-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/50 mt-1.5 shrink-0" />
-              <p className="text-xs text-white/55 leading-relaxed">{w}</p>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Common pitfalls */}
-      <motion.div
-        className="mb-6"
-        variants={stagger}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div variants={item} className="flex items-center gap-2 mb-3">
-          <Warning weight="fill" className="text-amber-400 w-4 h-4" />
-          <p className="font-mono text-[10px] uppercase tracking-widest text-amber-400">Common pitfalls</p>
-        </motion.div>
-        <div className="rounded-sm border border-amber-500/15 bg-amber-500/4 p-4 space-y-2.5">
-          {PITFALLS.map((p, i) => (
-            <motion.div key={i} variants={item} className="flex items-start gap-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-400/50 mt-1.5 shrink-0" />
-              <p className="text-xs text-white/55 leading-relaxed">{p}</p>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Senior approach */}
-      <motion.div
-        className="mb-10"
-        variants={stagger}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div variants={item} className="flex items-center gap-2 mb-3">
-          <Lightbulb weight="fill" className="text-[#a86f44] w-4 h-4" />
-          <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44]">
-            Senior approach
-          </p>
-        </motion.div>
-        <div className="space-y-3">
-          {SENIOR_APPROACH.map((s, i) => (
-            <motion.div
-              key={i}
-              variants={item}
-              className="rounded-sm border border-[#a86f44]/15 bg-[#a86f44]/4 px-4 py-3"
-            >
-              <p className="text-xs font-medium text-white/75 mb-1">{s.label}</p>
-              <p className="text-xs text-white/35 leading-relaxed">{s.detail}</p>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* CTA group */}
-      <motion.div
-        variants={item}
-        initial="hidden"
-        animate="visible"
-        className="space-y-3"
-      >
-        <Link href="/first-day?role=backend&lang=JavaScript+%2F+TypeScript&handle=engineer">
-          <div className="w-full h-12 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer hover:bg-[#b87f54] transition-colors">
-            <ArrowRight className="w-4 h-4" />
-            Next scenario
+        {/* Right: Technical Insights (8 cols) */}
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          animate="visible"
+          className="col-span-8 space-y-6"
+        >
+          {/* Insights Grid */}
+          <div className="grid grid-cols-2 gap-6">
+            {SENIOR_INSIGHTS.map((insight, i) => (
+              <motion.div
+                key={i}
+                variants={item}
+                className={`p-6 rounded-sm border ${insight.borderColor} ${insight.bgColor} space-y-4`}
+              >
+                <div className="flex items-center gap-3">
+                  <insight.icon size={18} weight="fill" className={insight.color} />
+                  <span className={`font-mono text-[10px] uppercase tracking-widest ${insight.color}`}>{insight.title}</span>
+                </div>
+                <ul className="space-y-3">
+                  {insight.items.map((it, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-xs text-white/50 leading-relaxed">
+                      <span className="mt-1.5 w-1 h-1 rounded-full bg-white/20 shrink-0" />
+                      {it}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
           </div>
-        </Link>
 
-        <Link href="/dashboard">
-          <div className="w-full h-11 flex items-center justify-center gap-2 rounded-sm border border-white/8 text-sm font-mono text-white/35 hover:text-white/60 hover:border-white/20 transition-all cursor-pointer">
-            <House className="w-4 h-4" />
-            Back to dashboard
-          </div>
-        </Link>
-      </motion.div>
+          {/* Senior Approach Card */}
+          <motion.div variants={item} className="p-8 rounded-sm border border-[#a86f44]/20 bg-[#a86f44]/[0.03] space-y-6 relative overflow-hidden">
+            <Lightbulb size={120} weight="thin" className="absolute -right-10 -bottom-10 text-[#a86f44]/5" />
+
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-1">Senior Perspective</p>
+              <h3 className="text-lg font-bold text-white">How a Lead would approach this</h3>
+            </div>
+
+            <div className="grid grid-cols-2 gap-8">
+              {SENIOR_APPROACH.map((s, i) => (
+                <div key={i}>
+                  <p className="text-xs font-bold text-white mb-2">{s.label}</p>
+                  <p className="text-xs text-white/40 leading-relaxed">{s.detail}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Final CTAs */}
+          <motion.div variants={item} className="flex gap-4 pt-4">
+            <Link href="/dashboard" className="flex-1">
+              <div className="h-14 flex items-center justify-center gap-3 rounded-sm border border-white/10 bg-white/[0.02] text-sm font-medium text-white/60 hover:bg-white/[0.05] hover:text-white transition-all cursor-pointer">
+                <House size={18} />
+                Return to Dashboard
+              </div>
+            </Link>
+            <Link href="/first-day?role=backend&lang=JavaScript+%2F+TypeScript&handle=engineer" className="flex-[1.5]">
+              <div className="h-14 flex items-center justify-center gap-3 rounded-sm bg-[#a86f44] text-sm font-bold text-white hover:bg-[#b87f54] transition-all shadow-xl shadow-[#a86f44]/20 cursor-pointer">
+                Next Assigned Scenario
+                <ArrowRight size={18} />
+              </div>
+            </Link>
+          </motion.div>
+        </motion.div>
+      </div>
     </motion.div>
   )
 }
