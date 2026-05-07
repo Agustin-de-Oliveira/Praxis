@@ -9,6 +9,7 @@ import {
 } from "@phosphor-icons/react"
 import ScenarioBoard from "@/components/scenario/board"
 import ScenarioIDE from "@/components/scenario/ide"
+import { Dithering } from "@paper-design/shaders-react"
 
 type ViewMode = "hub" | "board" | "ide" | "team"
 
@@ -174,7 +175,21 @@ export default function ScenarioPage() {
   const [view, setView] = useState<ViewMode>("hub")
 
   return (
-    <div className="min-h-screen bg-background flex flex-col text-foreground">
+    <div className="relative min-h-screen text-foreground overflow-hidden">
+      {/* Global Dithering background */}
+      <div className="absolute inset-0 h-full w-full pointer-events-none">
+        <Dithering
+          style={{ height: "100%", width: "100%" }}
+          colorBack="hsla(0,0%,0%,1)"
+          colorFront="hsl(0,0%,5%)"
+          shape="warp"
+          type="4x4"
+          pxSize={2}
+          speed={0.03}
+        />
+      </div>
+
+      <div className="relative z-10 flex flex-col min-h-screen">
       {/* Floating Navigation */}
       <div className="fixed top-6 left-6 z-50 flex items-center gap-3">
         <Link href="/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-sm border border-border bg-card/80 backdrop-blur-sm text-muted-foreground hover:text-foreground transition-colors">

@@ -130,10 +130,8 @@ export default function AICommandBar({ phase }: AICommandBarProps) {
     <>
       {/* Floating orb */}
       <motion.button
-        className="fixed bottom-8 right-8 z-[200] w-12 h-12 rounded-full bg-[#a86f44] text-white flex items-center justify-center cursor-pointer shadow-lg shadow-[#a86f44]/20"
+        className="fixed bottom-8 right-8 z-[200] w-12 h-12 rounded-full bg-[#a86f44] text-white flex items-center justify-center cursor-pointer shadow-lg shadow-[#a86f44]/20 hover:bg-[#b87f54] transition-colors"
         onClick={() => setOpen(true)}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
         animate={{
           boxShadow: open
             ? "0 0 0 6px rgba(168,111,68,0.15)"
@@ -171,9 +169,9 @@ export default function AICommandBar({ phase }: AICommandBarProps) {
             {/* Panel */}
             <motion.div
               className="fixed top-1/4 left-1/2 -translate-x-1/2 z-[200] w-full max-w-lg"
-              initial={{ opacity: 0, y: -20, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -12, scale: 0.97 }}
+              initial={{ opacity: 0, filter: "blur(8px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, filter: "blur(4px)" }}
               transition={{ duration: 0.25, ease: "easeOut" }}
             >
               <div className="rounded-sm border border-[#a86f44]/30 bg-[#0A0A0A] overflow-hidden shadow-2xl shadow-black/80">

@@ -2,117 +2,30 @@
 
 // ─────────────────────────────────────────────────────────────────────────────
 // components/first-day/transition-screen.tsx
-// "Onboarding complete" celebration screen with copper particle accents.
+// "Onboarding complete" welcome screen.
+// Background: same Dithering shader as onboarding.
+// Animations: blur-in only (no Y translation, no scale).
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useEffect, useRef } from "react"
 import { motion, type Variants } from "framer-motion"
-import { CheckCircle, Confetti } from "@phosphor-icons/react"
+import { CheckCircle, ArrowRight } from "@phosphor-icons/react"
+import { Dithering } from "@paper-design/shaders-react"
 
-// ── Copper particle canvas animation ─────────────────────────────────────────
+// ── Animation system ──────────────────────────────────────────────────────────
+// Items reveal by clearing blur + fading in — feels sharp and intentional.
 
-function CopperParticles() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
-
-    const W = canvas.offsetWidth
-    const H = canvas.offsetHeight
-    canvas.width = W
-    canvas.height = H
-
-    // Generate particles
-    const particles = Array.from({ length: 60 }, () => ({
-      x: Math.random() * W,
-      y: H + Math.random() * 100,
-      vx: (Math.random() - 0.5) * 1.2,
-      vy: -(Math.random() * 2 + 1),
-      size: Math.random() * 3 + 1,
-      opacity: Math.random() * 0.8 + 0.2,
-      life: Math.random(),
-      // Copper color variants
-      hue: Math.floor(Math.random() * 3),
-    }))
-
-    const COPPER = ["#a86f44", "#c4884f", "#8a5a35"]
-
-    let frame: number
-    const tick = () => {
-      ctx.clearRect(0, 0, W, H)
-
-      particles.forEach((p) => {
-        p.x += p.vx
-        p.y += p.vy
-        p.life -= 0.004
-        p.opacity = Math.max(0, p.life * 0.9)
-
-        if (p.life <= 0) {
-          // Reset
-          p.x = Math.random() * W
-          p.y = H + 10
-          p.vx = (Math.random() - 0.5) * 1.2
-          p.vy = -(Math.random() * 2 + 1)
-          p.life = 1
-        }
-
-        ctx.save()
-        ctx.globalAlpha = p.opacity
-        ctx.fillStyle = COPPER[p.hue]
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.restore()
-      })
-
-      frame = requestAnimationFrame(tick)
-    }
-
-    tick()
-    return () => cancelAnimationFrame(frame)
-  }, [])
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none"
-    />
-  )
+const container: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
 }
 
-// ── Pulsing copper ring ───────────────────────────────────────────────────────
-
-function CopperRing() {
-  return (
-    <div className="relative flex items-center justify-center w-24 h-24">
-      {/* Outer pulse rings */}
-      {[1, 2, 3].map((i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full border border-[#a86f44]"
-          style={{ width: 40 + i * 22, height: 40 + i * 22 }}
-          animate={{ opacity: [0.6, 0, 0.6], scale: [1, 1.15, 1] }}
-          transition={{
-            duration: 2.4,
-            delay: i * 0.4,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-      {/* Core icon */}
-      <motion.div
-        className="relative z-10 w-14 h-14 rounded-full bg-[#a86f44]/10 border border-[#a86f44]/40 flex items-center justify-center"
-        animate={{ boxShadow: ["0 0 0 0px rgba(168,111,68,0.3)", "0 0 0 8px rgba(168,111,68,0)", "0 0 0 0px rgba(168,111,68,0.3)"] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <CheckCircle weight="fill" className="text-[#a86f44] w-7 h-7" />
-      </motion.div>
-    </div>
-  )
+const reveal: Variants = {
+  hidden: { opacity: 0, filter: "blur(6px)" },
+  visible: {
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.35, ease: "easeOut" as const },
+  },
 }
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -124,111 +37,90 @@ interface TransitionScreenProps {
   onContinue: () => void
 }
 
-// ── Stagger children variant ─────────────────────────────────────────────────
-
-const container: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.3 } },
-}
-
-const item: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
-}
-
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function TransitionScreen({ role, stack, handle, onContinue }: TransitionScreenProps) {
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#050505]">
-      {/* Particle canvas */}
-      <CopperParticles />
-
-      {/* Radial glow behind card */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 40% at 50% 60%, rgba(168,111,68,0.07) 0%, transparent 70%)",
-        }}
-      />
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#050505]">
+      {/* Background Dithering */}
+      <div className="absolute inset-0 h-full w-full pointer-events-none">
+        <Dithering
+          style={{ height: "100%", width: "100%" }}
+          colorBack="hsla(0,0%,0%,1)"
+          colorFront="hsl(0,0%,5%)"
+          shape="warp"
+          type="4x4"
+          pxSize={2}
+          speed={0.03}
+        />
+      </div>
 
       <motion.div
-        className="relative z-10 w-full max-w-lg px-6"
+        className="relative z-10 w-full max-w-md px-6"
         variants={container}
         initial="hidden"
         animate="visible"
       >
-        {/* Badge */}
-        <motion.div variants={item} className="flex justify-center mb-8">
-          <span className="px-3 py-1 rounded-full bg-[#a86f44]/10 border border-[#a86f44]/25 font-mono text-[10px] uppercase tracking-widest text-[#a86f44]">
+        {/* Status badge */}
+        <motion.div variants={reveal} className="flex justify-center mb-10">
+          <span className="flex items-center gap-2 px-3 py-1.5 rounded-sm border border-[#a86f44]/25 bg-[#a86f44]/8 font-mono text-[9px] uppercase tracking-widest text-[#a86f44]">
+            <CheckCircle weight="fill" className="w-3 h-3" />
             Placement complete
           </span>
         </motion.div>
 
-        {/* Copper ring */}
-        <motion.div variants={item} className="flex justify-center mb-8">
-          <CopperRing />
-        </motion.div>
-
         {/* Headline */}
-        <motion.div variants={item} className="text-center mb-4">
-          <h1 className="font-serif text-4xl font-medium tracking-tight text-white mb-2">
+        <motion.div variants={reveal} className="text-center mb-2">
+          <h1 className="font-serif text-4xl font-medium tracking-tight text-white/70 leading-tight">
             Welcome to the team,
           </h1>
+        </motion.div>
+        <motion.div variants={reveal} className="text-center mb-10">
           <h1 className="font-serif text-4xl font-medium tracking-tight text-[#a86f44]">
             @{handle}.
           </h1>
         </motion.div>
 
         {/* Divider */}
-        <motion.div variants={item}>
-          <div className="h-px bg-gradient-to-r from-transparent via-[#a86f44]/30 to-transparent my-8" />
+        <motion.div variants={reveal}>
+          <div className="h-px bg-gradient-to-r from-transparent via-[#a86f44]/20 to-transparent mb-10" />
         </motion.div>
 
-        {/* Profile summary */}
+        {/* Profile summary card */}
         <motion.div
-          variants={item}
-          className="rounded-sm border border-[#a86f44]/20 bg-[#a86f44]/5 px-6 py-5 mb-8 text-center"
+          variants={reveal}
+          className="rounded-sm border border-[#171717] bg-[#0A0A0A] px-6 py-5 mb-3"
         >
-          <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44]/60 mb-3">
+          <p className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44]/50 mb-3">
             Based on your profile
           </p>
-          <p className="text-sm text-white/80 leading-relaxed">
-            As a{" "}
-            <span className="text-white font-medium">{role}</span>, working primarily with{" "}
-            <span className="text-white font-medium">{stack}</span>, we've curated your first
-            engineering scenarios.
+          <p className="text-sm text-white/60 leading-relaxed">
+            As a <span className="text-white font-medium">{role}</span>, working
+            primarily with{" "}
+            <span className="text-white font-medium">{stack}</span> — we've
+            prepared your first engineering scenarios.
           </p>
         </motion.div>
 
-        {/* Flavour text */}
+        {/* Flavour */}
         <motion.p
-          variants={item}
-          className="text-center text-xs text-white/35 font-mono mb-10 leading-relaxed"
+          variants={reveal}
+          className="text-center text-xs text-white/25 font-mono mb-10 leading-relaxed"
         >
-          These are guided simulations designed to feel like your first week
+          Guided simulations built to feel like your first week
           <br />
-          at a real engineering company — with training wheels that come off.
+          at a real engineering company.
         </motion.p>
 
         {/* CTA */}
-        <motion.div variants={item}>
-          <motion.button
+        <motion.div variants={reveal}>
+          <button
             onClick={onContinue}
-            className="w-full h-13 flex items-center justify-center gap-3 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer relative overflow-hidden group"
-            whileHover={{ scale: 1.015 }}
-            whileTap={{ scale: 0.985 }}
+            className="w-full h-12 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer hover:bg-[#b87f54] transition-colors group"
           >
-            {/* Shimmer sweep */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12"
-              animate={{ x: ["-120%", "120%"] }}
-              transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.5, ease: "easeInOut" }}
-            />
-            <Confetti weight="fill" className="w-4 h-4" />
-            <span className="relative z-10">See your first scenarios</span>
-          </motion.button>
+            See your first scenarios
+            <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+          </button>
         </motion.div>
       </motion.div>
     </div>

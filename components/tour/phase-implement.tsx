@@ -12,9 +12,13 @@ import { Lightbulb, ArrowRight, Code } from "@phosphor-icons/react"
 import { SCN008_HINTS } from "@/lib/first-day-data"
 
 const tourVariants: Variants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: "easeOut" as const } },
-  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
+  hidden: { opacity: 0, filter: "blur(4px)" },
+  visible: {
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.3, ease: "easeOut" as const },
+  },
+  exit: { opacity: 0, transition: { duration: 0.18 } },
 }
 
 // ── Simulated code content ────────────────────────────────────────────────────
@@ -228,15 +232,13 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
       </AnimatePresence>
 
       {/* CTA */}
-      <motion.button
+      <button
         onClick={onContinue}
-        className="w-full h-11 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer"
-        whileHover={{ scale: 1.01, backgroundColor: "#b87f54" }}
-        whileTap={{ scale: 0.985 }}
+        className="w-full h-11 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer hover:bg-[#b87f54] transition-colors"
       >
         Run checkpoints
         <ArrowRight className="w-4 h-4" />
-      </motion.button>
+      </button>
     </motion.div>
   )
 }

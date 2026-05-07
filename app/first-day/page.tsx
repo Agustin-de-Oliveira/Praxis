@@ -27,21 +27,18 @@ import { getRecommendedScenarios, type RoleId } from "@/lib/first-day-data"
 
 type Step = "transition" | "prompt" | "browse"
 
-// ── Page transition wrapper ───────────────────────────────────────────────────
+// ── Page transition: pure opacity fade — no Y, no scale ─────────────────────
+// Eliminates the "coming from bottom-right" artifact entirely.
 
 const pageVariants: Variants = {
-  hidden: { opacity: 0, y: 16, scale: 0.985 },
+  hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.45, ease: "easeOut" as const },
+    transition: { duration: 0.25, ease: "easeOut" as const },
   },
   exit: {
     opacity: 0,
-    y: -16,
-    scale: 1.01,
-    transition: { duration: 0.3, ease: "easeIn" as const },
+    transition: { duration: 0.2, ease: "easeIn" as const },
   },
 }
 
@@ -110,7 +107,8 @@ function FirstDayInner() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <AnimatePresence mode="wait">
+    <div className="relative min-h-screen bg-[#050505] overflow-x-hidden">
+      <AnimatePresence mode="wait">
       {step === "transition" && (
         <motion.div
           key="transition"
@@ -156,7 +154,8 @@ function FirstDayInner() {
           />
         </motion.div>
       )}
-    </AnimatePresence>
+      </AnimatePresence>
+    </div>
   )
 }
 

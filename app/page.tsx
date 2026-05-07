@@ -51,7 +51,7 @@ export default function LandingPage() {
           colorFront="hsl(0, 0%, 5%)"
           shape="warp"
           type="4x4"
-          pxSize={3}
+          pxSize={2}
           offsetX={0}
           offsetY={0}
           scale={0.8}

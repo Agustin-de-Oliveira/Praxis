@@ -2,8 +2,8 @@
 
 // ─────────────────────────────────────────────────────────────────────────────
 // components/first-day/scenario-cards.tsx
-// Personalized scenario recommendation grid (Browse view / Skip path).
-// Shows 3–4 matched SimpleScenario cards with Tour Mode badge on SCN-008.
+// Personalized scenario recommendation grid.
+// Blur-in stagger, no scale, no whileHover motion — CSS transitions only.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { motion, type Variants } from "framer-motion"
@@ -11,9 +11,10 @@ import {
   Clock, Star, ArrowRight, Compass,
   Database, Browser, Cloud, ShieldCheck, Code,
 } from "@phosphor-icons/react"
+import { Dithering } from "@paper-design/shaders-react"
 import type { SimpleScenario } from "@/lib/first-day-data"
 
-// ── Category → icon mapping ───────────────────────────────────────────────────
+// ── Category → icon ───────────────────────────────────────────────────────────
 
 const CATEGORY_ICON: Record<string, React.ElementType> = {
   Backend: Database,
@@ -24,82 +25,72 @@ const CATEGORY_ICON: Record<string, React.ElementType> = {
 }
 
 const DIFFICULTY_COLOR: Record<string, string> = {
-  Beginner: "text-emerald-400 border-emerald-500/20 bg-emerald-500/8",
-  "Beginner / Intermediate": "text-[#a86f44] border-[#a86f44]/20 bg-[#a86f44]/8",
-  Intermediate: "text-sky-400 border-sky-500/20 bg-sky-500/8",
-  Advanced: "text-purple-400 border-purple-500/20 bg-purple-500/8",
+  "Beginner": "text-emerald-400 border-emerald-500/20 bg-emerald-500/5",
+  "Beginner / Intermediate": "text-[#a86f44] border-[#a86f44]/20 bg-[#a86f44]/5",
+  "Intermediate": "text-sky-400 border-sky-500/20 bg-sky-500/5",
+  "Advanced": "text-purple-400 border-purple-500/20 bg-purple-500/5",
 }
 
 // ── Animation variants ────────────────────────────────────────────────────────
 
 const container: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
 }
 
-const cardVariant: Variants = {
-  hidden: { opacity: 0, y: 28, scale: 0.97 },
+const reveal: Variants = {
+  hidden: { opacity: 0, filter: "blur(6px)" },
   visible: {
     opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.45, ease: "easeOut" as const },
+    filter: "blur(0px)",
+    transition: { duration: 0.3, ease: "easeOut" as const },
   },
 }
 
-// ── Scenario Card ─────────────────────────────────────────────────────────────
+// ── Scenario card ─────────────────────────────────────────────────────────────
 
 interface ScenarioCardProps {
   scenario: SimpleScenario
   onSelect: (id: string) => void
-  index: number
 }
 
-function ScenarioCard({ scenario, onSelect, index }: ScenarioCardProps) {
+function ScenarioCard({ scenario, onSelect }: ScenarioCardProps) {
   const Icon = CATEGORY_ICON[scenario.category] ?? Code
   const difficultyClass = DIFFICULTY_COLOR[scenario.difficulty] ?? DIFFICULTY_COLOR["Beginner"]
   const isFeatured = scenario.isFeatured
 
   return (
     <motion.div
-      variants={cardVariant}
-      whileHover={{ y: -3, transition: { duration: 0.2 } }}
-      className={`relative group rounded-sm border bg-[#0A0A0A] cursor-pointer overflow-hidden flex flex-col transition-all duration-300
+      variants={reveal}
+      onClick={() => onSelect(scenario.id)}
+      className={`
+        relative group rounded-sm border bg-[#0A0A0A] cursor-pointer
+        transition-colors duration-200 flex flex-col
         ${isFeatured
-          ? "border-[#a86f44]/40 hover:border-[#a86f44]/70"
-          : "border-[#171717] hover:border-white/15"
+          ? "border-[#a86f44]/30 hover:border-[#a86f44]/60"
+          : "border-[#171717] hover:border-white/12"
         }
       `}
-      onClick={() => onSelect(scenario.id)}
     >
-      {/* Copper glow for featured */}
-      {isFeatured && (
-        <div
-          className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          style={{
-            background:
-              "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(168,111,68,0.06) 0%, transparent 70%)",
-          }}
-        />
-      )}
-
       <div className="p-5 flex flex-col flex-1">
         {/* Top row */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             <div
-              className={`p-2 rounded-sm border ${
-                isFeatured ? "border-[#a86f44]/30 text-[#a86f44] bg-[#a86f44]/8" : "border-white/8 text-white/40"
+              className={`p-2 rounded-sm border transition-colors ${
+                isFeatured
+                  ? "border-[#a86f44]/25 text-[#a86f44] bg-[#a86f44]/5"
+                  : "border-white/8 text-white/30 group-hover:text-white/50"
               }`}
             >
-              <Icon size={16} weight="bold" />
+              <Icon size={15} weight="bold" />
             </div>
             <div>
-              <p className="font-mono text-[9px] uppercase tracking-widest text-white/30">
+              <p className="font-mono text-[9px] uppercase tracking-widest text-white/25">
                 {scenario.id} · {scenario.category}
               </p>
               {isFeatured && (
-                <p className="font-mono text-[9px] text-[#a86f44] flex items-center gap-1 mt-0.5">
+                <p className="font-mono text-[9px] text-[#a86f44]/70 flex items-center gap-1 mt-0.5">
                   <Star weight="fill" className="w-2.5 h-2.5" />
                   Best match
                 </p>
@@ -107,9 +98,9 @@ function ScenarioCard({ scenario, onSelect, index }: ScenarioCardProps) {
             </div>
           </div>
 
-          {/* Tour mode badge on featured */}
+          {/* Tour badge — featured only */}
           {isFeatured && (
-            <span className="px-2 py-0.5 rounded-full border border-[#a86f44]/25 bg-[#a86f44]/8 font-mono text-[8px] uppercase tracking-widest text-[#a86f44] flex items-center gap-1.5">
+            <span className="px-2 py-0.5 rounded-sm border border-[#a86f44]/20 bg-[#a86f44]/5 font-mono text-[8px] uppercase tracking-widest text-[#a86f44]/70 flex items-center gap-1.5">
               <Compass weight="fill" className="w-2.5 h-2.5" />
               Tour
             </span>
@@ -117,12 +108,16 @@ function ScenarioCard({ scenario, onSelect, index }: ScenarioCardProps) {
         </div>
 
         {/* Title */}
-        <h3 className={`font-serif text-base font-medium mb-2 leading-snug ${isFeatured ? "text-white" : "text-white/80"}`}>
+        <h3
+          className={`font-serif text-base font-medium mb-2 leading-snug transition-colors ${
+            isFeatured ? "text-white" : "text-white/70 group-hover:text-white/90"
+          }`}
+        >
           {scenario.title}
         </h3>
 
         {/* Description */}
-        <p className="text-xs text-white/40 leading-relaxed mb-4 flex-1">
+        <p className="text-xs text-white/35 leading-relaxed mb-4 flex-1">
           {scenario.description}
         </p>
 
@@ -131,7 +126,7 @@ function ScenarioCard({ scenario, onSelect, index }: ScenarioCardProps) {
           {scenario.tags.map((t) => (
             <span
               key={t}
-              className="px-1.5 py-0.5 rounded-sm border border-white/8 font-mono text-[9px] uppercase tracking-wider text-white/25"
+              className="px-1.5 py-0.5 rounded-sm border border-white/6 font-mono text-[9px] uppercase tracking-wider text-white/20"
             >
               {t}
             </span>
@@ -141,25 +136,25 @@ function ScenarioCard({ scenario, onSelect, index }: ScenarioCardProps) {
         {/* Meta row */}
         <div className="flex items-center justify-between pt-3 border-t border-white/5">
           <div className="flex items-center gap-3">
-            {/* Duration */}
-            <span className="flex items-center gap-1.5 font-mono text-[10px] text-white/30">
+            <span className="flex items-center gap-1.5 font-mono text-[10px] text-white/25">
               <Clock className="w-3 h-3" />
               {scenario.estimatedDuration}
             </span>
-            {/* Difficulty */}
             <span className={`px-1.5 py-0.5 rounded-sm border font-mono text-[9px] uppercase tracking-wider ${difficultyClass}`}>
               {scenario.difficulty}
             </span>
           </div>
           <ArrowRight
-            className={`w-4 h-4 transition-all duration-200 group-hover:translate-x-1 ${
-              isFeatured ? "text-[#a86f44]" : "text-white/20 group-hover:text-white/50"
+            className={`w-3.5 h-3.5 transition-all duration-200 ${
+              isFeatured
+                ? "text-[#a86f44] group-hover:translate-x-0.5"
+                : "text-white/15 group-hover:text-white/40 group-hover:translate-x-0.5"
             }`}
           />
         </div>
 
         {/* Match reason */}
-        <p className="mt-3 text-[10px] font-mono text-white/25 italic">
+        <p className="mt-3 font-mono text-[9px] text-white/20 italic leading-relaxed">
           {scenario.matchReason}
         </p>
       </div>
@@ -178,45 +173,62 @@ interface ScenarioCardsProps {
 
 export default function ScenarioCards({ scenarios, role, stack, onSelect }: ScenarioCardsProps) {
   return (
-    <div className="min-h-screen bg-[#050505] px-6 py-16">
-      <motion.div
-        className="mx-auto max-w-4xl"
-        variants={container}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Header */}
-        <motion.div variants={cardVariant} className="mb-12">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
-            Personalised for you
-          </p>
-          <h2 className="font-serif text-3xl font-medium text-white mb-3">
-            Your first scenarios
-          </h2>
-          <p className="text-sm text-white/40 max-w-md leading-relaxed">
-            Curated for a{" "}
-            <span className="text-white/70">{role}</span> working with{" "}
-            <span className="text-white/70">{stack}</span>. Start with any — the
-            featured one is Tour-guided.
-          </p>
-        </motion.div>
+    <div className="relative min-h-screen w-full overflow-hidden bg-[#050505]">
+      {/* Background Dithering */}
+      <div className="absolute inset-0 h-full w-full pointer-events-none">
+        <Dithering
+          style={{ height: "100%", width: "100%" }}
+          colorBack="hsla(0,0%,0%,1)"
+          colorFront="hsl(0,0%,5%)"
+          shape="warp"
+          type="4x4"
+          pxSize={2}
+          speed={0.03}
+        />
+      </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {scenarios.map((s, i) => (
-            <ScenarioCard key={s.id} scenario={s} onSelect={onSelect} index={i} />
-          ))}
-        </div>
-
-        {/* Footer hint */}
-        <motion.p
-          variants={cardVariant}
-          className="mt-10 text-center font-mono text-[10px] text-white/20 uppercase tracking-widest"
+      <div className="relative z-10 px-6 py-14">
+        <motion.div
+          className="mx-auto max-w-3xl"
+          variants={container}
+          initial="hidden"
+          animate="visible"
         >
-          More scenarios unlock as you complete these ·{" "}
-          <span className="text-[#a86f44]/50">Tour Mode</span> includes guided hints &amp; checkpoints
-        </motion.p>
-      </motion.div>
+          {/* Header */}
+          <motion.div variants={reveal} className="mb-10">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
+              Personalised for you
+            </p>
+            <h2 className="font-serif text-3xl font-medium text-white mb-2">
+              Your first scenarios
+            </h2>
+            <p className="text-sm text-white/35 max-w-md leading-relaxed">
+              Curated for a{" "}
+              <span className="text-white/60">{role}</span> working with{" "}
+              <span className="text-white/60">{stack}</span>. The featured one is Tour-guided.
+            </p>
+          </motion.div>
+
+          {/* Divider */}
+          <motion.div variants={reveal} className="h-px bg-white/5 mb-10" />
+
+          {/* Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {scenarios.map((s) => (
+              <ScenarioCard key={s.id} scenario={s} onSelect={onSelect} />
+            ))}
+          </div>
+
+          {/* Footer hint */}
+          <motion.p
+            variants={reveal}
+            className="mt-10 text-center font-mono text-[9px] text-white/18 uppercase tracking-widest"
+          >
+            More scenarios unlock as you complete these ·{" "}
+            <span className="text-[#a86f44]/40">Tour Mode</span> includes step-by-step guidance
+          </motion.p>
+        </motion.div>
+      </div>
     </div>
   )
 }

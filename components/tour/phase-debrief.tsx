@@ -13,19 +13,23 @@ import {
 import Link from "next/link"
 
 const tourVariants: Variants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: "easeOut" as const } },
-  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
+  hidden: { opacity: 0, filter: "blur(4px)" },
+  visible: {
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.3, ease: "easeOut" as const },
+  },
+  exit: { opacity: 0, transition: { duration: 0.18 } },
 }
 
 const stagger: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
 }
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
+  hidden: { opacity: 0, filter: "blur(4px)" },
+  visible: { opacity: 1, filter: "blur(0px)", transition: { duration: 0.3, ease: "easeOut" as const } },
 }
 
 // ── Data ──────────────────────────────────────────────────────────────────────
@@ -170,14 +174,10 @@ export default function PhaseDebrief() {
         className="space-y-3"
       >
         <Link href="/first-day?role=backend&lang=JavaScript+%2F+TypeScript&handle=engineer">
-          <motion.div
-            className="w-full h-12 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer"
-            whileHover={{ scale: 1.01, backgroundColor: "#b87f54" }}
-            whileTap={{ scale: 0.985 }}
-          >
+          <div className="w-full h-12 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer hover:bg-[#b87f54] transition-colors">
             <ArrowRight className="w-4 h-4" />
             Next scenario
-          </motion.div>
+          </div>
         </Link>
 
         <Link href="/dashboard">

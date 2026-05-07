@@ -69,11 +69,16 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen relative flex items-center justify-center px-6 py-12">
       <div className="absolute inset-0 h-full w-full">
-        <Dithering style={{ height: "100%", width: "100%" }} colorBack="hsla(0,0%,0%,1)" colorFront="hsl(0,0%,5%)" shape="warp" type="4x4" pxSize={3} speed={0.05} />
+        <Dithering style={{ height: "100%", width: "100%" }} colorBack="hsla(0,0%,0%,1)" colorFront="hsl(0,0%,5%)" shape="warp" type="4x4" pxSize={2} speed={0.03} />
       </div>
 
       <div className="relative z-10 w-full max-w-2xl">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-sm border border-border bg-card p-10 shadow-2xl">
+        <motion.div
+          initial={{ opacity: 0, filter: "blur(12px)" }}
+          animate={{ opacity: 1, filter: "blur(0px)" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="rounded-sm border border-border bg-card p-10 shadow-2xl"
+        >
 
           {/* Header */}
           <div className="flex items-center justify-between mb-10">
@@ -93,7 +98,13 @@ export default function OnboardingPage() {
           <AnimatePresence mode="wait">
             {/* ── STEP 1: Identity ── */}
             {step === 1 && (
-              <motion.div key="s1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+              <motion.div
+                key="s1"
+                initial={{ opacity: 0, filter: "blur(6px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
                 <p className="font-serif text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">Phase 01 · Identity</p>
                 <h1 className="text-3xl font-medium tracking-tight text-foreground font-serif mb-3">Who are you?</h1>
                 <p className="text-sm text-muted-foreground mb-10 leading-relaxed">
@@ -114,7 +125,13 @@ export default function OnboardingPage() {
 
             {/* ── STEP 2: Background ── */}
             {step === 2 && (
-              <motion.div key="s2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+              <motion.div
+                key="s2"
+                initial={{ opacity: 0, filter: "blur(6px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
                 <p className="font-serif text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">Phase 02 · Background</p>
                 <h1 className="text-3xl font-medium tracking-tight text-foreground font-serif mb-3">Where are you coming from?</h1>
                 <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
@@ -166,7 +183,13 @@ export default function OnboardingPage() {
 
             {/* ── STEP 3: Track & Goals ── */}
             {step === 3 && (
-              <motion.div key="s3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+              <motion.div
+                key="s3"
+                initial={{ opacity: 0, filter: "blur(6px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
                 <p className="font-serif text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">Phase 03 · Track & Goals</p>
                 <h1 className="text-3xl font-medium tracking-tight text-foreground font-serif mb-3">Choose your path.</h1>
                 <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
@@ -225,7 +248,7 @@ export default function OnboardingPage() {
             {step < totalSteps ? (
               <button disabled={!canAdvance} onClick={() => setStep(step + 1)} className="flex-1 h-12 flex items-center justify-center gap-2 rounded-sm bg-foreground text-sm font-medium text-background hover:bg-foreground/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed group cursor-pointer">
                 Continue
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             ) : (
               <Link

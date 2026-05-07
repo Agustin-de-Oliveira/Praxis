@@ -13,28 +13,23 @@ import { SCN008_TICKET, SCN008_TEAM } from "@/lib/first-day-data"
 // ── Variants ──────────────────────────────────────────────────────────────────
 
 const tourVariants: Variants = {
-  hidden: { opacity: 0, x: 60, scale: 0.97 },
+  hidden: { opacity: 0, filter: "blur(4px)" },
   visible: {
     opacity: 1,
-    x: 0,
-    scale: 1,
-    transition: { duration: 0.5, ease: "easeOut" as const },
+    filter: "blur(0px)",
+    transition: { duration: 0.3, ease: "easeOut" as const },
   },
-  exit: {
-    opacity: 0,
-    x: -40,
-    transition: { duration: 0.3, ease: "easeIn" as const },
-  },
+  exit: { opacity: 0, transition: { duration: 0.18 } },
 }
 
 const stagger: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.4 } },
+  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.25 } },
 }
 
 const listItem: Variants = {
-  hidden: { opacity: 0, x: -12 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
+  hidden: { opacity: 0, filter: "blur(4px)" },
+  visible: { opacity: 1, filter: "blur(0px)", transition: { duration: 0.25, ease: "easeOut" as const } },
 }
 
 // ── PM avatar ─────────────────────────────────────────────────────────────────

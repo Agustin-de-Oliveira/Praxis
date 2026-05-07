@@ -18,6 +18,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence, type Variants } from "framer-motion"
 import { ArrowLeft, Compass } from "@phosphor-icons/react"
+import { Dithering } from "@paper-design/shaders-react"
 
 import TourProgressBar from "@/components/tour/tour-progress-bar"
 import AICommandBar from "@/components/tour/ai-command-bar"
@@ -30,17 +31,17 @@ import PhaseDebrief from "@/components/tour/phase-debrief"
 import type { TourPhase } from "@/lib/first-day-data"
 import { SCN008_CHECKPOINTS } from "@/lib/first-day-data"
 
-// ── Phase-level page transition ───────────────────────────────────────────────
+// ── Phase transition: pure opacity fade ──────────────────────────────────────
 
 const phaseVariants: Variants = {
-  hidden: { opacity: 0, y: 24, scale: 0.97 },
+  hidden: { opacity: 0 },
   visible: {
-    opacity: 1, y: 0, scale: 1,
-    transition: { duration: 0.45, ease: "easeOut" as const },
+    opacity: 1,
+    transition: { duration: 0.25, ease: "easeOut" as const },
   },
   exit: {
-    opacity: 0, y: -16,
-    transition: { duration: 0.3, ease: "easeIn" as const },
+    opacity: 0,
+    transition: { duration: 0.18, ease: "easeIn" as const },
   },
 }
 
@@ -62,7 +63,20 @@ export default function TourPage() {
   // ── Render ──────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white">
+    <div className="relative min-h-screen text-white overflow-x-hidden">
+      {/* Shared Dithering background */}
+      <div className="absolute inset-0 h-full w-full pointer-events-none">
+        <Dithering
+          style={{ height: "100%", width: "100%" }}
+          colorBack="hsla(0,0%,0%,1)"
+          colorFront="hsl(0,0%,5%)"
+          shape="warp"
+          type="4x4"
+          pxSize={2}
+          speed={0.03}
+        />
+      </div>
+
       {/* ── Global: Progress bar (with phase tracking) ──────────────────── */}
       <TourProgressBar
         phase={phase}

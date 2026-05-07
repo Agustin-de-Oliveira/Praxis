@@ -12,15 +12,13 @@ import { Folder, File, ArrowRight, Lightbulb } from "@phosphor-icons/react"
 import { SCN008_FILE_TREE } from "@/lib/first-day-data"
 
 const tourVariants: Variants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  hidden: { opacity: 0, filter: "blur(4px)" },
   visible: {
-    opacity: 1, y: 0, scale: 1,
-    transition: { duration: 0.4, ease: "easeOut" as const },
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.3, ease: "easeOut" as const },
   },
-  exit: {
-    opacity: 0, y: -20,
-    transition: { duration: 0.3 },
-  },
+  exit: { opacity: 0, transition: { duration: 0.18 } },
 }
 
 // ── Tour tooltips that appear sequentially ────────────────────────────────────
@@ -177,15 +175,13 @@ export default function PhaseOrientation({ onContinue }: PhaseOrientationProps) 
             </button>
           </>
         ) : (
-          <motion.button
+          <button
             onClick={onContinue}
-            className="flex-1 h-11 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer"
-            whileHover={{ scale: 1.01, backgroundColor: "#b87f54" }}
-            whileTap={{ scale: 0.985 }}
+            className="flex-1 h-11 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer hover:bg-[#b87f54] transition-colors"
           >
             Start implementing
             <ArrowRight className="w-4 h-4" />
-          </motion.button>
+          </button>
         )}
       </div>
     </motion.div>

@@ -15,9 +15,13 @@ import {
 import { SCN008_CHECKPOINTS } from "@/lib/first-day-data"
 
 const tourVariants: Variants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: "easeOut" as const } },
-  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
+  hidden: { opacity: 0, filter: "blur(4px)" },
+  visible: {
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.3, ease: "easeOut" as const },
+  },
+  exit: { opacity: 0, transition: { duration: 0.18 } },
 }
 
 // ── Mini particle burst (copper) ──────────────────────────────────────────────
@@ -71,9 +75,9 @@ function CheckpointItem({ id, label, detail, index, status, onRun }: CheckpointI
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -16 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.08, duration: 0.4, ease: "easeOut" }}
+      initial={{ opacity: 0, filter: "blur(4px)" }}
+      animate={{ opacity: 1, filter: "blur(0px)" }}
+      transition={{ delay: index * 0.07, duration: 0.3, ease: "easeOut" }}
       className={`relative rounded-sm border p-4 transition-all duration-300 ${
         status === "passed"
           ? "border-emerald-500/30 bg-emerald-500/5"
@@ -242,19 +246,15 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
 
         <AnimatePresence>
           {allPassed && (
-            <motion.button
+            <button
               key="continue"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
               onClick={() => onContinue(passed)}
-              className="flex-1 h-11 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer"
-              whileHover={{ scale: 1.01, backgroundColor: "#b87f54" }}
-              whileTap={{ scale: 0.985 }}
+              className="flex-1 h-11 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer hover:bg-[#b87f54] transition-colors"
             >
               <CheckCircle weight="fill" className="w-4 h-4" />
               All checks pass · Create PR
               <ArrowRight className="w-4 h-4" />
-            </motion.button>
+            </button>
           )}
         </AnimatePresence>
       </div>

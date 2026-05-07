@@ -12,9 +12,13 @@ import { GitMerge, ChatCircle, CheckCircle, ArrowRight, Warning } from "@phospho
 import { SCN008_PR_REVIEW, SCN008_TEAM } from "@/lib/first-day-data"
 
 const tourVariants: Variants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: "easeOut" as const } },
-  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
+  hidden: { opacity: 0, filter: "blur(4px)" },
+  visible: {
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.3, ease: "easeOut" as const },
+  },
+  exit: { opacity: 0, transition: { duration: 0.18 } },
 }
 
 // ── Typing indicator ──────────────────────────────────────────────────────────
@@ -53,9 +57,9 @@ function ReviewCard({ comment, index }: { comment: ReviewComment; index: number 
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.35, duration: 0.4, ease: "easeOut" }}
+      initial={{ opacity: 0, filter: "blur(4px)" }}
+      animate={{ opacity: 1, filter: "blur(0px)" }}
+      transition={{ delay: index * 0.2, duration: 0.3, ease: "easeOut" }}
       className={`rounded-sm border overflow-hidden ${
         isApproval
           ? "border-emerald-500/30 bg-emerald-500/5"
@@ -208,11 +212,9 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
             </div>
 
             {/* Submit */}
-            <motion.button
+            <button
               onClick={handleSubmit}
-              className="w-full h-12 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer relative overflow-hidden"
-              whileHover={{ scale: 1.01, backgroundColor: "#b87f54" }}
-              whileTap={{ scale: 0.985 }}
+              className="w-full h-12 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer relative overflow-hidden transition-colors hover:bg-[#b87f54]"
             >
               {/* Shimmer */}
               <motion.div
@@ -222,7 +224,7 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
               />
               <GitMerge className="w-4 h-4 relative z-10" />
               <span className="relative z-10">Create Pull Request</span>
-            </motion.button>
+            </button>
           </motion.div>
         )}
 
@@ -281,19 +283,15 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
             {/* Continue when approved */}
             <AnimatePresence>
               {prState === "approved" && (
-                <motion.button
+                <button
                   key="debrief-btn"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
                   onClick={onContinue}
-                  className="w-full h-11 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer"
-                  whileHover={{ scale: 1.01, backgroundColor: "#b87f54" }}
-                  whileTap={{ scale: 0.985 }}
+                  className="w-full h-11 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer hover:bg-[#b87f54] transition-colors"
                 >
                   <CheckCircle weight="fill" className="w-4 h-4" />
                   View debrief
                   <ArrowRight className="w-4 h-4" />
-                </motion.button>
+                </button>
               )}
             </AnimatePresence>
           </motion.div>
