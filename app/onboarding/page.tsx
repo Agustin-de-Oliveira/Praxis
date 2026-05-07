@@ -228,7 +228,10 @@ export default function OnboardingPage() {
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             ) : (
-              <Link href="/dashboard" className="flex-1">
+              <Link
+                href={`/first-day?role=${encodeURIComponent(selectedRole ?? "backend")}&lang=${encodeURIComponent(selectedLang ?? "JavaScript / TypeScript")}&handle=${encodeURIComponent(handle || "engineer")}`}
+                className="flex-1"
+              >
                 <button disabled={!canAdvance} className="w-full h-12 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-background hover:bg-[#a86f44]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed group cursor-pointer">
                   Initialize Workspace
                   <Code className="w-4 h-4" />
