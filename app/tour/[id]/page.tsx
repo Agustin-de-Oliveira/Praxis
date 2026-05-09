@@ -10,7 +10,6 @@
 //
 // Global elements (always rendered):
 //   - TourProgressBar (pinned top)
-//   - AICommandBar (floating Cmd+K orb)
 //   - Exit button
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -21,7 +20,6 @@ import { ArrowLeft, Compass } from "lucide-react"
 import { Dithering } from "@paper-design/shaders-react"
 
 import TourProgressBar from "@/components/tour/tour-progress-bar"
-import AICommandBar from "@/components/tour/ai-command-bar"
 import PhaseStoryline from "@/components/tour/phase-storyline"
 import PhaseTicket from "@/components/tour/phase-ticket"
 import PhaseOrientation from "@/components/tour/phase-orientation"
@@ -159,8 +157,6 @@ export default function TourPage() {
         </AnimatePresence>
       </div>
 
-      {/* ── Global: AI Command Bar (always visible) ─────────────────────── */}
-      <AICommandBar phase={phase} />
     </div>
   )
 }

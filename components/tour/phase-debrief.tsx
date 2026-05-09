@@ -218,19 +218,13 @@ export default function PhaseDebrief() {
             </div>
           </motion.div>
 
-          {/* Final CTAs */}
-          <motion.div variants={item} className="flex gap-4 pt-4">
-            <Link href="/dashboard" className="flex-1">
-              <div className="h-14 flex items-center justify-center gap-3 rounded-sm border border-white/10 bg-white/[0.02] text-sm font-medium text-white/60 hover:bg-white/[0.05] hover:text-white transition-all cursor-pointer">
-                <Home size={18} />
-                Return to Dashboard
-              </div>
-            </Link>
-            <Link href="/first-day?role=backend&lang=JavaScript+%2F+TypeScript&handle=engineer" className="flex-[1.5]">
-              <div className="h-14 flex items-center justify-center gap-3 rounded-sm bg-[#a86f44] text-sm font-bold text-white hover:bg-[#b87f54] transition-all shadow-xl shadow-[#a86f44]/20 cursor-pointer">
-                Next Assigned Scenario
-                <ArrowRight size={18} />
-              </div>
+          {/* Final CTA */}
+          <motion.div variants={item} className="flex justify-center pt-8">
+            <Link href="/selection">
+              <button className="group h-14 px-12 flex items-center justify-center gap-4 rounded-sm bg-[#a86f44] text-sm font-bold text-white hover:bg-[#b87f54] transition-all shadow-xl shadow-[#a86f44]/20 cursor-pointer">
+                Proceed to Hub
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </button>
             </Link>
           </motion.div>
         </motion.div>

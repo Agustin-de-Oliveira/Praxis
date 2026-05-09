@@ -46,7 +46,11 @@ const improvements = [
   "Testing strategies",
 ]
 
+import { createClient } from "@/utils/supabase/client"
+import { useRouter } from "next/navigation"
+
 export default function OnboardingPage() {
+  const router = useRouter()
   const [step, setStep] = useState(1)
   const [handle, setHandle] = useState("")
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
@@ -54,6 +58,28 @@ export default function OnboardingPage() {
   const [selectedExp, setSelectedExp] = useState<string | null>(null)
   const [selectedLang, setSelectedLang] = useState<string | null>(null)
   const [selectedGoals, setSelectedGoals] = useState<string[]>([])
+  const [loading, setLoading] = useState(false)
+
+  const supabase = createClient()
+
+  const handleInitialize = async () => {
+    setLoading(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (user) {
+      await supabase
+        .from('profiles')
+        .update({
+          username: handle,
+          role: selectedRole,
+          onboarding_completed: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+    }
+    
+    router.push(`/first-day?role=${encodeURIComponent(selectedRole ?? "backend")}&lang=${encodeURIComponent(selectedLang ?? "JavaScript / TypeScript")}&handle=${encodeURIComponent(handle || "engineer")}`)
+  }
 
   const totalSteps = 3
   const canAdvance = step === 1
@@ -251,15 +277,14 @@ export default function OnboardingPage() {
                 <ArrowRight className="w-4 h-4" />
               </button>
             ) : (
-              <Link
-                href={`/first-day?role=${encodeURIComponent(selectedRole ?? "backend")}&lang=${encodeURIComponent(selectedLang ?? "JavaScript / TypeScript")}&handle=${encodeURIComponent(handle || "engineer")}`}
-                className="flex-1"
+              <button
+                disabled={!canAdvance || loading}
+                onClick={handleInitialize}
+                className="flex-1 h-12 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-background hover:bg-[#a86f44]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed group cursor-pointer"
               >
-                <button disabled={!canAdvance} className="w-full h-12 flex items-center justify-center gap-2 rounded-sm bg-[#a86f44] text-sm font-medium text-background hover:bg-[#a86f44]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed group cursor-pointer">
-                  Initialize Workspace
-                  <Code className="w-4 h-4" />
-                </button>
-              </Link>
+                {loading ? "Initializing..." : "Initialize Workspace"}
+                <Code className="w-4 h-4" />
+              </button>
             )}
           </div>
         </motion.div>

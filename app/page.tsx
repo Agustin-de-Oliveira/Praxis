@@ -160,13 +160,23 @@ export default function LandingPage() {
           variants={itemVariants}
           className="flex items-center justify-between border-t border-border pt-6"
         >
-          <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-foreground">
-              <TerminalSquare className="h-3.5 w-3.5 text-background" />
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-foreground">
+                <TerminalSquare className="h-3.5 w-3.5 text-background" />
+              </div>
+              <span className="font-sans text-sm font-medium tracking-tight">
+                praxis
+              </span>
             </div>
-            <span className="font-sans text-sm font-medium tracking-tight">
-              praxis
-            </span>
+            <a 
+              href="https://twitter.com/thebtjackson" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-mono text-[7px] uppercase tracking-widest text-muted-foreground/30 hover:text-foreground transition-colors"
+            >
+              Imagery by @thebtjackson
+            </a>
           </div>
           <nav className="flex items-center gap-5">
             <Link

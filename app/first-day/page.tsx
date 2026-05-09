@@ -3,20 +3,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // app/first-day/page.tsx
 // Post-onboarding "First Day" orchestrator.
-//
-// Flow:
-//   1. TransitionScreen  — celebratory welcome with copper particles
-//   2. ScenarioPrompt    — "Ready to start?" interstitial
-//   3a. → Tour page      — immersive guided lesson (if "Start")
-//   3b. ScenarioCards    — browse grid (if "Skip")
-//
-// State is kept locally (URL params feed the profile summary).
-// In production, swap the profile data for a real user-session/store read.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { AnimatePresence, motion, type Variants } from "framer-motion"
+import Link from "next/link"
 
 import TransitionScreen from "@/components/first-day/transition-screen"
 import ScenarioPrompt from "@/components/first-day/scenario-prompt"
@@ -74,6 +66,7 @@ function FirstDayInner() {
   const scenarios = getRecommendedScenarios(roleId)
 
   const [step, setStep] = useState<Step>("welcome")
+  const [showSkipModal, setShowSkipModal] = useState(false)
 
   const handleTransitionContinue = () => setStep("selection")
 
@@ -88,6 +81,69 @@ function FirstDayInner() {
 
   return (
     <div className="relative min-h-screen bg-[#050505] overflow-x-hidden">
+      
+      {/* Subtle Skip Button */}
+      <div className="fixed top-8 right-10 z-[100]">
+        <button 
+          onClick={() => setShowSkipModal(true)}
+          className="font-serif text-[10px] uppercase tracking-widest text-muted-foreground/30 hover:text-foreground transition-colors cursor-pointer"
+        >
+          Skip Simulation
+        </button>
+      </div>
+
+      {/* Skip Modal (FOMO) */}
+      <AnimatePresence>
+        {showSkipModal && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6 backdrop-blur-md bg-black/60">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="w-full max-w-md bg-card border border-border p-10 rounded-sm shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#a86f44]/10 rounded-full blur-3xl pointer-events-none" />
+              
+              <h3 className="text-2xl font-serif font-medium text-white mb-6 leading-tight">
+                You are bypassing the <span className="italic text-[#a86f44]">simulation.</span>
+              </h3>
+              
+              <p className="text-xs text-muted-foreground mb-8 leading-relaxed">
+                By skipping, you will miss the high-fidelity engineering workstation experience including:
+              </p>
+              
+              <ul className="space-y-4 mb-10">
+                {[
+                  "Interactive workstation with real-time IDE feedback",
+                  "Direct code reviews from Senior AI Personas",
+                  "Simulated PR cycle and CI/CD validation",
+                  "Performance debrief and skill progression metrics"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-[11px] text-white/80">
+                    <div className="mt-1 w-1 h-1 rounded-full bg-[#a86f44]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={() => setShowSkipModal(false)}
+                  className="h-12 w-full rounded-sm bg-[#a86f44] text-white text-xs font-medium hover:bg-[#a86f44]/90 transition-colors cursor-pointer"
+                >
+                  Return to Simulation
+                </button>
+                <Link href="/selection" className="w-full">
+                  <button className="h-12 w-full rounded-sm border border-border bg-transparent text-xs font-mono text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all cursor-pointer">
+                    Proceed to Hub anyway
+                  </button>
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence mode="wait">
         {step === "welcome" && (
           <motion.div
@@ -126,8 +182,6 @@ function FirstDayInner() {
     </div>
   )
 }
-
-// ── Page export (wraps in Suspense for useSearchParams) ───────────────────────
 
 export default function FirstDayPage() {
   return (
