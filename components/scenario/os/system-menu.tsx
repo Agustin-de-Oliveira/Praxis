@@ -5,15 +5,16 @@ import { motion, AnimatePresence } from "framer-motion"
 import { 
   ChevronLeft, ChevronRight, HardDrive, Search, X, 
   Star, FileText, Zap, Monitor, Network, Folder, File, 
-  Database as DbIcon, Ghost, Skull 
+  Database as DbIcon, Ghost, Skull, Settings
 } from "lucide-react"
 import { EXPLORER_FILES } from "./constants"
 
 interface SystemMenuProps {
   onClose: () => void
+  onOpenProgram: (id: string) => void
 }
 
-export function SystemMenu({ onClose }: SystemMenuProps) {
+export function SystemMenu({ onClose, onOpenProgram }: SystemMenuProps) {
   const [currentPath, setCurrentPath] = useState<string>("disk_c")
   const [history, setHistory] = useState<string[]>(["disk_c"])
   const [historyIndex, setHistoryIndex] = useState(0)
@@ -145,6 +146,19 @@ export function SystemMenu({ onClose }: SystemMenuProps) {
                <button onClick={() => navigateTo("network")} className="w-full flex items-center gap-3 px-2 py-1.5 rounded-sm hover:bg-white/5 text-white/60 group transition-all text-left">
                  <Network size={12} className="text-white/20 group-hover:text-white/50" />
                  <span className="font-mono text-[9px] uppercase tracking-wider">Network</span>
+               </button>
+             </div>
+
+             <div className="mt-auto pt-4 border-t border-white/5 space-y-1">
+               <button 
+                 onClick={() => {
+                   onOpenProgram("settings")
+                   onClose()
+                 }} 
+                 className="w-full flex items-center gap-3 px-2 py-1.5 rounded-sm hover:bg-white/5 text-white/60 group transition-all text-left"
+               >
+                 <Settings size={12} className="text-white/20 group-hover:text-white/50" />
+                 <span className="font-mono text-[9px] uppercase tracking-wider">OS Settings</span>
                </button>
              </div>
           </div>

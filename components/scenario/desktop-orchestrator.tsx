@@ -203,7 +203,7 @@ export default function DesktopOrchestrator({ scenario, initialProgress }: Deskt
   const handleSave = async () => {
     setSaving(true)
     const { error } = await supabase
-      .from("scenarios_progress")
+      .from("scenario_progress")
       .update({ current_code_state: codeState })
       .eq("scenario_id", scenario.id)
 
@@ -395,10 +395,10 @@ export default function DesktopOrchestrator({ scenario, initialProgress }: Deskt
                     >
                       {win.id === "briefing" && <HubView scenario={scenario} />}
                       {win.id === "board" && <DynamicBoard ticket={scenario.ticket} aiTeam={scenario.ai_team} checkpoints={scenario.checkpoints} checkpointsPassed={initialProgress.checkpoints_passed} />}
-                      {win.id === "ide" && <DynamicIDE files={codeState} ticket={scenario.ticket} checkpoints={scenario.checkpoints} checkpointsPassed={initialProgress.checkpoints_passed} aiTeam={scenario.ai_team} onCodeChange={handleCodeChange} isRepoCloned={isRepoCloned} />}
+                      {win.id === "ide" && <DynamicIDE files={codeState} ticket={scenario.ticket} checkpoints={scenario.checkpoints} checkpointsPassed={initialProgress.checkpoints_passed} aiTeam={scenario.ai_team} onCodeChange={handleCodeChange} isRepoCloned={isRepoCloned} isCloning={false} />}
                       {win.id === "team" && <TeamView aiTeam={scenario.ai_team} />}
                       {win.id === "mail" && <MailApp scenario={scenario} onDownload={(file) => setShowSaveDialog({ fileName: file })} />}
-                      {win.id === "terminal" && <TerminalApp onRepoCloned={() => setIsRepoCloned(true)} isRepoCloned={isRepoCloned} ticketKey={scenario.ticket.key} />}
+                      {win.id === "terminal" && <TerminalApp onRepoCloned={() => setIsRepoCloned(true)} onCloningStart={() => {}} isRepoCloned={isRepoCloned} ticketKey={scenario.ticket.key} />}
                       {win.id === "settings" && (
                         <PreferencesModal 
                           scenario={scenario}
@@ -475,7 +475,7 @@ export default function DesktopOrchestrator({ scenario, initialProgress }: Deskt
           <ContextMenu x={contextMenu.x} y={contextMenu.y} items={contextMenu.items} onClose={() => setContextMenu(null)} />
         )}
         {showSystemMenu && (
-          <SystemMenu onClose={() => setShowSystemMenu(false)} />
+          <SystemMenu onClose={() => setShowSystemMenu(false)} onOpenProgram={openWindow} />
         )}
         {isSpotlightOpen && (
           <Spotlight

@@ -1,10 +1,14 @@
 # Database Schema
 
-**Last updated:** 2026-05-07 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md) | → [TECHNICAL_ARCHITECTURE.md](./TECHNICAL_ARCHITECTURE.md)
+**Last updated:** 2026-05-10 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md) | → [TECHNICAL_ARCHITECTURE.md](./TECHNICAL_ARCHITECTURE.md)
 
-Schema defined in: `lib/db/schema.ts` (Drizzle ORM)  
-Database: PostgreSQL via Supabase  
-Migrations output: `./drizzle/`
+Praxis uses Supabase Postgres directly through `supabase-js` and `@supabase/ssr`. Drizzle is no longer part of the stack.
+
+Runtime TypeScript contracts live in:
+- `lib/scenario-types.ts`
+- `lib/os-types.ts`
+
+Schema changes should be made with Supabase SQL migrations or the Supabase CLI, then reflected in the TypeScript contracts.
 
 ---
 
@@ -15,210 +19,121 @@ Supabase Auth (auth.users)
        │
        │ 1:1
        ▼
-   profiles ──────────┐
-       │               │
-       │ 1:N           │ 1:N
-       ▼               ▼
-  user_progress    messages
+   profiles
        │
-       │ N:1
+       │ 1:N
        ▼
-   scenarios ──── tickets (1:N)
+ scenario_progress ─── N:1 ─── scenarios
 ```
+
+Scenario content is currently embedded in the `scenarios` row as structured JSON fields (`ticket`, `repo_initial`, `checkpoints`, `ai_team`, `debrief`, `events`, `environment_config`) rather than split into separate `tickets` or `messages` tables.
 
 ---
 
-## Tables
+## Current Tables
 
 ### `profiles`
 
-Extends Supabase Auth. Created after user registration via trigger or server action.
+Extends Supabase Auth. The app currently treats `profiles.id` as the authenticated `auth.users.id`.
 
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | `uuid` | PK, default random | Internal profile ID |
-| `user_id` | `uuid` | NOT NULL, UNIQUE | Reference to `auth.users.id` |
-| `username` | `text` | NOT NULL | Display name |
-| `role` | `text` (enum) | default `'frontend'` | `frontend` \| `backend` \| `fullstack` \| `devops` |
-| `xp` | `integer` | default `0` | Total XP earned across all scenarios |
-| `level` | `integer` | default `1` | Derived from XP thresholds |
-| `avatar_url` | `text` | nullable | Profile picture URL |
-| `created_at` | `timestamp` | defaultNow() | |
-| `updated_at` | `timestamp` | defaultNow() | |
-
-**Notes:**
-- `level` should be a computed column or derived at query time from `xp`
-- `role` is set during onboarding; affects which scenarios are highlighted
-
----
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | `uuid` | Matches `auth.users.id`; queried during OS boot |
+| `username` | `text` | Set during onboarding |
+| `role` | `text` | Selected track: frontend, backend, fullstack, devops, security |
+| `level` | `integer` | Displayed in Praxis OS |
+| `total_xp` | `integer` | Displayed in profile/OS views |
+| `onboarding_completed` | `boolean` | Gates `/os`; incomplete users redirect to `/onboarding` |
+| `os_tutorial_completed` | `boolean` | Optional flag used by OS first-boot logic |
+| `created_at` | `timestamp` | Recommended |
+| `updated_at` | `timestamp` | Updated during onboarding |
 
 ### `scenarios`
 
-Canonical scenario definitions. Seeded by the content team — not user-created.
+Canonical scenario definitions. Published scenarios appear in `/scenarios` and inside the Praxis OS Browser app.
 
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | `uuid` | PK, default random | |
-| `slug` | `text` | NOT NULL, UNIQUE | URL-friendly ID (e.g. `jwt-auth-refresh-tokens`) |
-| `title` | `text` | NOT NULL | Display title |
-| `description` | `text` | NOT NULL | Short scenario summary |
-| `category` | `text` | NOT NULL | `security` \| `backend` \| `devops` \| `database` \| `frontend` \| `observability` |
-| `difficulty` | `text` (enum) | NOT NULL | `BEGINNER` \| `INTERMEDIATE` \| `ADVANCED` \| `EXPERT` |
-| `xp_reward` | `integer` | NOT NULL | XP awarded on completion |
-| `starter_code` | `text` | NOT NULL | Initial codebase description or code |
-| `solution_code` | `text` | nullable | Reference solution (admin only) |
-| `validation_rules` | `jsonb` | NOT NULL | Per-checkpoint validation config |
-| `created_at` | `timestamp` | defaultNow() | |
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | `text` or `uuid` | Used directly in `/scenario/[id]`; current content uses IDs like `SCN-008` |
+| `slug` | `text` | URL-friendly identifier |
+| `title` | `text` | Display title |
+| `description` | `text` | Short scenario summary |
+| `story` | `jsonb` | Optional scenario briefing narrative |
+| `type` | `text` | `simple` \| `complex` \| `end-to-end` |
+| `category` | `text` | backend, security, devops, database, frontend, etc. |
+| `difficulty` | `text` | `beginner` \| `intermediate` \| `advanced` \| `expert` |
+| `estimated_duration_minutes` | `integer` | Displayed as `~Nm` |
+| `tags` | `text[]` | Used by filters/search |
+| `ticket` | `jsonb` | Main assignment data |
+| `repo_initial` | `jsonb` | Initial in-browser repo files |
+| `checkpoints` | `jsonb` | Checkpoint list rendered by Board/IDE |
+| `events` | `jsonb` | Complex scenario events |
+| `ai_team` | `jsonb` | Persona roster for Team/Mail/Board |
+| `debrief` | `jsonb` | Completion/debrief metadata |
+| `environment_config` | `jsonb` | Future runtime config |
+| `is_published` | `boolean` | Controls scenario library visibility |
+| `version` | `integer` | Needed for scenario versioning |
+| `created_at` | `timestamp` | Used for ordering |
+| `updated_at` | `timestamp` | Recommended |
 
-**`validation_rules` shape:**
-```json
-{
-  "checkpoints": [
-    {
-      "id": "cp-1",
-      "description": "/login returns access + refresh tokens",
-      "type": "http_response",
-      "config": {
-        "endpoint": "/login",
-        "method": "POST",
-        "expect_fields": ["accessToken", "refreshToken"]
-      }
-    }
-  ]
-}
-```
+Expected JSON shapes are defined in `lib/scenario-types.ts`.
 
-**Missing fields (to add):**
-- `type` — `simple` | `complex` | `end-to-end`
-- `estimated_duration` — string (e.g. `"1–1.5h"`)
-- `events` — `jsonb` (complex scenarios)
-- `ai_team_config` — `jsonb` (personas + opening messages + PR questions)
-- `debrief_template` — `jsonb`
-- `tags` — `text[]`
-
----
-
-### `tickets`
-
-Tickets are linked to scenarios. Each scenario has one or more tickets (currently one — the main task).
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | `uuid` | PK, default random | |
-| `scenario_id` | `uuid` | FK → `scenarios.id` | |
-| `title` | `text` | NOT NULL | Short ticket title |
-| `description` | `text` | NOT NULL | Full ticket description (PM voice) |
-| `status` | `text` (enum) | default `'backlog'` | `backlog` \| `in-progress` \| `review` \| `done` |
-| `priority` | `text` (enum) | default `'medium'` | `low` \| `medium` \| `high` \| `critical` |
-| `labels` | `text[]` | nullable | Tags (e.g. `["auth", "security"]`) |
-| `estimate` | `text` | nullable | Time estimate (e.g. `"~1.5h"`) |
-| `created_at` | `timestamp` | defaultNow() | |
-
-**Missing fields (to add):**
-- `acceptance_criteria` — `text[]`
-- `constraints` — `text[]`
-- `sender` — `text` (e.g. `"@pm_bot"`)
-
----
-
-### `user_progress`
+### `scenario_progress`
 
 Tracks each user's state within a scenario.
 
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | `uuid` | PK, default random | |
-| `profile_id` | `uuid` | FK → `profiles.id` | |
-| `scenario_id` | `uuid` | FK → `scenarios.id` | |
-| `status` | `text` (enum) | default `'not-started'` | `not-started` \| `in-progress` \| `completed` |
-| `completed_checkpoints` | `text[]` | nullable | List of passed checkpoint IDs |
-| `current_code` | `text` | nullable | User's latest code state |
-| `last_attempt_at` | `timestamp` | nullable | Last time user actively worked on this |
-| `created_at` | `timestamp` | defaultNow() | |
-
-**Missing fields (to add):**
-- `started_at` — `timestamp`
-- `completed_at` — `timestamp`
-- `xp_earned` — `integer`
-- `debrief_data` — `jsonb` (populated after completion)
-- `moments_data` — `jsonb` (complex scenario tracking — decisions, response times)
-
----
-
-### `messages`
-
-AI team chat history per user per scenario session.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | `uuid` | PK, default random | |
-| `profile_id` | `uuid` | FK → `profiles.id` | |
-| `sender_name` | `text` | NOT NULL | Persona display name (e.g. `"Marcus Webb"`) |
-| `sender_role` | `text` | NOT NULL | Persona role (e.g. `"Senior Engineer"`) |
-| `content` | `text` | NOT NULL | Message content |
-| `is_read` | `boolean` | default `false` | Whether user has seen the message |
-| `created_at` | `timestamp` | defaultNow() | |
-
-**Missing fields (to add):**
-- `scenario_id` — `uuid` FK → `scenarios.id` (currently missing — needed for scoped queries)
-- `agent` — `text` enum (`pm_bot` | `senior_dev` | `backend_dev` | `design_lead`)
-- `is_user_message` — `boolean` (to store the full conversation thread)
-- `model_used` — `text` (which model generated this response)
-- `token_count` — `integer` (for cost tracking)
-- `triggered_by_event` — `boolean` (push vs. pull interaction)
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | `uuid` | Primary key |
+| `user_id` | `uuid` | Matches `auth.users.id` |
+| `scenario_id` | `text` or `uuid` | Matches `scenarios.id` |
+| `status` | `text` | `not_started` \| `in_progress` \| `completed` \| `abandoned` |
+| `started_at` | `timestamp` | Set when progress row is created |
+| `completed_at` | `timestamp` | Set on completion |
+| `checkpoints_passed` | `text[]` | Passed checkpoint IDs |
+| `current_checkpoint_id` | `text` | Optional active checkpoint |
+| `current_code_state` | `jsonb` | File path → content map |
+| `xp_earned` | `integer` | XP awarded for this scenario |
+| `debrief_data` | `jsonb` | Completion analysis |
 
 ---
 
 ## Planned Tables
 
+### `messages`
+
+Needed once Live AI is wired. Should store both user and AI persona messages scoped to a scenario session.
+
+Suggested columns: `id`, `user_id`, `scenario_id`, `agent`, `sender_name`, `sender_role`, `content`, `is_user_message`, `is_read`, `model_used`, `token_count`, `triggered_by_event`, `created_at`.
+
 ### `ai_usage`
 
 Tracks the 5-interaction free tier gate per user per scenario.
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | `uuid` | PK |
-| `profile_id` | `uuid` | FK → `profiles.id` |
-| `scenario_id` | `uuid` | FK → `scenarios.id` |
-| `interactions_used` | `integer` | Max 5 for free tier |
-| `tier_at_time` | `text` | `free` \| `pro` \| `byok` |
-| `reset_at` | `timestamp` | nullable — resets per scenario |
+Suggested columns: `id`, `user_id`, `scenario_id`, `interactions_used`, `tier_at_time`, `reset_at`, `created_at`.
 
 ### `skills`
 
-Tracks per-user skill levels within the skill tree.
+Tracks per-user skill XP and levels.
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `id` | `uuid` | PK |
-| `profile_id` | `uuid` | FK → `profiles.id` |
-| `skill_category` | `text` | e.g. `"backend"`, `"devops"` |
-| `skill_name` | `text` | e.g. `"Authentication & Authorization"` |
-| `level` | `integer` | 1–5 |
-| `xp_total` | `integer` | XP in this specific skill |
+Suggested columns: `id`, `user_id`, `skill_category`, `skill_name`, `level`, `xp_total`, `updated_at`.
 
 ---
 
-## Schema Gaps (Priority Order)
+## Schema Gaps
 
-These fields are missing from the current `schema.ts` and should be added:
-
-1. `scenarios.type` — `simple | complex | end-to-end` (required for routing behavior)
-2. `scenarios.estimated_duration` — display in UI
-3. `scenarios.events` — JSONB for complex scenario event config
-4. `scenarios.ai_team_config` — JSONB for persona prompts/questions
-5. `scenarios.debrief_template` — JSONB
-6. `tickets.acceptance_criteria` + `tickets.constraints` + `tickets.sender`
-7. `user_progress.started_at` + `completed_at` + `xp_earned` + `debrief_data`
-8. `messages.scenario_id` + `messages.agent` + `messages.is_user_message` + `messages.model_used`
-9. New table: `ai_usage`
-10. New table: `skills`
+1. Create canonical Supabase migrations for the current `profiles`, `scenarios`, and `scenario_progress` tables.
+2. Add or confirm RLS policies for every exposed table.
+3. Decide whether `scenarios.id` is a text content ID (`SCN-008`) or a UUID, then make app code and FK types consistent.
+4. Add a unique constraint for `scenario_progress(user_id, scenario_id)` to prevent duplicate active sessions.
+5. Add `messages`, `ai_usage`, and `skills` before Live AI and persistent progression ship.
+6. Decide whether `current_code_state` should remain in Postgres JSONB or move to Supabase Storage for larger repos.
 
 ---
 
 ## Open Questions
 
-- [ ] Should `messages` include both user messages and AI messages in the same table (with an `is_user_message` flag), or separate tables?
-- [ ] `current_code` in `user_progress` — is storing full code in Postgres acceptable, or should it go to object storage (S3/Supabase Storage)?
-- [ ] Should `skills` be updated incrementally per checkpoint, or recalculated on scenario completion?
-- [ ] Do we need a `subscriptions` table, or can we rely on Stripe webhooks + a `tier` field on `profiles`?
+- [ ] Should scenario content stay embedded as JSONB or be normalized once authoring tools exist?
+- [ ] How should scenario versioning behave when a user has in-progress work?
+- [ ] Should skill XP be updated per checkpoint or recalculated on scenario completion?
+- [ ] Do we need a `subscriptions` table, or can Stripe webhooks update a tier field on `profiles`?

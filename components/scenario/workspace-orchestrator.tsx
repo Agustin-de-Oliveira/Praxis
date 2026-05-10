@@ -9,7 +9,7 @@
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import {
-  LayoutGrid, Layout, Code, Users, ArrowLeft, Save,
+  LayoutGrid, Layout, Code, Users, ArrowLeft, Save, Terminal,
 } from "lucide-react"
 import { createClient } from "@/utils/supabase/client"
 import type { Scenario, ScenarioProgress, WorkspaceView } from "@/lib/scenario-types"
@@ -18,6 +18,7 @@ import HubView from "./hub-view"
 import DynamicBoard from "./dynamic-board"
 import DynamicIDE from "./dynamic-ide"
 import TeamView from "./team-view"
+import TerminalApp from "./os/terminal-app"
 
 interface WorkspaceProps {
   scenario: Scenario
@@ -28,6 +29,7 @@ const TABS: { id: WorkspaceView; label: string; icon: typeof Code }[] = [
   { id: "hub", label: "Overview", icon: LayoutGrid },
   { id: "board", label: "Board", icon: Layout },
   { id: "ide", label: "Codebase", icon: Code },
+  { id: "terminal", label: "Terminal", icon: Terminal },
   { id: "team", label: "Team", icon: Users },
 ]
 
@@ -36,6 +38,13 @@ export default function ScenarioWorkspace({ scenario, initialProgress }: Workspa
   const [codeState, setCodeState] = useState<Record<string, string>>(
     initialProgress.current_code_state
   )
+  const [isRepoCloned, setIsRepoCloned] = useState(
+    Object.keys(initialProgress.current_code_state).length > 0
+  )
+  const [checkpointsPassed, setCheckpointsPassed] = useState<string[]>(
+    initialProgress.checkpoints_passed
+  )
+  const [isCloning, setIsCloning] = useState(false)
   const [saving, setSaving] = useState(false)
   const [lastSaved, setLastSaved] = useState<string | null>(null)
 
@@ -48,7 +57,10 @@ export default function ScenarioWorkspace({ scenario, initialProgress }: Workspa
     try {
       await supabase
         .from("scenario_progress")
-        .update({ current_code_state: codeState })
+        .update({ 
+          current_code_state: codeState,
+          checkpoints_passed: checkpointsPassed
+        })
         .eq("id", initialProgress.id)
       setLastSaved(new Date().toLocaleTimeString())
     } catch (err) {
@@ -69,11 +81,20 @@ export default function ScenarioWorkspace({ scenario, initialProgress }: Workspa
     return () => window.removeEventListener("keydown", handler)
   }, [handleSave])
 
-  // ── Code change handler (from IDE) ───────────────────────────────────────
-
   const handleCodeChange = useCallback((filePath: string, newContent: string) => {
     setCodeState(prev => ({ ...prev, [filePath]: newContent }))
   }, [])
+
+  // ── Repo clone handler ───────────────────────────────────────────────────
+
+  const handleRepoCloned = useCallback(() => {
+    setIsRepoCloned(true)
+    setIsCloning(false)
+    // If we're cloning for the first time and have no code, load the initial repo
+    if (Object.keys(codeState).length === 0) {
+      setCodeState(scenario.repo_initial.files)
+    }
+  }, [codeState, scenario.repo_initial.files])
 
   // ── Render ──────────────────────────────────────────────────────────────
 
@@ -151,9 +172,9 @@ export default function ScenarioWorkspace({ scenario, initialProgress }: Workspa
         {view === "board" && (
           <DynamicBoard
             ticket={scenario.ticket}
-            aiTeam={scenario.ai_team}
             checkpoints={scenario.checkpoints}
-            checkpointsPassed={initialProgress.checkpoints_passed}
+            checkpointsPassed={checkpointsPassed}
+            aiTeam={scenario.ai_team}
           />
         )}
         {view === "ide" && (
@@ -161,9 +182,19 @@ export default function ScenarioWorkspace({ scenario, initialProgress }: Workspa
             files={codeState}
             ticket={scenario.ticket}
             checkpoints={scenario.checkpoints}
-            checkpointsPassed={initialProgress.checkpoints_passed}
+            checkpointsPassed={checkpointsPassed}
             aiTeam={scenario.ai_team}
             onCodeChange={handleCodeChange}
+            isRepoCloned={isRepoCloned}
+            isCloning={isCloning}
+          />
+        )}
+        {view === "terminal" && (
+          <TerminalApp
+            onRepoCloned={handleRepoCloned}
+            onCloningStart={() => setIsCloning(true)}
+            isRepoCloned={isRepoCloned}
+            ticketKey={scenario.ticket.key}
           />
         )}
         {view === "team" && (

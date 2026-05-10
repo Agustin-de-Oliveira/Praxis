@@ -116,7 +116,6 @@ export default function ScenarioBriefing({ scenario, onComplete }: BriefingProps
        }, 3000)
        return () => clearTimeout(timer)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIdx, narrative, userOptions, userResponse, view, scenario.id, onComplete, alwaysSkip])
 
   const handleUserSelect = (option: string) => {
@@ -172,14 +171,20 @@ export default function ScenarioBriefing({ scenario, onComplete }: BriefingProps
   }
 
   return (
-    <div className="fixed inset-0 z-[20000] bg-[#050505] flex items-center justify-center p-6 overflow-hidden select-none">
+    <motion.div 
+      initial={{ y: "100%", opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: "-100%", opacity: 0 }}
+      transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed inset-0 z-[20000] bg-[#050505] flex items-center justify-center p-6 overflow-hidden select-none"
+    >
       <motion.div
         key="briefing"
         variants={tourVariants}
         initial="hidden"
         animate="visible"
         exit="exit"
-        className="w-full max-w-2xl"
+        className="w-full max-w-2xl relative z-10"
       >
         <div className="mb-8">
           <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">Context Initiation</p>
@@ -306,6 +311,6 @@ export default function ScenarioBriefing({ scenario, onComplete }: BriefingProps
       <div className="absolute inset-0 -z-10 opacity-40 pointer-events-none overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-[#a86f44]/5 blur-[200px] rounded-full animate-pulse" />
       </div>
-    </div>
+    </motion.div>
   )
 }

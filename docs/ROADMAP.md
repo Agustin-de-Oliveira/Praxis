@@ -1,12 +1,12 @@
 # Roadmap
 
-**Last updated:** 2026-05-07 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md)
+**Last updated:** 2026-05-08 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md)
 
 ---
 
-## Current Status: Phase 1 — Foundation
+## Current Status: Phase 1.5 — The Vertical Slice
 
-Active sprint is focused on completing the core product loop before moving to AI team integration.
+We have successfully built the **Immersive Tour Experience (SCN-008)**, a high-fidelity vertical slice that proves the core product loop: from ticket assigned to code implemented, verified, and PR reviewed. The focus now shifts from UI/UX prototyping to backend robustness and real-world validation.
 
 ---
 
@@ -15,15 +15,17 @@ Active sprint is focused on completing the core product loop before moving to AI
 | Item | Status | Notes |
 |------|--------|-------|
 | Landing page + brand identity | ✅ Done | Hero, about, highlights, testimonials, navbar |
-| Auth flow (Supabase) | 🔄 In Progress | Login page exists; session handling pending |
-| User dashboard | ⬜ Not Started | Scenario list + progress overview |
+| **Immersive Tour Engine** | ✅ Done | Multi-phase orchestrator (storyline → debrief) |
+| **Vertical Slice (SCN-008)** | ✅ Done | Full interactive endpoint implementation scenario |
 | Scenario library (browse + filter) | ✅ Done | `scenario-library.tsx` implemented |
-| Scenario board UI | ✅ Done | Board + ticket detail modal + AI chat panel |
-| In-browser IDE (scaffold) | ✅ Done | `components/scenario/ide.tsx` exists |
-| Database schema (core entities) | 🔄 In Progress | Drizzle schema defined; migrations pending |
-| First 3 scenarios (authored) | 🔄 In Progress | SCN-003 + SCN-007 authored in docs |
-| Checkpoint validation engine (v1) | ⬜ Not Started | **Next major milestone** |
-| XP tracking & skill tree (v1) | ⬜ Not Started | Depends on checkpoint engine |
+| User onboarding flow | 🔄 Pivoting | Replace form-style onboarding with Candidate OS → CV → job application → calibration challenge |
+| Scenario board UI | ✅ Done | Ticket detail modal + interaction panels |
+| In-browser IDE (Workstation) | ✅ Done | Ghost text, auto-completion, and synth highlighting |
+| Checkpoint validation (Client-side) | ✅ Done | Simulated CI/CD pipeline with streaming logs |
+| Auth flow (Supabase) | 🔄 In Progress | Scaffolding complete; session handling pending |
+| Database schema (Supabase) | 🔄 In Progress | Core tables defined; migrations and RLS policies pending |
+| Checkpoint validation (Server-side) | ⬜ Not Started | **Next major milestone: Real test execution** |
+| XP tracking & skill tree (v1) | ⬜ Not Started | UI exists in debrief; needs DB persistence |
 
 ---
 
@@ -31,12 +33,15 @@ Active sprint is focused on completing the core product loop before moving to AI
 
 | Item | Status | Notes |
 |------|--------|-------|
-| AI team integration (Together.ai / Groq) | ⬜ Not Started | Llama 3 / Mistral |
+| AI team integration (Live) | 🔄 In Progress | Personas (Sarah, Alex) defined; needs API wiring |
+| **Contextual Workspace Transformation** | ⬜ Not Started | Shift from static tools to mission-driven downloads |
+| **Internal App Marketplace (v1)** | ⬜ Not Started | Central hub for unlocking scenario-specific tooling |
+| **Candidate OS & Hiring Flow** | ⬜ Not Started | CV builder, fictional jobs, applications, mail response, calibration challenge |
+| User dashboard | ⬜ Not Started | Scenario list + progress overview |
+| 5 total scenarios across categories | 🔄 In Progress | SCN-008 Done; SCN-003 + SCN-007 in design |
 | 5-interaction free gate + upgrade prompt | ⬜ Not Started | Core monetization hook |
-| Scenario debrief system | ⬜ Not Started | Post-completion analysis |
-| 5 total scenarios across categories | ⬜ Not Started | Backend, DevOps, Security, Database, Frontend |
+| Scenario debrief system (Persistent) | ⬜ Not Started | Move from static to dynamic analysis |
 | Waitlist → closed beta (50 users) | ⬜ Not Started | Email capture → invite flow |
-| User onboarding flow | 🔄 In Progress | `/onboarding` route exists |
 
 ---
 
@@ -68,27 +73,17 @@ Active sprint is focused on completing the core product loop before moving to AI
 
 ## Prioritized Backlog
 
-Items not yet in a phase, ordered by impact × urgency.
-
 ### Must Have (before beta launch)
-1. **Checkpoint validation engine** — Without this, users can't complete scenarios. Blocking everything.
-2. **Auth session handling** — Login/register exists; needs server-side session persistence.
-3. **XP award system** — Scenario completion → XP → skill level update.
-4. **Scenario data in DB** — SCN-003 + SCN-007 need to be seeded.
-5. **User dashboard** — Users need to see their progress after completing a scenario.
+1. **Server-side Validation Engine** — Move from simulated logs to real `jest` or `node` execution of user code.
+2. **Auth & Session Persistence** — Ensure users don't lose progress on refresh; link scenario state to DB.
+3. **Candidate OS Entry Arc** — Replace conventional onboarding with CV, job application, challenge, calibration, and offer.
+4. **User Dashboard / Profile Dossier** — The home base should live inside Praxis OS as professional progress, not a separate SaaS dashboard.
+5. **Scenario Versioning** — Handling updates to codebases while users are mid-scenario.
 
 ### Should Have (before closed beta)
-6. **AI team (basic)** — At least @pm_bot and @senior_dev working for SCN-003.
-7. **5-interaction gate** — Core monetization psychology; needs to be in place during beta.
-8. **Scenario debrief** — This is the payoff. Can't launch without it.
-9. **Email capture + waitlist** — Start building the list now.
-
-### Nice to Have (Phase 3+)
-10. BYOK integration
-11. Public skill tree profiles
-12. Leaderboard
-13. Scenario difficulty filters on library
-14. Dark/light mode toggle
+6. **Live AI Chat (Groq/Together)** — Enable actual conversation with Sarah/Alex beyond preset responses.
+7. **5-Interaction Gate** — Implement the soft-wall for the free tier.
+8. **XP award system** — Scenario completion → XP → skill level update in DB.
 
 ---
 
@@ -96,23 +91,18 @@ Items not yet in a phase, ordered by impact × urgency.
 
 | Risk | Impact | Likelihood | Mitigation |
 |------|--------|-----------|-----------|
-| **AI costs at scale** | High | Medium | Use Llama 3/Mistral (10–20x cheaper); BYOK tier; 5-interaction gate |
-| **Cloud environment costs** | High | Medium | Start with static repos (no live Docker); upgrade for Phase 3+ scenarios |
-| **Content bottleneck** | High | High | Build authoring tooling; explore AI-assisted scenario generation |
-| **AI team quality** | Medium | Medium | Invest in prompt engineering; test models; allow user feedback |
-| **Free tier abuse** | Low | Medium | Rate limit by IP; email verification; device fingerprinting |
-| **Low retention** | High | Medium | XP, streaks, skill unlocks; email re-engagement sequences |
-| **Validation complexity** | High | High | Start with simple static validators (file existence, API response shape) |
-| **Solo founder bottleneck** | High | High | Document everything (this repo); keep scope tight for Phase 1 |
+| **Validation Complexity** | High | High | Focus on "High-Fidelity Simulation" first (as we've done) to defer heavy infra costs. |
+| **Content Bottleneck** | High | High | Use the SCN-008 template to rapidly scaffold the next 4 scenarios. |
+| **AI Team Quality** | Medium | Medium | Hard-code high-impact interactions; use LLMs only for open-ended queries. |
+| **AI Costs** | High | Medium | 5-interaction gate is critical for early sustainability. |
 
 ---
 
-## Open Questions
+## Open Questions (Answered)
 
-- [ ] What's the minimum viable scenario experience for closed beta — does it need live Docker environments or can we start with static code problems?
-- [ ] Should Phase 2 AI team use streaming responses or wait-then-display?
+- [x] **What's the MV Scenario Experience?** We've proven that high-fidelity simulation (Phase 1.5) works without live Docker environments for code-focused backend tasks.
+- [ ] Should Phase 2 AI team use streaming responses or wait-then-display? (Likely streaming for "premium" feel).
 - [ ] How do we handle scenario versioning for users with in-progress sessions?
-- [ ] What's the beta invite strategy — first-come-first-served waitlist, or curated cohort?
 
 → See [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md) for detailed upcoming features.
 → See [GTM_STRATEGY.md](./GTM_STRATEGY.md) for launch plan and metrics.

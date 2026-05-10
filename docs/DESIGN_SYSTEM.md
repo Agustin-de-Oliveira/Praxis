@@ -27,13 +27,23 @@ All design tokens are defined in `app/globals.css` using Tailwind CSS v4's `@the
 ### Brand & Accents
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--color-copper` | `#a86f44` | Primary brand accent (CTAs, highlights) |
+| `--color-copper` | `#a86f44` | Legacy brand accent (Amber) |
+| `--accent` | Dynamic | Current user-selected system accent color |
 | `--color-accent` | `#94A3B8` | Steel blue — technical UI accents |
 | `--color-steel-dim` | `#2d3f44` | Dim steel (subtle borders, active states) |
 | `--color-primary` | `#FFFFFF` | Primary action color |
 | `--color-primary-foreground` | `#050505` | Text on primary buttons |
 | `--color-secondary` | `#0F0F0F` | Secondary buttons/surfaces |
 | `--color-secondary-foreground` | `#94A3B8` | Text on secondary elements |
+
+### System Accents (Customizable)
+Users can select from the following palette in **Settings.exe**:
+- **Amber**: `#a86f44` (Default)
+- **Blue**: `#3b82f6`
+- **Emerald**: `#10b981`
+- **Rose**: `#f43f5e`
+- **Purple**: `#8b5cf6`
+- **Slate**: `#64748b`
 
 ### Borders & Inputs
 | Token | Value | Usage |
@@ -150,7 +160,12 @@ Custom `checkmark-pop` keyframe: scale from 0 + rotate -45° → scale 1 + rotat
 Framer Motion is used for:
 - Scenario board modal open/close
 - Landing page section reveals
-- Scenario card hover effects
+### OS Window Interactions
+The Workspace uses a windowed orchestrator:
+- **Focus**: Clicking a window brings it to the front and highlights its title bar.
+- **Draggable**: Windows are draggable via the `WindowFrame` title bar.
+- **Contextual Initiation**: New files (like mission briefs) manifest on the desktop only after a "Save As" event.
+- **Gated State**: IDE functionality is gated behind terminal operations (`git clone`).
 
 ---
 
@@ -159,8 +174,8 @@ Framer Motion is used for:
 Custom thin scrollbar across the entire app:
 - **Width:** 6px horizontal, 6px vertical
 - **Track:** Transparent
-- **Thumb:** `#1a1a1a`, hover: `#2a2a2a`
-- **Firefox:** `scrollbar-color: #1a1a1a transparent; scrollbar-width: thin`
+- **Thumb:** `#333333` (increased for visibility), hover: `#444444`
+- **Firefox:** `scrollbar-color: #333333 transparent; scrollbar-width: thin`
 
 ---
 

@@ -1,18 +1,34 @@
 # Scenarios
 
-**Last updated:** 2026-05-07 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md)
+**Last updated:** 2026-05-08 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md)
 
 ---
 
 ## Scenario Types
 
-The atomic unit of Praxis is a **scenario** — a self-contained, time-boxed simulation of a real engineering task. There are three types:
+The internal atomic unit of Praxis is a **scenario** — a self-contained, time-boxed simulation of a real engineering task. Users should experience scenarios as workplace events inside Praxis OS: hiring challenges, tickets, incidents, PR reviews, deploys, and first-week tasks.
+
+There are three types:
 
 | Type | Duration | Events | AI Team Mode | Goal |
 |------|----------|--------|--------------|------|
 | **Simple** | 1–1.5h | None | Reactive (responds when asked) | Linear task with clear outcome |
 | **Complex** | 2–3h | Triggered events with consequences | Active (injects messages, reviews, disruptions) | Multi-step task under realistic pressure |
 | **End-to-End** | TBD | TBD | Full cast | Complete project; user ships something they own |
+
+### Entry Scenario: Calibration Challenge
+
+The first scenario should be presented as a technical challenge from a fictional company after the user applies for a role in Candidate OS.
+
+Goal:
+- calibrate initial level
+- infer role fit
+- set starting difficulty
+- unlock the First Week arc
+
+The challenge should be realistic and workplace-shaped, not an algorithm puzzle. SCN-008 can be adapted for this purpose: a small endpoint task with auth context, data shaping, tests/checkpoints, and a short review.
+
+Failure should branch, not block. The user may receive feedback, retry, get a mentor hint, or enter a trainee path.
 
 ---
 
@@ -122,12 +138,53 @@ Scenario {
 
 | ID | Title | Type | Category | Difficulty | Duration | Status |
 |----|-------|------|----------|-----------|----------|--------|
+| SCN-008 | Add User Profile Endpoint | Simple | Backend | Beginner / Intermediate | ~1h | ✅ Vertical Slice |
 | SCN-001 | Deploy a Node.js API to Kubernetes | Simple | DevOps | Advanced | ~2h | ⬜ Draft |
 | SCN-002 | Build a Redis-backed Rate Limiter | Simple | Backend | Intermediate | ~1.5h | ⬜ Draft |
 | SCN-003 | Implement JWT Auth with Refresh Tokens | Simple | Security | Intermediate | ~1.5h | 🔄 Authored |
 | SCN-004 | Instrument a Service with OpenTelemetry | Simple | Observability | Advanced | ~2.5h | ⬜ Draft |
 | SCN-005 | Optimize a Cold PostgreSQL Query | Simple | Database | Expert | ~3h | ⬜ Draft |
 | SCN-007 | The Friday Deploy | Complex | Backend + DevOps | Advanced | ~2h | 🔄 Authored |
+
+---
+
+## SCN-008 — Add User Profile Endpoint (Vertical Slice)
+
+```
+type: simple
+category: backend
+difficulty: BEGINNER / INTERMEDIATE
+estimated_duration: 1h
+xp_reward: 200
+```
+
+### Ticket (from @pm_bot)
+
+> "Users keep asking for a profile page. We need a **GET /api/profile** endpoint that returns the current user's basic info (name, email, join date, avatar_url). The auth middleware is already there — just make sure it works with the existing JWT setup."
+
+### Repo Initial State
+
+Express API with `src/middleware/auth.ts` already implemented. `src/routes/profile.ts` is a 501 stub. Database queries in `src/db/queries.ts` are ready to use.
+
+### Checkpoints
+
+| # | Description | Validation |
+|---|-------------|-----------|
+| 1 | 401 for unauthenticated requests | `GET /api/profile` returns 401 without token |
+| 2 | Returns correct user data | `res.json()` contains name, email, etc. |
+| 3 | Sensitive fields excluded | `passwordHash` is removed from the response |
+| 4 | Input validation & error handling | Handle null users and DB errors with clean JSON |
+
+### AI Team
+
+**@pm_bot (Alex Rivera):** Briefing and ticket assignment.
+
+**@senior_dev (Sarah Chen):** Codebase orientation, interactive implementation guidance (ghost text), and final PR approval.
+
+### Debrief
+
+- **senior_would_do_differently:** Implement Data Transfer Objects (DTOs) and correlation IDs early to simplify future scaling and debugging.
+- **optional_reading:** [Express Security Best Practices](https://expressjs.com/en/advanced/best-practice-security.html), [REST API Design Guidelines](https://github.com/microsoft/api-guidelines).
 
 ---
 
@@ -157,10 +214,6 @@ Express API with users in PostgreSQL, bcrypt for passwords. `/register` and `/lo
 | 2 | Protected route rejects requests without token with 401 | `GET /me` without auth header returns 401 |
 | 3 | `/refresh` generates new access token without password | New valid access token returned given a valid refresh token |
 | 4 | Expired tokens are rejected correctly | Token with `exp` in the past returns 401 |
-
-### Events
-
-None. This is a simple scenario.
 
 ### AI Team
 

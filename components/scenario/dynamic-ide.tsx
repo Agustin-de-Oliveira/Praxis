@@ -6,7 +6,7 @@
 // checkpoint checklist. Loads files from scenario data.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import Editor from "@monaco-editor/react"
 import {
   ChevronRight, ChevronDown, File, Folder, FolderOpen,
@@ -25,6 +25,7 @@ interface DynamicIDEProps {
   aiTeam: AITeam
   onCodeChange: (filePath: string, content: string) => void
   isRepoCloned: boolean
+  isCloning?: boolean
 }
 
 // ── File Tree Types ──────────────────────────────────────────────────────────
@@ -100,8 +101,8 @@ function FileTreeNode({
     <button
       onClick={() => onSelect(node.path)}
       className={`w-full flex items-center gap-1.5 py-1 text-xs transition-colors ${isActive
-          ? "text-foreground bg-secondary border-l-2 border-blue-400"
-          : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+        ? "text-foreground bg-secondary border-l-2 border-blue-400"
+        : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
         }`}
       style={{ paddingLeft: `${depth * 12 + 20}px` }}
     >
@@ -133,21 +134,39 @@ function getLanguage(filePath: string): string {
 // ── IDE Component ────────────────────────────────────────────────────────────
 
 export default function DynamicIDE({
-  files, ticket, checkpoints, checkpointsPassed, aiTeam, onCodeChange, isRepoCloned
+  files, ticket, checkpoints, checkpointsPassed, aiTeam, onCodeChange, isRepoCloned, isCloning
 }: DynamicIDEProps) {
   const filePaths = Object.keys(files)
   const [activeFile, setActiveFile] = useState(filePaths[0] ?? "")
   const [openTabs, setOpenTabs] = useState<string[]>([])
   const [msg, setMsg] = useState("")
 
-  // Terminal State
   const [terminalLines, setTerminalLines] = useState<string[]>([
     "Integrated Terminal Ready.",
     isRepoCloned ? `✓ ${ticket.key} initialized.` : "Waiting for repository initialization..."
   ])
   const [terminalInput, setTerminalInput] = useState("")
 
-  const repoStatus = isRepoCloned ? "ready" : "locked"
+  const repoStatus = isCloning ? "cloning" : (isRepoCloned ? "ready" : "locked")
+
+  // ── Effects ────────────────────────────────────────────────────────────────
+
+  // Auto-select first file when they become available
+  useEffect(() => {
+    if (!activeFile && filePaths.length > 0 && isRepoCloned) {
+      setActiveFile(filePaths[0])
+    }
+  }, [filePaths, activeFile, isRepoCloned])
+
+  // Update terminal when repo is cloned
+  useEffect(() => {
+    if (isRepoCloned) {
+      setTerminalLines(prev => {
+        if (prev.some(l => l.includes("initialized"))) return prev
+        return [...prev, `✓ ${ticket.key} initialized.`]
+      })
+    }
+  }, [isRepoCloned, ticket.key])
 
   const tree = useMemo(() => buildFileTree(files), [files])
 
@@ -168,7 +187,7 @@ export default function DynamicIDE({
     setTerminalInput("")
 
     if (cmd === "git pull" || cmd === "git clone") {
-      setTerminalLines(prev => [...prev, 
+      setTerminalLines(prev => [...prev,
         "error: operation restricted.",
         "Repository initialization must be performed via the main OS Terminal.exe for security verification.",
         ""
@@ -195,6 +214,13 @@ export default function DynamicIDE({
 
   const doneCount = checkpointsPassed.length
   const progress = checkpoints.length > 0 ? (doneCount / checkpoints.length) * 100 : 0
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!msg.trim()) return
+    // Simple mock: clear message and show a toast or system log
+    setMsg("")
+  }
 
   // Get first AI team member for the hint
   const firstTeamMember = Object.entries(aiTeam)[0]
@@ -225,8 +251,8 @@ export default function DynamicIDE({
                 key={tab}
                 onClick={() => setActiveFile(tab)}
                 className={`flex items-center gap-2 px-4 py-2 border-r border-border text-xs transition-colors cursor-pointer ${isActive
-                    ? "bg-[#050505] text-foreground border-b-2 border-b-blue-400"
-                    : "text-muted-foreground hover:text-foreground"
+                  ? "bg-[#050505] text-foreground border-b-2 border-b-blue-400"
+                  : "text-muted-foreground hover:text-foreground"
                   }`}
               >
                 <File className="w-3 h-3" />
@@ -323,8 +349,8 @@ export default function DynamicIDE({
               {ticket.key}
             </span>
             <span className={`font-mono text-[9px] uppercase tracking-widest ${ticket.priority === "critical" ? "text-red-400" :
-                ticket.priority === "high" ? "text-orange-400" :
-                  "text-muted-foreground"
+              ticket.priority === "high" ? "text-orange-400" :
+                "text-muted-foreground"
               }`}>
               {ticket.priority}
             </span>
@@ -386,7 +412,7 @@ export default function DynamicIDE({
               <span className="font-mono text-[9px] text-muted-foreground ml-1">3 left</span>
             </div>
           </div>
-          <div className="flex gap-2">
+          <form onSubmit={handleSendMessage} className="flex gap-2">
             <input
               type="text"
               placeholder="Ask your team..."
@@ -394,10 +420,10 @@ export default function DynamicIDE({
               onChange={e => setMsg(e.target.value)}
               className="flex-1 h-8 px-3 rounded-sm border border-border bg-secondary text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-blue-400/50 transition-colors"
             />
-            <button className="h-8 w-8 flex items-center justify-center rounded-sm bg-foreground text-background hover:bg-foreground/90 cursor-pointer shrink-0">
+            <button type="submit" className="h-8 w-8 flex items-center justify-center rounded-sm bg-foreground text-background hover:bg-foreground/90 cursor-pointer shrink-0">
               <Send className="w-3.5 h-3.5" />
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </div>

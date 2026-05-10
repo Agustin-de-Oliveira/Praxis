@@ -119,7 +119,7 @@ const ThermodynamicGrid = ({
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           const idx = c + r * cols;
-          let temp = grid[idx];
+          const temp = grid[idx];
 
           // Cooling
           grid[idx] *= coolingFactor;

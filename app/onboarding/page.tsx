@@ -78,7 +78,7 @@ export default function OnboardingPage() {
         .eq('id', user.id)
     }
     
-    router.push(`/first-day?role=${encodeURIComponent(selectedRole ?? "backend")}&lang=${encodeURIComponent(selectedLang ?? "JavaScript / TypeScript")}&handle=${encodeURIComponent(handle || "engineer")}`)
+    router.push('/os')
   }
 
   const totalSteps = 3

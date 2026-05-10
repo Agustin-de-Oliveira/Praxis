@@ -34,7 +34,7 @@ User Action (e.g., "Run validator")
    ValidationResult { passed: boolean, message: string, details?: object }
          │
          ▼
-   Update user_progress.completed_checkpoints
+   Update scenario_progress.checkpoints_passed
    Award XP if all checkpoints complete
 ```
 

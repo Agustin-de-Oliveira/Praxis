@@ -36,46 +36,34 @@ cp .env.example .env.local
 **`.env.local` contents:**
 
 ```env
-# Supabase Connection (Frontend)
+# Supabase Connection
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-or-anon-key
 
-# Database (Direct Connection — Migrations & Drizzle)
-DATABASE_URL=postgres://postgres:password@db.your-project-id.supabase.co:5432/postgres
+# Optional: only for one-off admin scripts. Never expose this to the browser.
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
 ### Where to get these values
 
 1. Go to [supabase.com](https://supabase.com) → your project → **Settings → API**
 2. Copy `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
-3. Copy `anon public` key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Go to **Settings → Database → Connection string** → copy the `URI` → `DATABASE_URL`
-
-> **Important:** Use the **direct connection** string (not the pooler) for `DATABASE_URL`. Drizzle Kit requires a direct connection for migrations.
+3. Copy the publishable key → `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+4. Only use `SUPABASE_SERVICE_ROLE_KEY` for trusted scripts that run locally or on the server.
 
 ---
 
 ## 3. Database Setup
 
-Praxis uses Drizzle ORM with Supabase PostgreSQL.
+Praxis uses Supabase Postgres directly through `supabase-js` and `@supabase/ssr`. Drizzle is no longer part of the stack.
 
-### Run migrations
+### Manage schema
 
-```bash
-# Generate migration files from schema
-pnpm drizzle-kit generate
+Use Supabase SQL migrations, the Supabase dashboard SQL editor, or the Supabase CLI for schema changes. Keep the runtime TypeScript contracts in `lib/scenario-types.ts` and `lib/os-types.ts` aligned with the database.
 
-# Apply migrations to the database
-pnpm drizzle-kit migrate
-```
+### Inspect data
 
-### Open Drizzle Studio (visual DB explorer)
-
-```bash
-pnpm drizzle-kit studio
-```
-
-This opens a browser-based interface at `http://localhost:4983` for inspecting and editing data.
+Use the Supabase table editor or SQL editor for local development and debugging.
 
 ### Seed the database
 
@@ -84,7 +72,7 @@ This opens a browser-based interface at `http://localhost:4983` for inspecting a
 pnpm db:seed
 ```
 
-> **Note:** Seed scripts are not yet created. You'll need to manually insert scenario data via Drizzle Studio or Supabase table editor.
+> **Note:** Seed scripts are not yet created. You'll need to manually insert scenario data via the Supabase dashboard or a trusted local script.
 
 ---
 
@@ -115,29 +103,23 @@ pnpm dev          # Start Next.js dev server (http://localhost:3000)
 pnpm build        # Build production bundle
 pnpm start        # Run production build locally
 pnpm lint         # ESLint
-
-pnpm drizzle-kit generate   # Generate SQL migrations from schema changes
-pnpm drizzle-kit migrate    # Apply pending migrations
-pnpm drizzle-kit studio     # Open Drizzle Studio
 ```
 
 ---
 
 ## 6. Making Schema Changes
 
-1. Edit `lib/db/schema.ts`
-2. Run `pnpm drizzle-kit generate` — this creates a new SQL file in `./drizzle/`
-3. Review the generated SQL
-4. Run `pnpm drizzle-kit migrate` — applies the migration to your Supabase DB
-5. Commit both the schema change and the migration file
-
-> **Never manually edit migration files.** Let Drizzle generate them.
+1. Create or update a Supabase SQL migration.
+2. Apply it to the target Supabase project.
+3. Update `lib/scenario-types.ts`, `lib/os-types.ts`, and any query code affected by the schema change.
+4. Review RLS policies for every table exposed through the Data API.
+5. Commit the migration, type updates, and app changes together.
 
 ---
 
 ## 7. Supabase Auth Setup
 
-Supabase Auth is configured via `lib/supabase.ts`. The app uses the `@supabase/ssr` package for server-side session handling.
+Supabase Auth is configured via `utils/supabase/client.ts`, `utils/supabase/server.ts`, and `proxy.ts`. The app uses the `@supabase/ssr` package for server-side session handling.
 
 **Required Supabase settings:**
 - Enable Email/Password auth in **Authentication → Providers**
@@ -156,9 +138,11 @@ Supabase Auth is configured via `lib/supabase.ts`. The app uses the `@supabase/s
 | File | Purpose |
 |------|---------|
 | `app/globals.css` | All design tokens and base styles |
-| `lib/db/schema.ts` | Drizzle schema — single source of truth for DB |
-| `lib/supabase.ts` | Supabase client setup (browser + server) |
-| `drizzle.config.ts` | Drizzle Kit configuration |
+| `lib/scenario-types.ts` | Scenario and progress TypeScript contracts |
+| `lib/os-types.ts` | Praxis OS profile and shell contracts |
+| `utils/supabase/client.ts` | Browser Supabase client |
+| `utils/supabase/server.ts` | Server Component Supabase client |
+| `proxy.ts` | Supabase session refresh and route protection |
 | `components/scenario/board.tsx` | Main scenario experience component |
 | `components/scenario/ide.tsx` | In-browser code editor |
 | `components/scenario-library.tsx` | Scenario browse/filter view |
@@ -173,11 +157,6 @@ Supabase Auth is configured via `lib/supabase.ts`. The app uses the `@supabase/s
 pnpm install --frozen-lockfile
 ```
 
-### Drizzle migration fails with connection error
-
-- Check `DATABASE_URL` is the **direct connection** string (not the pooler)
-- Ensure your IP is allowed in Supabase → Settings → Database → Connection Pooling
-
 ### Next.js build error: Type mismatch
 
 ```bash
@@ -188,6 +167,7 @@ npx tsc --noEmit # Run TypeScript compiler without emitting files
 ### Supabase auth not working locally
 
 - Verify `NEXT_PUBLIC_SUPABASE_URL` doesn't have a trailing slash
+- Verify `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` is set. `NEXT_PUBLIC_SUPABASE_ANON_KEY` is supported as a backwards-compatible fallback.
 - Check that Site URL in Supabase dashboard matches `http://localhost:3000`
 
 ---

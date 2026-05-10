@@ -50,7 +50,24 @@ Users don't solve algorithm puzzles. They:
 4. **Hit checkpoints** validated by automated rules
 5. **Receive a structured debrief** comparing their approach to how a senior would handle it
 
-The atomic unit is a **scenario** — a self-contained, time-boxed simulation of a real engineering task. See [SCENARIOS.md](./SCENARIOS.md) for the full specification.
+The internal atomic unit is a **scenario** — a self-contained, time-boxed simulation of a real engineering task. The user-facing experience should feel like an interactive workplace: job applications, hiring challenges, offers, first-week onboarding, tickets, incidents, reviews, and deploys. See [OS_EXPERIENCE.md](./OS_EXPERIENCE.md) for the product direction and [SCENARIOS.md](./SCENARIOS.md) for the scenario specification.
+
+### Experience Direction
+
+Praxis should lean toward an indie interactive workplace sim rather than a scenario library with a dashboard. The OS is the world.
+
+The first-time experience should be:
+
+1. Boot into a candidate workstation.
+2. Build a CV/profile inside the OS.
+3. Apply to fictional companies that match the user's target role.
+4. Receive a company response by mail.
+5. Complete a realistic technical challenge.
+6. Use that challenge to calibrate level, role fit, and starting difficulty.
+7. Receive an offer or trial-week invitation.
+8. Start the **First Week** arc.
+
+The calibration challenge should never be a hard gate. If the user struggles, Praxis adapts the story and recommends a better starting path.
 
 ---
 
@@ -63,7 +80,7 @@ The atomic unit is a **scenario** — a self-contained, time-boxed simulation of
 | Solo experience | Simulated team (PM, senior dev, designer) |
 | Teach syntax & algorithms | Teach the workflow, the tools, the soft skills |
 | Gamified badges | XP mapped to real job ladder competencies |
-| One-size-fits-all | Scenarios scoped like sprint tickets with time estimates |
+| One-size-fits-all | Calibrated role paths based on a realistic first challenge |
 
 ### Competitive Landscape
 

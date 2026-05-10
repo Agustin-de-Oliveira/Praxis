@@ -94,4 +94,4 @@ export interface ScenarioProgress {
 
 // ── View modes for the workspace orchestrator ────────────────────────────────
 
-export type WorkspaceView = "hub" | "board" | "ide" | "team"
+export type WorkspaceView = "hub" | "board" | "ide" | "team" | "terminal"

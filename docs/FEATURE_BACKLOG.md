@@ -28,7 +28,8 @@ Features are scored on two axes:
 | **Auth session persistence** | 3 | 2 | Login works but sessions break on refresh |
 | **Scenario data seed** | 3 | 1 | SCN-003 + SCN-007 need to be in the DB |
 | **XP award on completion** | 3 | 2 | Core progression loop |
-| **User dashboard** | 3 | 2 | Users need to see their progress post-completion |
+| **Candidate OS entry arc** | 3 | 3 | Replace onboarding with CV builder, job applications, response mail, calibration challenge, and offer |
+| **Profile dossier** | 3 | 2 | OS-native replacement for a conventional dashboard; shows CV, calibration, progress, and skill growth |
 
 ---
 
@@ -43,6 +44,9 @@ Features are scored on two axes:
 | **Scenario debrief** | 3 | 3 | Post-completion analysis — this is the learning payoff |
 | **Scenario timer** | 2 | 1 | Estimated duration countdown |
 | **Checkpoint progress indicator** | 2 | 1 | Visual progress through checkpoints |
+| **Contextual Tool Distribution** | 3 | 2 | Gated apps (IDE, Terminal) released via mission milestones |
+| **Fictional company/job board** | 3 | 2 | Role-matched jobs that turn onboarding data into applications |
+| **Calibration challenge** | 3 | 2 | First realistic code challenge measures baseline and sets starting difficulty |
 | **Email capture / waitlist** | 3 | 1 | Start building the list now |
 
 ---
@@ -116,9 +120,38 @@ code_contains   → Check if code contains a required pattern
 5. **Optional reading** — Curated links
 
 **Implementation:**
-- Debrief data is assembled server-side from `user_progress.moments_data` + scenario's `debrief_template`
-- Stored in `user_progress.debrief_data` (JSONB)
+- Debrief data is assembled server-side from `scenario_progress` state + scenario's `debrief_template`
+- Stored in `scenario_progress.debrief_data` (JSONB)
 - Rendered in a full-screen modal or dedicated `/scenario/[id]/debrief` route
+
+---
+
+### Candidate OS Entry Arc (P0)
+
+**What:** Replace form-style onboarding with a playable hiring flow inside Praxis OS.
+
+**Flow:**
+1. Candidate OS first boot.
+2. CV Builder collects name/handle, role, experience, stack, background, and goals.
+3. Job Board recommends fictional companies and roles.
+4. User applies.
+5. Mail response unlocks a technical challenge.
+6. Challenge completion calibrates level and role fit.
+7. User receives an offer/trial-week message.
+8. First Week arc unlocks.
+
+**Calibration signals:**
+- code reading
+- debugging behavior
+- test usage
+- implementation correctness
+- security hygiene
+- help-seeking behavior
+- time to signal
+
+**Important:** Failing the challenge should not block the user. It should adapt the story, offer a retry or mentor hint, and recommend a better starting difficulty.
+
+→ Full spec in [OS_EXPERIENCE.md](./OS_EXPERIENCE.md)
 
 ---
 
@@ -177,6 +210,7 @@ These are genuinely interesting but not prioritized:
 | **Scenario recommendation engine** | Based on skill gaps detected from past sessions |
 | **VS Code extension** | Work in VS Code instead of in-browser IDE |
 | **Slack integration for B2B** | AI team interactions in a real Slack workspace |
+| **Internal App Marketplace** | Central hub to 'purchase' or download mission-required tools with XP/Credits |
 
 ---
 

@@ -5,11 +5,12 @@ import { Terminal as TerminalIcon, ChevronRight } from "lucide-react"
 
 interface TerminalAppProps {
   onRepoCloned: () => void
+  onCloningStart?: () => void
   isRepoCloned: boolean
   ticketKey: string
 }
 
-export default function TerminalApp({ onRepoCloned, isRepoCloned, ticketKey }: TerminalAppProps) {
+export default function TerminalApp({ onRepoCloned, onCloningStart, isRepoCloned, ticketKey }: TerminalAppProps) {
   const [lines, setLines] = useState<string[]>([
     "Praxis Terminal [Version 10.0.19045.4412]",
     "(c) Praxis Corporation. All rights reserved.",
@@ -69,6 +70,8 @@ export default function TerminalApp({ onRepoCloned, isRepoCloned, ticketKey }: T
         setLines(prev => [...prev, `fatal: destination path '${ticketKey.toLowerCase()}' already exists and is not an empty directory.`, ""])
         return
       }
+
+      if (onCloningStart) onCloningStart()
 
       setLines(prev => [...prev, 
         "Cloning into 'praxis-internal'...",

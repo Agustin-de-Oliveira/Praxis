@@ -10,7 +10,8 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                         Frontend                             │
 │              Next.js 16 + React 19 + Framer Motion           │
-│         Landing Page / Scenario Library / Board / IDE        │
+│         Landing Page / Scenario Library / Board / OS Shell        │
+│          (Window Management, Mail, Terminal, Monaco IDE)          │
 └─────────────────────────┬───────────────────────────────────┘
                           │ fetch / Server Actions / tRPC
                           ▼
@@ -27,7 +28,7 @@
 │                 │   │  Checkpoint validation                 │
 │  profiles       │   │  AI team interactions                  │
 │  scenarios      │   │  Event scheduling                      │
-│  user_progress  │   └────────────────────────────────────────┘
+│  scenario_progress │ └────────────────────────────────────────┘
 │  tickets        │                    │
 │  messages       │                    ▼
 └─────────────────┘   ┌────────────────────────────────────────┐
@@ -54,7 +55,7 @@
 | **Font (Mono)** | JetBrains Mono | via next/font | Code, terminal, technical labels |
 | **Shader Background** | @paper-design/shaders-react | 0.0.76 | Dithering effect on landing page |
 | **Database** | PostgreSQL via Supabase | latest | Auth, user data, progress, scenario metadata |
-| **ORM** | Drizzle ORM | 0.45.x | Type-safe queries, lightweight, schema-first |
+| **Data Access** | Supabase JS + `@supabase/ssr` | latest | Direct table access, SSR session cookies, and route protection |
 | **Auth** | Supabase Auth + `@supabase/ssr` | latest | JWT sessions, SSR-compatible |
 | **AI Inference** | Together.ai / Groq | — | Llama 3 / Mistral, 10–20x cheaper than GPT-4 |
 | **AI Fallback** | BYOK | — | User's own OpenAI/Anthropic/Groq key |
@@ -62,6 +63,7 @@
 | **Forms** | React Hook Form + Zod | latest | Type-safe form validation |
 | **Charts** | Recharts | 2.15.x | XP/progress visualization |
 | **Analytics** | Vercel Analytics | 1.6.x | Usage tracking, funnel analysis |
+| **IDE Editor** | Monaco Editor (via @monaco-editor/react) | latest | Industry standard, powerful intellisense, familiar DX |
 | **Hosting** | Vercel | — | Frontend; automatic deploys from main |
 | **Future API** | Railway or Render | — | If API is extracted from Next.js |
 
@@ -87,8 +89,16 @@ praxis/
 ├── components/
 │   ├── ui/                       # shadcn/ui primitives (owned, not imported)
 │   ├── scenario/
-│   │   ├── board.tsx             # Main scenario board component
-│   │   └── ide.tsx               # Code editor component
+│   │   ├── desktop-orchestrator.tsx # Main OS window manager & state
+│   │   ├── scenario-briefing.tsx  # Initial mission entry sequence
+│   │   ├── board.tsx             # Legacy scenario board (transitioning to windowed)
+│   │   ├── dynamic-ide.tsx       # Monaco-powered code editor with integrated terminal
+│   │   └── os/                   # Simulated OS Applications
+│   │       ├── mail-app.tsx      # Internal communication (Gmail-style)
+│   │       ├── terminal-app.tsx  # CLI for git operations and filesystem
+│   │       ├── preferences-modal.tsx # System settings (Theme, Fonts, Accents)
+│   │       ├── window-frame.tsx  # Draggable/resizable window container
+│   │       └── constants.ts      # Program definitions and icons
 │   ├── scenario-library.tsx      # Browsable scenario grid
 │   ├── navbar.tsx                # Top navigation
 │   ├── hero-card.tsx             # Landing page hero section
@@ -99,17 +109,20 @@ praxis/
 │   └── smooth-scroll.tsx         # Lenis scroll provider
 │
 ├── lib/
-│   ├── db/
-│   │   └── schema.ts             # Drizzle schema (all tables)
-│   ├── supabase.ts               # Supabase client (browser + server)
+│   ├── scenario-types.ts         # Scenario and progress TypeScript contracts
+│   ├── os-types.ts               # Praxis OS shell types
 │   └── utils.ts                  # cn() and shared utilities
+├── utils/
+│   └── supabase/
+│       ├── client.ts             # Browser Supabase client
+│       ├── server.ts             # Server Component Supabase client
+│       └── middleware.ts         # Legacy helper for request-bound clients
 │
 ├── hooks/                        # Custom React hooks
 ├── styles/                       # Additional stylesheets (if needed)
 ├── public/                       # Static assets
 ├── docs/                         # ← This documentation suite
 │
-├── drizzle.config.ts             # Drizzle Kit configuration
 ├── next.config.mjs               # Next.js configuration
 ├── tsconfig.json                 # TypeScript configuration
 ├── .env.example                  # Required environment variables
@@ -123,8 +136,8 @@ praxis/
 ### 1. Next.js App Router (not Pages Router)
 The App Router enables co-located Server Components, streaming, and Server Actions. Landing page routes benefit from SSR for SEO. Dashboard and scenario routes use client components for interactivity.
 
-### 2. Drizzle over Prisma
-Drizzle is lightweight, has zero runtime overhead, and its schema-as-code approach is easier to keep in sync with Supabase migrations. Prisma's DX is better but Drizzle's type inference is more predictable for this stack.
+### 2. Supabase JS over an ORM
+Praxis no longer uses Drizzle or Prisma. The app reads and writes Supabase tables directly through `supabase-js` and `@supabase/ssr`. TypeScript contracts live in `lib/scenario-types.ts` and should be kept in sync with the Supabase schema.
 
 ### 3. Supabase for Auth + Database
 Single managed service for both auth and database reduces infrastructure complexity for a solo founder. Supabase Auth handles JWTs, sessions, and SSR cookies out of the box via `@supabase/ssr`.
@@ -156,7 +169,7 @@ Checkpoints will be validated server-side via custom validator scripts. Each sce
 
 3. Checkpoint validation
    └── Server Action runs validation script against user's code/state
-   └── Updates user_progress in DB
+   └── Updates scenario_progress in DB
    └── Returns checkpoint result to client
 
 4. AI team interaction
@@ -167,7 +180,7 @@ Checkpoints will be validated server-side via custom validator scripts. Each sce
 
 5. Scenario completion
    └── All checkpoints passed → trigger debrief generation
-   └── Update user_progress status → "completed"
+   └── Update scenario_progress status → "completed"
    └── Award XP + update skill levels
 ```
 
@@ -176,7 +189,7 @@ Checkpoints will be validated server-side via custom validator scripts. Each sce
 ## Open Questions
 
 - [ ] Should the validation engine run in a serverless function or an isolated Docker container? (Security implications of running user code)
-- [ ] How do we handle the in-browser IDE? Options: Monaco Editor (embedded), CodeSandbox SDK, Gitpod
+- [x] **In-browser IDE Selection**: Monaco Editor selected for its performance and native feel.
 - [ ] tRPC vs. Server Actions for the API layer — decision needed before Phase 2
 - [ ] Event scheduling for complex scenarios — cron job, WebSocket, or client-side polling?
 
