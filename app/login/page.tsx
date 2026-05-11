@@ -7,14 +7,16 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Link from "next/link"
-import { useState, useEffect } from "react"
+import { Suspense, useState, useEffect } from "react"
+import { AnimatePresence } from "framer-motion"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Terminal, ArrowRight, Github, Chrome, Mail, Lock, AlertCircle, CheckCircle } from "lucide-react"
 import { Dithering } from "@paper-design/shaders-react"
 import ThermodynamicGrid from "@/components/interactive-thermodynamic-grid"
+import { WelcomeGateway } from "@/components/auth/welcome-gateway"
 import { createClient } from "@/utils/supabase/client"
 
-export default function LoginPage() {
+function LoginPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -24,6 +26,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [showPostSignInGate, setShowPostSignInGate] = useState(false)
 
   // Read error from OAuth callback redirect (e.g. ?error=auth_callback_error)
   useEffect(() => {
@@ -49,8 +52,8 @@ export default function LoginPage() {
         setLoading(false)
         return
       }
-      router.push("/dashboard")
-      router.refresh()
+      setLoading(false)
+      setShowPostSignInGate(true)
     } else {
       const { error } = await supabase.auth.signUp({
         email,
@@ -91,8 +94,20 @@ export default function LoginPage() {
     setSuccess(null)
   }
 
+  const continueToOs = () => {
+    setShowPostSignInGate(false)
+    router.push("/os")
+    router.refresh()
+  }
+
   return (
     <div className="min-h-screen relative flex items-center justify-center px-6 py-12">
+
+      <AnimatePresence>
+        {showPostSignInGate && (
+          <WelcomeGateway key="post-signin-gate" variant="fullscreen" onContinue={continueToOs} />
+        )}
+      </AnimatePresence>
 
       {/* Dithering background */}
       <div className="absolute inset-0 h-full w-full">
@@ -298,5 +313,19 @@ export default function LoginPage() {
 
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground text-sm">
+          Loading…
+        </div>
+      }
+    >
+      <LoginPageInner />
+    </Suspense>
   )
 }

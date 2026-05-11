@@ -59,7 +59,7 @@ Praxis should lean toward an indie interactive workplace sim rather than a scena
 The first-time experience should be:
 
 1. Boot into a candidate workstation.
-2. Build a CV/profile inside the OS.
+2. Build a CV/profile inside the OS browser.
 3. Apply to fictional companies that match the user's target role.
 4. Receive a company response by mail.
 5. Complete a realistic technical challenge.

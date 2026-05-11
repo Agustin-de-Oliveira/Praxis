@@ -29,7 +29,7 @@ Features are scored on two axes:
 | **Scenario data seed** | 3 | 1 | SCN-003 + SCN-007 need to be in the DB |
 | **XP award on completion** | 3 | 2 | Core progression loop |
 | **Candidate OS entry arc** | 3 | 3 | Replace onboarding with CV builder, job applications, response mail, calibration challenge, and offer |
-| **Profile dossier** | 3 | 2 | OS-native replacement for a conventional dashboard; shows CV, calibration, progress, and skill growth |
+| **Profile dossier** | 3 | 2 | Browser-based replacement for a conventional dashboard; shows CV, calibration, progress, and skill growth |
 
 ---
 
@@ -132,8 +132,8 @@ code_contains   → Check if code contains a required pattern
 
 **Flow:**
 1. Candidate OS first boot.
-2. CV Builder collects name/handle, role, experience, stack, background, and goals.
-3. Job Board recommends fictional companies and roles.
+2. Browser-based CV Builder collects name/handle, role, experience, stack, background, and goals.
+3. Browser-based Job Board recommends fictional companies and roles.
 4. User applies.
 5. Mail response unlocks a technical challenge.
 6. Challenge completion calibrates level and role fit.

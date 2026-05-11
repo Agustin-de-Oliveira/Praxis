@@ -15,7 +15,7 @@ const SELECTIONS = [
     id: "hub",
     title: "Profile",
     cta: "Enter Command Center",
-    href: "/dashboard",
+    href: "/os",
     img: "/profile-path.png",
     color: "group-hover:text-[#a86f44]"
   },

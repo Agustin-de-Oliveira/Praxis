@@ -31,7 +31,7 @@ export default async function RealScenarioPage({ params }: ScenarioPageProps) {
     .single()
 
   if (error || !rawScenario) {
-    redirect("/dashboard")
+    redirect("/os")
   }
 
   // 3. Parse JSONB fields into typed objects

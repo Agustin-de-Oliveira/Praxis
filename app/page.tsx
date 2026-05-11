@@ -139,7 +139,7 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
-              href="/dashboard"
+              href="/os"
               className="interactive inline-flex items-center gap-2 rounded-sm bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >
               <Play className="h-4 w-4" />
@@ -180,7 +180,7 @@ export default function LandingPage() {
           </div>
           <nav className="flex items-center gap-5">
             <Link
-              href="/dashboard"
+              href="/os"
               className="interactive text-xs text-muted-foreground hover:text-foreground"
             >
               Dashboard

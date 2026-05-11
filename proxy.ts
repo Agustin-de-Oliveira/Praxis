@@ -1,20 +1,38 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// proxy.ts  (Next.js 16+ replaces middleware.ts with proxy.ts)
-// Session refresh + route protection via Supabase SSR.
-// Runs on every non-static request at the edge.
+// proxy.ts (Next.js 16+ file convention; replaces deprecated middleware.ts)
+// Supabase session refresh + route protection (@supabase/ssr).
+// Refreshes auth cookies on navigation; redirects unauthenticated users from
+// protected routes. See docs/TECHNICAL_ARCHITECTURE.md.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
-// Routes that require an authenticated session
-const PROTECTED_PREFIXES = ["/dashboard", "/tour", "/first-day", "/onboarding"]
+// Routes that require an authenticated session (prefix match)
+const PROTECTED_PREFIXES = ["/tour", "/first-day"]
 
-// Routes authenticated users should not see (bounce them to dashboard)
+// Routes authenticated users should not see (bounce them to workstation)
 const AUTH_ONLY_PATHS = ["/login"]
 
+function isProtectedPath(pathname: string): boolean {
+  if (pathname === "/resume" || pathname.startsWith("/resume/")) {
+    return true
+  }
+  if (PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
+    return true
+  }
+  // /scenario/[id] only — do not match /scenarios (library)
+  if (pathname === "/scenario" || pathname.startsWith("/scenario/")) {
+    return true
+  }
+  // /os and nested OS routes only — avoid accidental /osx-style matches
+  if (pathname === "/os" || pathname.startsWith("/os/")) {
+    return true
+  }
+  return false
+}
+
 export async function proxy(request: NextRequest) {
-  // Start with a passthrough response so cookie mutations attach correctly
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -46,26 +64,20 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // ── Redirect unauthenticated users away from protected routes ─────────────
-  const isProtected = PROTECTED_PREFIXES.some((prefix) =>
-    pathname.startsWith(prefix)
-  )
-  if (isProtected && !user) {
+  if (isProtectedPath(pathname) && !user) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = "/login"
     return NextResponse.redirect(loginUrl)
   }
 
-  // ── Redirect authenticated users away from /login ─────────────────────────
   const isAuthOnly = AUTH_ONLY_PATHS.some((p) => pathname.startsWith(p))
   if (isAuthOnly && user) {
-    const dashboardUrl = request.nextUrl.clone()
-    dashboardUrl.pathname = "/dashboard"
-    return NextResponse.redirect(dashboardUrl)
+    const workstationUrl = request.nextUrl.clone()
+    workstationUrl.pathname = "/os"
+    workstationUrl.search = ""
+    return NextResponse.redirect(workstationUrl)
   }
 
-  // Return supabaseResponse (not a plain NextResponse) so refreshed cookies
-  // are forwarded to the browser correctly
   return supabaseResponse
 }
 

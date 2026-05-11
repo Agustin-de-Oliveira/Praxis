@@ -2,6 +2,7 @@
 // app/os/page.tsx
 // Server Component — The Praxis OS entry point.
 // Loads the user's profile, active scenario, and scenario library.
+// Incomplete dossier: Browser.exe surfaces Résumé Studio at /resume.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { redirect } from "next/navigation"
@@ -15,31 +16,41 @@ export const metadata = {
   description: "Your persistent engineering workstation.",
 }
 
-export default async function OSPage() {
+export default async function OSPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ welcome?: string }>
+}) {
+  const { welcome } = await searchParams
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
-  // 1. Auth guard
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/login")
 
-  // 2. Profile guard
   const { data: profileData } = await supabase
     .from("profiles")
     .select("id, username, role, level, total_xp, onboarding_completed")
     .eq("id", user.id)
-    .single()
+    .maybeSingle()
 
-  if (!profileData || !profileData.onboarding_completed) {
-    redirect("/onboarding")
-  }
+  const resumeIncomplete = !profileData?.onboarding_completed
 
-  const profile: UserProfile = {
-    ...profileData,
-    os_tutorial_completed: (profileData as any).os_tutorial_completed ?? false,
-  }
+  const profile: UserProfile = profileData
+    ? {
+      ...profileData,
+      os_tutorial_completed: (profileData as { os_tutorial_completed?: boolean }).os_tutorial_completed ?? false,
+    }
+    : {
+      id: user.id,
+      username: null,
+      role: null,
+      level: 1,
+      total_xp: 0,
+      onboarding_completed: false,
+      os_tutorial_completed: false,
+    }
 
-  // 3. Fetch active mission (in_progress only)
   const { data: activeProgressData } = await supabase
     .from("scenario_progress")
     .select("*")
@@ -47,7 +58,6 @@ export default async function OSPage() {
     .eq("status", "in_progress")
     .maybeSingle()
 
-  // 4. Fetch active scenario details if one exists
   let activeScenario = null
   if (activeProgressData?.scenario_id) {
     const { data } = await supabase
@@ -58,7 +68,6 @@ export default async function OSPage() {
     activeScenario = data
   }
 
-  // 5. Fetch published scenario library
   const { data: scenariosData } = await supabase
     .from("scenarios")
     .select("*")
@@ -66,6 +75,7 @@ export default async function OSPage() {
     .order("created_at", { ascending: false })
 
   const firstBoot = !profile.os_tutorial_completed
+  const welcomeFromAuth = welcome === "1"
 
   return (
     <PraxisDesktop
@@ -75,6 +85,8 @@ export default async function OSPage() {
       activeScenario={activeScenario}
       activeProgress={activeProgressData ?? null}
       firstBoot={firstBoot}
+      resumeIncomplete={resumeIncomplete}
+      welcomeFromAuth={welcomeFromAuth}
     />
   )
 }

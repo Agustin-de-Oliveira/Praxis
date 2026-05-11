@@ -22,4 +22,8 @@ export interface OSProps {
   activeScenario: Scenario | null
   activeProgress: ScenarioProgress | null
   firstBoot: boolean
+  /** Résumé dossier not filed — Browser highlights paths to `/resume` */
+  resumeIncomplete: boolean
+  /** OAuth return path — show welcome copy before boot */
+  welcomeFromAuth: boolean
 }

@@ -79,7 +79,6 @@ praxis/
 │   ├── page.tsx                  # Landing page
 │   ├── login/                    # Auth pages
 │   ├── onboarding/               # New user setup (role, goals)
-│   ├── dashboard/                # User dashboard (scenario list, XP overview)
 │   ├── scenarios/                # Scenario library (browse, filter)
 │   └── scenario/                 # Active scenario experience
 │       ├── [id]/
@@ -112,11 +111,11 @@ praxis/
 │   ├── scenario-types.ts         # Scenario and progress TypeScript contracts
 │   ├── os-types.ts               # Praxis OS shell types
 │   └── utils.ts                  # cn() and shared utilities
+├── proxy.ts                      # Supabase session refresh + protected-route redirects (Next.js 16+)
 ├── utils/
 │   └── supabase/
 │       ├── client.ts             # Browser Supabase client
-│       ├── server.ts             # Server Component Supabase client
-│       └── middleware.ts         # Legacy helper for request-bound clients
+│       └── server.ts             # Server Component / Route Handler Supabase client
 │
 ├── hooks/                        # Custom React hooks
 ├── styles/                       # Additional stylesheets (if needed)
@@ -140,7 +139,7 @@ The App Router enables co-located Server Components, streaming, and Server Actio
 Praxis no longer uses Drizzle or Prisma. The app reads and writes Supabase tables directly through `supabase-js` and `@supabase/ssr`. TypeScript contracts live in `lib/scenario-types.ts` and should be kept in sync with the Supabase schema.
 
 ### 3. Supabase for Auth + Database
-Single managed service for both auth and database reduces infrastructure complexity for a solo founder. Supabase Auth handles JWTs, sessions, and SSR cookies out of the box via `@supabase/ssr`.
+Single managed service for both auth and database reduces infrastructure complexity for a solo founder. Supabase Auth handles JWTs, sessions, and SSR cookies out of the box via `@supabase/ssr`. Root [`proxy.ts`](../proxy.ts) (Next.js proxy convention; formerly `middleware.ts`) runs `createServerClient` and `getUser()` on matched requests so sessions refresh and updated cookies reach the browser; [`utils/supabase/server.ts`](../utils/supabase/server.ts) reads the same cookies in Server Components and route handlers. Protected prefixes (e.g. `/os`, `/scenario/…`, `/tour`) redirect to `/login` when unauthenticated. The legacy `/onboarding` route redirects into `/os` where in-shell onboarding runs.
 
 ### 4. AI via Together.ai/Groq (not OpenAI)
 Llama 3 and Mistral are 10–20x cheaper than GPT-4 for inference. For PR review questions and PM pushback, the quality difference is negligible. BYOK as a tier means zero AI cost for that segment.

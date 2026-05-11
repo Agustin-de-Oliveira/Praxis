@@ -192,7 +192,7 @@ export default function ScenarioPage() {
       <div className="relative z-10 flex flex-col min-h-screen">
       {/* Floating Navigation */}
       <div className="fixed top-6 left-6 z-50 flex items-center gap-3">
-        <Link href="/dashboard" className="flex items-center gap-2 px-3 py-2 rounded-sm border border-border bg-card/80 backdrop-blur-sm text-muted-foreground hover:text-foreground transition-colors">
+        <Link href="/os" className="flex items-center gap-2 px-3 py-2 rounded-sm border border-border bg-card/80 backdrop-blur-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft size={14} />
           <span className="font-serif text-[10px] uppercase tracking-widest">Exit</span>
         </Link>

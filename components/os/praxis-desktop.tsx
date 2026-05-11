@@ -7,6 +7,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import {
   ArrowLeft, Save, Trash2, Wifi, Volume2, Search, Bluetooth,
   BatteryCharging, CircleDashed, RefreshCw, Plus, Monitor,
@@ -38,9 +39,12 @@ import DynamicBoard from "@/components/scenario/dynamic-board"
 import DynamicIDE from "@/components/scenario/dynamic-ide"
 import TeamView from "@/components/scenario/team-view"
 import MarketplaceApp from "./apps/marketplace-app"
+import { WelcomeGateway } from "@/components/auth/welcome-gateway"
+import { OsBootScreen } from "@/components/os/os-boot-screen"
 
 import type { OSProps } from "@/lib/os-types"
 import type { Scenario } from "@/lib/scenario-types"
+import type { CSSProperties } from "react"
 
 // ── Program registry ─────────────────────────────────────────────────────────
 
@@ -80,9 +84,16 @@ function createInitialWindows(): WindowState[] {
 
 // ── Component ────────────────────────────────────────────────────────────────
 
+type OsPhase = "welcome" | "boot" | "runtime"
+
 export default function PraxisDesktop({
-  profile, email, scenarios, activeScenario, activeProgress, firstBoot,
+  profile, email, scenarios, activeScenario, activeProgress,
+  firstBoot,
+  resumeIncomplete, welcomeFromAuth,
 }: OSProps) {
+  const router = useRouter()
+  const [phase, setPhase] = useState<OsPhase>(() => (welcomeFromAuth ? "welcome" : "boot"))
+
   // ── OS state ──
   const [windows, setWindows] = useState<WindowState[]>(createInitialWindows)
   const [installedApps, setInstalledApps] = useState<string[]>(["trash", "mail", "browser", "terminal", "marketplace", "settings"])
@@ -96,7 +107,6 @@ export default function PraxisDesktop({
   const [accentColor, setAccentColor] = useState("#a86f44")
   const [applyFontToHeaders, setApplyFontToHeaders] = useState(false)
   const [time, setTime] = useState<Date | null>(null)
-  const [isBooting, setIsBooting] = useState(true)
 
   // ── Mission state ──
   const [currentScenario, setCurrentScenario] = useState<Scenario | null>(activeScenario)
@@ -111,10 +121,20 @@ export default function PraxisDesktop({
   )
 
   useEffect(() => {
-    // Entrance animation trigger
-    const timer = setTimeout(() => setIsBooting(false), 2000)
-    return () => clearTimeout(timer)
-  }, [])
+    if (!welcomeFromAuth && phase === "welcome") setPhase("boot")
+  }, [welcomeFromAuth, phase])
+
+  useEffect(() => {
+    if (phase !== "boot") return
+    const t = setTimeout(() => setPhase("runtime"), 2800)
+    return () => clearTimeout(t)
+  }, [phase])
+
+  const dismissWelcome = () => {
+    setPhase("boot")
+    router.replace("/os")
+    router.refresh()
+  }
 
   // ── UI modals ──
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; items: ContextMenuItem[] } | null>(null)
@@ -258,7 +278,16 @@ export default function PraxisDesktop({
           ? <MailApp scenario={currentScenario} onDownload={() => { }} />
           : <div className="flex-1 flex items-center justify-center text-white/20"><Mail size={48} strokeWidth={1} /><p className="font-mono text-[10px] uppercase tracking-widest ml-4">No messages</p></div>
       case "browser":
-        return <BrowserApp scenarios={scenarios} activeScenarioId={currentScenario?.id ?? null} onAcceptMission={handleAcceptMission} profile={profile} email={email} />
+        return (
+          <BrowserApp
+            scenarios={scenarios}
+            activeScenarioId={currentScenario?.id ?? null}
+            onAcceptMission={handleAcceptMission}
+            profile={profile}
+            email={email}
+            resumeIncomplete={resumeIncomplete}
+          />
+        )
       case "profile":
         return <ProfileApp profile={profile} email={email} activeScenarioTitle={currentScenario?.title ?? null} />
       case "terminal":
@@ -289,6 +318,16 @@ export default function PraxisDesktop({
         .os-shell.force-system-font h1,.os-shell.force-system-font h2,.os-shell.force-system-font h3,.os-shell.force-system-font h4,.os-shell.force-system-font .font-serif { font-family: inherit !important; }
       `}</style>
 
+      <AnimatePresence mode="wait">
+        {phase === "welcome" && (
+          <WelcomeGateway key="welcome" variant="fullscreen" onContinue={dismissWelcome} />
+        )}
+      </AnimatePresence>
+
+      {phase === "boot" && <OsBootScreen minDurationMs={2800} />}
+
+      {phase === "runtime" && (
+      <>
       <motion.div
         initial={{ padding: 0 }}
         animate={{ padding: isWrapped ? "2.5rem" : 0 }}
@@ -296,14 +335,10 @@ export default function PraxisDesktop({
         className="h-screen bg-[#0a0a0a] flex items-center justify-center overflow-hidden"
       >
         <motion.div
-          initial={{ scale: 1.15, opacity: 0, filter: "blur(20px)" }}
-          animate={{
-            scale: isBooting ? 1.05 : 1,
-            opacity: isBooting ? 0.8 : 1,
-            filter: isBooting ? "blur(10px)" : "blur(0px)"
-          }}
-          transition={{ duration: 2.5, ease: [0.16, 1, 0.3, 1] }}
-          style={{ "--accent": accentColor, "--accent-muted": `${accentColor}33` } as any}
+          initial={{ scale: 1.03, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+          style={{ "--accent": accentColor, "--accent-muted": `${accentColor}33` } as CSSProperties}
           className={`os-shell w-full h-full border border-white/[0.06] shadow-[0_0_80px_-20px_rgba(168,111,68,0.08)] overflow-hidden flex flex-col relative transition-all duration-700 ${isWrapped ? "rounded-lg" : "rounded-none border-none"} ${osFont === "jetbrains" ? "font-mono" : "font-sans"} ${applyFontToHeaders ? "force-system-font" : ""}`}
         >
           {/* Background shader */}
@@ -468,6 +503,9 @@ export default function PraxisDesktop({
           </div>
         )}
       </AnimatePresence>
+
+      </>
+      )}
     </>
   )
 }

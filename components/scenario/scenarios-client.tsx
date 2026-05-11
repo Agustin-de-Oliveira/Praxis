@@ -63,7 +63,7 @@ export default function ScenariosClient({ scenarios }: ScenariosClientProps) {
       <div className="mx-auto max-w-5xl px-6 py-12">
 
         {/* Back + Header */}
-        <Link href="/dashboard" className="inline-flex items-center gap-2 font-serif text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors mb-10">
+        <Link href="/os" className="inline-flex items-center gap-2 font-serif text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors mb-10">
           <ArrowLeft size={14} /> Back to Dashboard
         </Link>
 

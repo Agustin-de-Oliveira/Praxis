@@ -34,10 +34,14 @@ The user lands in a clean Praxis OS workspace. It is not yet a full employee wor
 Initial available apps:
 - `Mail.exe`
 - `Browser.exe`
-- `Profile.exe` / CV Builder
-- `Jobs.exe` or Job Board inside Browser
 - `Terminal.exe`
-- `Docs.exe` or internal docs inside Browser
+
+Candidate web surfaces live inside `Browser.exe`, not as separate native apps:
+- profile / CV builder
+- job board
+- company pages
+- docs / internal help
+- application status
 
 The first boot should introduce sections diegetically:
 - "Candidate workspace provisioned."
@@ -45,9 +49,9 @@ The first boot should introduce sections diegetically:
 - "Job board index mounted."
 - "Profile incomplete."
 
-### 2. Build CV
+### 2. Build CV In Browser
 
-Instead of a traditional onboarding form, the user builds a CV/profile.
+Instead of a traditional onboarding form, the user opens `Browser.exe` and builds a CV/profile in a web portal.
 
 Data to collect:
 - name or handle
@@ -59,9 +63,9 @@ Data to collect:
 
 The tone is not "tell us about yourself"; it is "prepare your application packet."
 
-### 3. Apply To Fictional Jobs
+### 3. Apply To Fictional Jobs In Browser
 
-The OS recommends fictional companies and roles based on the CV.
+The browser recommends fictional companies and roles based on the CV.
 
 Example companies:
 - **Northstar Health** — healthtech; backend, privacy, reliability
@@ -117,6 +121,8 @@ This unlocks the employee version of the OS:
 - project board
 - team personas
 - persistent progress
+
+At this point, native apps should represent work tools (`Terminal.exe`, `IDE.exe`, `Kanban.exe`, `Teams.exe`, `Mail.exe`). Browser remains the place for portals: profile, jobs, docs, company pages, and application status.
 
 The next arc is **First Week**.
 
@@ -184,8 +190,8 @@ Recommended campaign shape:
 ```txt
 Candidate Arc
   Candidate OS Boot
-  Build CV
-  Apply to roles
+  Build CV in Browser
+  Apply to roles in Browser
   Technical challenge
   Offer
 
@@ -212,6 +218,7 @@ Role Tracks
 - The user should receive work, not browse exercises.
 - Tools should unlock because a mission grants access.
 - Mail, terminal, browser, IDE, board, and team apps should all carry state.
+- Profile, CV, jobs, company pages, and docs should be browser routes, not standalone OS apps.
 - Progress should be visible as professional growth, not only XP.
 - Failures should branch or recalibrate, not block the user.
 - The learning model should stay real: every game moment maps to an actual workplace skill.
@@ -223,8 +230,8 @@ Role Tracks
 First playable version:
 
 1. Candidate OS first boot.
-2. CV Builder inside OS.
-3. Job Board with 3 fictional companies.
+2. CV Builder inside `Browser.exe`.
+3. Job Board with 3 fictional companies inside `Browser.exe`.
 4. Apply flow.
 5. Mail response.
 6. Short code challenge adapted from SCN-008.

@@ -106,7 +106,7 @@ export default function ScenarioWorkspace({ scenario, initialProgress }: Workspa
 
         {/* Left: Exit + Scenario Info */}
         <div className="flex items-center gap-4">
-          <Link href="/dashboard" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/os" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft size={14} />
             <span className="font-mono text-[10px] uppercase tracking-widest">Exit</span>
           </Link>

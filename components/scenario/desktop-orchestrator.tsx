@@ -340,7 +340,7 @@ export default function DesktopOrchestrator({ scenario, initialProgress }: Deskt
 
             <div className="h-8 backdrop-blur-xl bg-black/40 border-b border-white/[0.06] flex items-center justify-between px-4 shrink-0 relative" style={{ zIndex: 9998 }}>
               <div className="flex items-center gap-3">
-                <Link href="/dashboard" className="flex items-center gap-1.5 text-white/30 hover:text-white/70 transition-colors cursor-pointer">
+                <Link href="/os" className="flex items-center gap-1.5 text-white/30 hover:text-white/70 transition-colors cursor-pointer">
                   <ArrowLeft size={11} />
                   <span className="font-mono text-[9px] uppercase tracking-widest">Logout</span>
                 </Link>

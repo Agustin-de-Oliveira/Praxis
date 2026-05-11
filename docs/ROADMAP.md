@@ -36,7 +36,7 @@ We have successfully built the **Immersive Tour Experience (SCN-008)**, a high-f
 | AI team integration (Live) | 🔄 In Progress | Personas (Sarah, Alex) defined; needs API wiring |
 | **Contextual Workspace Transformation** | ⬜ Not Started | Shift from static tools to mission-driven downloads |
 | **Internal App Marketplace (v1)** | ⬜ Not Started | Central hub for unlocking scenario-specific tooling |
-| **Candidate OS & Hiring Flow** | ⬜ Not Started | CV builder, fictional jobs, applications, mail response, calibration challenge |
+| **Candidate OS & Hiring Flow** | ⬜ Not Started | Browser-based CV builder, fictional jobs, applications, mail response, calibration challenge |
 | User dashboard | ⬜ Not Started | Scenario list + progress overview |
 | 5 total scenarios across categories | 🔄 In Progress | SCN-008 Done; SCN-003 + SCN-007 in design |
 | 5-interaction free gate + upgrade prompt | ⬜ Not Started | Core monetization hook |
