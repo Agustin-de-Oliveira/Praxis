@@ -11,7 +11,7 @@ export interface ScenarioTicket {
   title: string
   description: string
   acceptance_criteria: string[]
-  priority: "low" | "medium" | "high" | "critical"
+  priority: 'low' | 'medium' | 'high' | 'critical'
 }
 
 export interface ScenarioCheckpoint {
@@ -41,15 +41,15 @@ export interface RepoInitial {
 }
 
 export interface StoryItem {
-  type: "message" | "context" | "choice" | "system"
-  view?: "channel" | "dm"
+  type: 'message' | 'context' | 'choice' | 'system'
+  view?: 'channel' | 'dm'
   role?: string
   name?: string
   content: string
-  delay?: number       // Now optional, code will handle default pacing
-  options?: string[] 
-  reactions?: string[] 
-  isTicket?: boolean   
+  delay?: number // Now optional, code will handle default pacing
+  options?: string[]
+  reactions?: string[]
+  isTicket?: boolean
 }
 
 export interface Scenario {
@@ -58,9 +58,9 @@ export interface Scenario {
   title: string
   description: string | null
   story?: StoryItem[] // Rich backstory narrative
-  type: "simple" | "complex" | "end-to-end"
+  type: 'simple' | 'complex' | 'end-to-end'
   category: string
-  difficulty: "beginner" | "intermediate" | "advanced" | "expert"
+  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert'
   estimated_duration_minutes: number
   tags: string[]
   ticket: ScenarioTicket
@@ -82,7 +82,7 @@ export interface ScenarioProgress {
   id: string
   user_id: string
   scenario_id: string
-  status: "not_started" | "in_progress" | "completed" | "abandoned"
+  status: 'not_started' | 'in_progress' | 'completed' | 'abandoned'
   started_at: string | null
   completed_at: string | null
   checkpoints_passed: string[] // array of checkpoint IDs
@@ -94,4 +94,4 @@ export interface ScenarioProgress {
 
 // ── View modes for the workspace orchestrator ────────────────────────────────
 
-export type WorkspaceView = "hub" | "board" | "ide" | "team" | "terminal"
+export type WorkspaceView = 'hub' | 'board' | 'ide' | 'team' | 'terminal'

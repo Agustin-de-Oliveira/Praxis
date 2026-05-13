@@ -1,13 +1,24 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Mail, Star, Send, Trash2, Archive, Inbox,
-  ChevronLeft, ChevronRight, MoreVertical, Paperclip,
-  CheckCircle2, AlertCircle, Clock, ShieldCheck
-} from "lucide-react"
-import type { Scenario } from "@/lib/scenario-types"
+  Mail,
+  Star,
+  Send,
+  Trash2,
+  Archive,
+  Inbox,
+  ChevronLeft,
+  ChevronRight,
+  MoreVertical,
+  Paperclip,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  ShieldCheck,
+} from 'lucide-react'
+import type { Scenario } from '@/lib/scenario-types'
 
 interface MailAppProps {
   scenario?: Scenario
@@ -30,10 +41,10 @@ export default function MailApp({ scenario, onDownload, initialEmails }: MailApp
   const defaultEmails = [
     {
       id: 0,
-      from: "Elena (Eng Ops)",
-      role: "Candidate Experience",
-      subject: "Welcome to your Praxis Workstation",
-      time: "Just now",
+      from: 'Elena (Eng Ops)',
+      role: 'Candidate Experience',
+      subject: 'Welcome to your Praxis Workstation',
+      time: 'Just now',
       isUnread: true,
       content: `Hello,
 
@@ -48,29 +59,33 @@ If you have questions, the internal docs are available at praxis://docs.
 
 Good luck,
 Elena`,
-      attachments: []
+      attachments: [],
     },
     {
       id: 1,
-      from: "System",
-      role: "OS Kernel",
-      subject: "Workspace Provisioning Report",
-      time: "2m ago",
+      from: 'System',
+      role: 'OS Kernel',
+      subject: 'Workspace Provisioning Report',
+      time: '2m ago',
       isUnread: false,
-      content: "All systems nominal. Encrypted tunnel established. Terminal, Browser, and Mail services are online. Local storage mounted at /home/candidate.",
-      attachments: ["system_report.log"]
-    }
+      content:
+        'All systems nominal. Encrypted tunnel established. Terminal, Browser, and Mail services are online. Local storage mounted at /home/candidate.',
+      attachments: ['system_report.log'],
+    },
   ]
 
-  const emails = initialEmails || (scenario ? [
-    {
-      id: 0,
-      from: "Sarah Chen",
-      role: "Senior Developer",
-      subject: `Project Access Provisioned: ${scenario.ticket.key}`,
-      time: "10:42 AM",
-      isUnread: true,
-      content: `Hey,
+  const emails =
+    initialEmails ||
+    (scenario
+      ? [
+          {
+            id: 0,
+            from: 'Sarah Chen',
+            role: 'Senior Developer',
+            subject: `Project Access Provisioned: ${scenario.ticket.key}`,
+            time: '10:42 AM',
+            isUnread: true,
+            content: `Hey,
       
 I've just finished provisioning your access to the repository for ${scenario.ticket.key}. 
 
@@ -83,10 +98,11 @@ Branch: feature/fix-hydration
 
 Good luck,
 Sarah`,
-      attachments: ["spec_brief.pdf", "access_keys.gpg"]
-    },
-    ...defaultEmails.map(e => ({ ...e, id: e.id + 1 }))
-  ] : defaultEmails)
+            attachments: ['spec_brief.pdf', 'access_keys.gpg'],
+          },
+          ...defaultEmails.map((e) => ({ ...e, id: e.id + 1 })),
+        ]
+      : defaultEmails)
 
   return (
     <div className="flex-1 flex overflow-hidden bg-[#0A0A0A]">
@@ -98,18 +114,23 @@ Sarah`,
         </button>
 
         {[
-          { icon: Inbox, label: "Inbox", count: 1, active: true },
-          { icon: Star, label: "Starred", count: 0 },
-          { icon: Send, label: "Sent", count: 12 },
-          { icon: Archive, label: "Archive", count: 452 },
-          { icon: Trash2, label: "Trash", count: 3 }
+          { icon: Inbox, label: 'Inbox', count: 1, active: true },
+          { icon: Star, label: 'Starred', count: 0 },
+          { icon: Send, label: 'Sent', count: 12 },
+          { icon: Archive, label: 'Archive', count: 452 },
+          { icon: Trash2, label: 'Trash', count: 3 },
         ].map((item, i) => (
-          <button key={i} className={`flex items-center justify-between px-3 py-2 rounded-sm transition-colors ${item.active ? "bg-white/10 text-white" : "text-white/40 hover:bg-white/5 hover:text-white/60"}`}>
+          <button
+            key={i}
+            className={`flex items-center justify-between px-3 py-2 rounded-sm transition-colors ${item.active ? 'bg-white/10 text-white' : 'text-white/40 hover:bg-white/5 hover:text-white/60'}`}
+          >
             <div className="flex items-center gap-3">
-              <item.icon size={14} className={item.active ? "text-[#a86f44]" : ""} />
+              <item.icon size={14} className={item.active ? 'text-[#a86f44]' : ''} />
               <span className="font-mono text-[9px] uppercase tracking-widest">{item.label}</span>
             </div>
-            {item.count > 0 && <span className="font-mono text-[8px] opacity-40">{item.count}</span>}
+            {item.count > 0 && (
+              <span className="font-mono text-[8px] opacity-40">{item.count}</span>
+            )}
           </button>
         ))}
       </div>
@@ -117,7 +138,9 @@ Sarah`,
       {/* Mail List */}
       <div className="w-[350px] border-r border-white/5 flex flex-col bg-black/20">
         <div className="p-3 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
-          <span className="font-mono text-[9px] uppercase tracking-widest text-white/20">Inbox</span>
+          <span className="font-mono text-[9px] uppercase tracking-widest text-white/20">
+            Inbox
+          </span>
           <div className="flex items-center gap-2">
             <ChevronLeft size={14} className="text-white/20 cursor-not-allowed" />
             <ChevronRight size={14} className="text-white/20 cursor-not-allowed" />
@@ -128,15 +151,27 @@ Sarah`,
             <button
               key={mail.id}
               onClick={() => setSelectedMail(mail.id)}
-              className={`w-full p-4 border-b border-white/5 text-left transition-all relative ${selectedMail === mail.id ? "bg-[#a86f44]/5 border-l-2 border-l-[#a86f44]" : "hover:bg-white/5 border-l-2 border-l-transparent"}`}
+              className={`w-full p-4 border-b border-white/5 text-left transition-all relative ${selectedMail === mail.id ? 'bg-[#a86f44]/5 border-l-2 border-l-[#a86f44]' : 'hover:bg-white/5 border-l-2 border-l-transparent'}`}
             >
-              {mail.isUnread && <div className="absolute top-5 right-4 w-1.5 h-1.5 rounded-full bg-[#a86f44]" />}
+              {mail.isUnread && (
+                <div className="absolute top-5 right-4 w-1.5 h-1.5 rounded-full bg-[#a86f44]" />
+              )}
               <div className="flex items-center justify-between mb-1">
-                <span className={`font-mono text-[10px] uppercase tracking-wider ${mail.isUnread ? "text-white" : "text-white/60"}`}>{mail.from}</span>
+                <span
+                  className={`font-mono text-[10px] uppercase tracking-wider ${mail.isUnread ? 'text-white' : 'text-white/60'}`}
+                >
+                  {mail.from}
+                </span>
                 <span className="font-mono text-[8px] text-white/20">{mail.time}</span>
               </div>
-              <p className={`text-[11px] truncate mb-1 ${mail.isUnread ? "text-white/90" : "text-white/40"}`}>{mail.subject}</p>
-              <p className="text-[10px] text-white/20 truncate line-clamp-1 italic">{mail.content}</p>
+              <p
+                className={`text-[11px] truncate mb-1 ${mail.isUnread ? 'text-white/90' : 'text-white/40'}`}
+              >
+                {mail.subject}
+              </p>
+              <p className="text-[10px] text-white/20 truncate line-clamp-1 italic">
+                {mail.content}
+              </p>
             </button>
           ))}
         </div>
@@ -155,35 +190,63 @@ Sarah`,
             >
               <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
                 <div className="flex items-center gap-3">
-                  <button className="p-1.5 rounded-sm hover:bg-white/10 text-white/40 transition-colors"><Archive size={14} /></button>
-                  <button className="p-1.5 rounded-sm hover:bg-white/10 text-white/40 transition-colors"><AlertCircle size={14} /></button>
-                  <button className="p-1.5 rounded-sm hover:bg-white/10 text-white/40 transition-colors text-red-500/40 hover:text-red-500"><Trash2 size={14} /></button>
+                  <button className="p-1.5 rounded-sm hover:bg-white/10 text-white/40 transition-colors">
+                    <Archive size={14} />
+                  </button>
+                  <button className="p-1.5 rounded-sm hover:bg-white/10 text-white/40 transition-colors">
+                    <AlertCircle size={14} />
+                  </button>
+                  <button className="p-1.5 rounded-sm hover:bg-white/10 text-white/40 transition-colors text-red-500/40 hover:text-red-500">
+                    <Trash2 size={14} />
+                  </button>
                   <div className="w-px h-4 bg-white/5 mx-1" />
-                  <button className="p-1.5 rounded-sm hover:bg-white/10 text-white/40 transition-colors"><Clock size={14} /></button>
-                  <button className="p-1.5 rounded-sm hover:bg-white/10 text-white/40 transition-colors"><CheckCircle2 size={14} /></button>
+                  <button className="p-1.5 rounded-sm hover:bg-white/10 text-white/40 transition-colors">
+                    <Clock size={14} />
+                  </button>
+                  <button className="p-1.5 rounded-sm hover:bg-white/10 text-white/40 transition-colors">
+                    <CheckCircle2 size={14} />
+                  </button>
                 </div>
-                <button className="p-1.5 rounded-sm hover:bg-white/10 text-white/40 transition-colors"><MoreVertical size={14} /></button>
+                <button className="p-1.5 rounded-sm hover:bg-white/10 text-white/40 transition-colors">
+                  <MoreVertical size={14} />
+                </button>
               </div>
 
               <div className="flex-1 overflow-y-auto p-8 max-w-3xl mx-auto w-full select-text">
-                <h2 className="font-serif text-2xl text-white mb-6 leading-tight">{emails[selectedMail].subject}</h2>
+                <h2 className="font-serif text-2xl text-white mb-6 leading-tight">
+                  {emails[selectedMail].subject}
+                </h2>
 
                 <div className="flex items-center justify-between mb-8 pb-8 border-b border-white/5">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-sm bg-[#a86f44]/20 border border-[#a86f44]/30 flex items-center justify-center text-[#a86f44] font-bold">
-                      {emails[selectedMail].from.split(' ').map((n: string) => n[0]).join('')}
+                      {emails[selectedMail].from
+                        .split(' ')
+                        .map((n: string) => n[0])
+                        .join('')}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-white">{emails[selectedMail].from}</span>
-                        <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">&lt;{emails[selectedMail].from.toLowerCase().replace(' ', '.')}@praxis.internal&gt;</span>
+                        <span className="text-sm font-medium text-white">
+                          {emails[selectedMail].from}
+                        </span>
+                        <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">
+                          &lt;{emails[selectedMail].from.toLowerCase().replace(' ', '.')}
+                          @praxis.internal&gt;
+                        </span>
                       </div>
-                      <p className="font-mono text-[9px] text-[#a86f44] uppercase tracking-[0.2em] mt-0.5">{emails[selectedMail].role}</p>
+                      <p className="font-mono text-[9px] text-[#a86f44] uppercase tracking-[0.2em] mt-0.5">
+                        {emails[selectedMail].role}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="font-mono text-[10px] text-white/20">{emails[selectedMail].time}</span>
-                    <button className="px-3 py-1 border border-white/10 rounded-sm text-[10px] text-white/40 hover:bg-white/5 font-mono uppercase">Reply</button>
+                    <span className="font-mono text-[10px] text-white/20">
+                      {emails[selectedMail].time}
+                    </span>
+                    <button className="px-3 py-1 border border-white/10 rounded-sm text-[10px] text-white/40 hover:bg-white/5 font-mono uppercase">
+                      Reply
+                    </button>
                   </div>
                 </div>
 
@@ -193,21 +256,30 @@ Sarah`,
 
                 {emails[selectedMail].attachments.length > 0 && (
                   <div className="space-y-3">
-                    <p className="font-mono text-[9px] uppercase tracking-widest text-white/20 mb-2">Attachments ({emails[selectedMail].attachments.length})</p>
+                    <p className="font-mono text-[9px] uppercase tracking-widest text-white/20 mb-2">
+                      Attachments ({emails[selectedMail].attachments.length})
+                    </p>
                     <div className="grid grid-cols-2 gap-3">
                       {emails[selectedMail].attachments.map((file: any, idx: number) => (
                         <div
                           key={idx}
                           onClick={() => !downloading && handleDownload(file)}
-                          className={`p-3 bg-white/[0.02] border rounded-sm flex items-center justify-between group transition-all cursor-pointer ${downloading === file ? "border-[#a86f44] animate-pulse" : "border-white/5 hover:border-white/20"}`}
+                          className={`p-3 bg-white/[0.02] border rounded-sm flex items-center justify-between group transition-all cursor-pointer ${downloading === file ? 'border-[#a86f44] animate-pulse' : 'border-white/5 hover:border-white/20'}`}
                         >
                           <div className="flex items-center gap-3">
-                            <Paperclip size={12} className={`transition-colors ${downloading === file ? "text-[#a86f44]" : "text-white/40 group-hover:text-[#a86f44]"}`} />
-                            <span className={`font-mono text-[10px] uppercase tracking-widest transition-colors ${downloading === file ? "text-[#a86f44]" : "text-white/60 group-hover:text-white"}`}>
-                              {downloading === file ? "Downloading..." : file}
+                            <Paperclip
+                              size={12}
+                              className={`transition-colors ${downloading === file ? 'text-[#a86f44]' : 'text-white/40 group-hover:text-[#a86f44]'}`}
+                            />
+                            <span
+                              className={`font-mono text-[10px] uppercase tracking-widest transition-colors ${downloading === file ? 'text-[#a86f44]' : 'text-white/60 group-hover:text-white'}`}
+                            >
+                              {downloading === file ? 'Downloading...' : file}
                             </span>
                           </div>
-                          <span className="font-mono text-[8px] text-white/10 uppercase group-hover:text-white/40">244 KB</span>
+                          <span className="font-mono text-[8px] text-white/10 uppercase group-hover:text-white/40">
+                            244 KB
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -216,14 +288,18 @@ Sarah`,
 
                 <div className="mt-12 pt-8 border-t border-white/5 flex items-center gap-4 text-white/20">
                   <ShieldCheck size={14} className="text-emerald-500/40" />
-                  <p className="font-mono text-[8px] uppercase tracking-widest">Message verified via Praxis Secure Gateway</p>
+                  <p className="font-mono text-[8px] uppercase tracking-widest">
+                    Message verified via Praxis Secure Gateway
+                  </p>
                 </div>
               </div>
             </motion.div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center gap-4 opacity-20">
               <Mail size={48} strokeWidth={1} />
-              <p className="font-mono text-[10px] uppercase tracking-[0.4em]">Select an email to view</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.4em]">
+                Select an email to view
+              </p>
             </div>
           )}
         </AnimatePresence>

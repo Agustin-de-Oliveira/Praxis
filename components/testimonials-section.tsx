@@ -1,30 +1,33 @@
-'use client';
+'use client'
 
-import { Quote } from "lucide-react";
+import { Quote } from 'lucide-react'
 
 const testimonials = [
   {
-    quote: "I used Praxis for two weeks before my first backend role. On day one, I already knew how to navigate a codebase, run migrations, and handle a PR review. My manager thought I had prior experience.",
-    name: "Elena V.",
-    role: "Junior Backend Engineer",
-    company: "Series B Fintech",
-    highlight: "My manager thought I had prior experience.",
+    quote:
+      'I used Praxis for two weeks before my first backend role. On day one, I already knew how to navigate a codebase, run migrations, and handle a PR review. My manager thought I had prior experience.',
+    name: 'Elena V.',
+    role: 'Junior Backend Engineer',
+    company: 'Series B Fintech',
+    highlight: 'My manager thought I had prior experience.',
   },
   {
-    quote: "The scenarios don't feel like tutorials — they feel like work. The first time a simulated PM pushed back on my implementation, I realized this was completely different from anything else I'd tried.",
-    name: "Marcus T.",
-    role: "Full-Stack Developer",
-    company: "Consulting Agency",
-    highlight: "they feel like work.",
+    quote:
+      "The scenarios don't feel like tutorials — they feel like work. The first time a simulated PM pushed back on my implementation, I realized this was completely different from anything else I'd tried.",
+    name: 'Marcus T.',
+    role: 'Full-Stack Developer',
+    company: 'Consulting Agency',
+    highlight: 'they feel like work.',
   },
   {
-    quote: "I've been hiring juniors for years. The ones who come through platforms like this show up with a fundamentally different level of readiness. They ask better questions, they scope better, they ship faster.",
-    name: "Sarah K.",
-    role: "Engineering Manager",
-    company: "Enterprise SaaS",
-    highlight: "a fundamentally different level of readiness.",
+    quote:
+      "I've been hiring juniors for years. The ones who come through platforms like this show up with a fundamentally different level of readiness. They ask better questions, they scope better, they ship faster.",
+    name: 'Sarah K.',
+    role: 'Engineering Manager',
+    company: 'Enterprise SaaS',
+    highlight: 'a fundamentally different level of readiness.',
   },
-];
+]
 
 export function TestimonialsSection() {
   return (
@@ -34,7 +37,8 @@ export function TestimonialsSection() {
           From the field
         </p>
         <h2 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground font-serif">
-          Real developers.<br />
+          Real developers.
+          <br />
           <span className="text-[#a86f44]">Real outcomes.</span>
         </h2>
       </div>
@@ -55,11 +59,13 @@ export function TestimonialsSection() {
             <div className="mt-8 pt-5 border-t border-border/50">
               <p className="text-sm font-medium text-foreground">{t.name}</p>
               <p className="text-[11px] text-muted-foreground mt-0.5">{t.role}</p>
-              <p className="font-serif text-[10px] text-muted-foreground/60 uppercase tracking-widest mt-1">{t.company}</p>
+              <p className="font-serif text-[10px] text-muted-foreground/60 uppercase tracking-widest mt-1">
+                {t.company}
+              </p>
             </div>
           </div>
         ))}
       </div>
     </section>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // components/tour/tour-progress-bar.tsx
@@ -6,18 +6,18 @@
 // Also shows the current phase label.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { motion } from "framer-motion"
-import type { TourPhase } from "@/lib/first-day-data"
+import { motion } from 'framer-motion'
+import type { TourPhase } from '@/lib/first-day-data'
 
 const PHASES: { id: TourPhase; label: string }[] = [
-  { id: "storyline", label: "Context" },
-  { id: "ticket", label: "Ticket" },
-  { id: "orientation", label: "Codebase" },
-  { id: "implement", label: "Implement" },
-  { id: "testing", label: "Tests" },
-  { id: "checkpoint", label: "Checkpoints" },
-  { id: "pr", label: "PR Review" },
-  { id: "debrief", label: "Debrief" },
+  { id: 'storyline', label: 'Context' },
+  { id: 'ticket', label: 'Ticket' },
+  { id: 'orientation', label: 'Codebase' },
+  { id: 'implement', label: 'Implement' },
+  { id: 'testing', label: 'Tests' },
+  { id: 'checkpoint', label: 'Checkpoints' },
+  { id: 'pr', label: 'PR Review' },
+  { id: 'debrief', label: 'Debrief' },
 ]
 
 const PHASE_INDEX: Record<TourPhase, number> = {
@@ -46,7 +46,7 @@ export default function TourProgressBar({
   // Overall progress: each phase = 20%, checkpoints split across implement+checkpoint phases
   const base = (phaseIdx / PHASES.length) * 100
   const cpFraction =
-    phase === "checkpoint" && totalCheckpoints > 0
+    phase === 'checkpoint' && totalCheckpoints > 0
       ? (checkpointsDone / totalCheckpoints) * (100 / PHASES.length)
       : 0
   const progress = Math.min(100, base + cpFraction)
@@ -58,7 +58,7 @@ export default function TourProgressBar({
         <motion.div
           className="h-full bg-gradient-to-r from-[#8a5a35] via-[#a86f44] to-[#c4884f]"
           animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
         />
       </div>
 
@@ -73,15 +73,15 @@ export default function TourProgressBar({
                 <div
                   className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                     done
-                      ? "bg-[#a86f44]"
+                      ? 'bg-[#a86f44]'
                       : active
-                      ? "bg-[#a86f44] shadow-[0_0_6px_rgba(168,111,68,0.8)]"
-                      : "bg-white/10"
+                        ? 'bg-[#a86f44] shadow-[0_0_6px_rgba(168,111,68,0.8)]'
+                        : 'bg-white/10'
                   }`}
                 />
                 <span
                   className={`font-mono text-[9px] uppercase tracking-widest transition-colors duration-300 ${
-                    active ? "text-[#a86f44]" : done ? "text-white/30" : "text-white/15"
+                    active ? 'text-[#a86f44]' : done ? 'text-white/30' : 'text-white/15'
                   }`}
                 >
                   {p.label}
@@ -90,7 +90,7 @@ export default function TourProgressBar({
               {i < PHASES.length - 1 && (
                 <div
                   className={`mx-3 h-px w-6 transition-colors duration-300 ${
-                    done ? "bg-[#a86f44]/40" : "bg-white/8"
+                    done ? 'bg-[#a86f44]/40' : 'bg-white/8'
                   }`}
                 />
               )}

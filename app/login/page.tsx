@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // app/login/page.tsx
@@ -6,23 +6,32 @@
 // Handles both login and register modes.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import Link from "next/link"
-import { Suspense, useState, useEffect } from "react"
-import { AnimatePresence } from "framer-motion"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Terminal, ArrowRight, Github, Chrome, Mail, Lock, AlertCircle, CheckCircle } from "lucide-react"
-import { Dithering } from "@paper-design/shaders-react"
-import ThermodynamicGrid from "@/components/interactive-thermodynamic-grid"
-import { WelcomeGateway } from "@/components/auth/welcome-gateway"
-import { createClient } from "@/utils/supabase/client"
+import Link from 'next/link'
+import { Suspense, useState, useEffect } from 'react'
+import { AnimatePresence } from 'framer-motion'
+import { useRouter, useSearchParams } from 'next/navigation'
+import {
+  Terminal,
+  ArrowRight,
+  Github,
+  Chrome,
+  Mail,
+  Lock,
+  AlertCircle,
+  CheckCircle,
+} from 'lucide-react'
+import { Dithering } from '@paper-design/shaders-react'
+import ThermodynamicGrid from '@/components/interactive-thermodynamic-grid'
+import { WelcomeGateway } from '@/components/auth/welcome-gateway'
+import { createClient } from '@/utils/supabase/client'
 
 function LoginPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const [mode, setMode] = useState<"login" | "register">("login")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [mode, setMode] = useState<'login' | 'register'>('login')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -30,8 +39,8 @@ function LoginPageInner() {
 
   // Read error from OAuth callback redirect (e.g. ?error=auth_callback_error)
   useEffect(() => {
-    if (searchParams.get("error")) {
-      setError("Authentication failed. Please try again.")
+    if (searchParams.get('error')) {
+      setError('Authentication failed. Please try again.')
     }
   }, [searchParams])
 
@@ -45,7 +54,7 @@ function LoginPageInner() {
     setError(null)
     setSuccess(null)
 
-    if (mode === "login") {
+    if (mode === 'login') {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) {
         setError(error.message)
@@ -68,14 +77,14 @@ function LoginPageInner() {
         return
       }
       // Supabase may require email confirmation — show a message and wait
-      setSuccess("Account created! Check your email to confirm, then sign in.")
+      setSuccess('Account created! Check your email to confirm, then sign in.')
       setLoading(false)
     }
   }
 
   // ── OAuth ──────────────────────────────────────────────────────────────────
 
-  const handleOAuth = async (provider: "github" | "google") => {
+  const handleOAuth = async (provider: 'github' | 'google') => {
     setError(null)
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
@@ -89,20 +98,19 @@ function LoginPageInner() {
   // ── Mode toggle ────────────────────────────────────────────────────────────
 
   const switchMode = () => {
-    setMode(mode === "login" ? "register" : "login")
+    setMode(mode === 'login' ? 'register' : 'login')
     setError(null)
     setSuccess(null)
   }
 
   const continueToOs = () => {
     setShowPostSignInGate(false)
-    router.push("/os")
+    router.push('/os')
     router.refresh()
   }
 
   return (
     <div className="min-h-screen relative flex items-center justify-center px-6 py-12">
-
       <AnimatePresence>
         {showPostSignInGate && (
           <WelcomeGateway key="post-signin-gate" variant="fullscreen" onContinue={continueToOs} />
@@ -112,7 +120,7 @@ function LoginPageInner() {
       {/* Dithering background */}
       <div className="absolute inset-0 h-full w-full">
         <Dithering
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: '100%', width: '100%' }}
           colorBack="hsla(0, 0%, 0%, 1.00)"
           colorFront="hsl(0, 0%, 5%)"
           shape="warp"
@@ -128,10 +136,8 @@ function LoginPageInner() {
 
       {/* Floating card */}
       <div className="relative z-10 w-full max-w-4xl flex rounded-sm border border-border overflow-hidden shadow-2xl">
-
         {/* ── Left: Form ────────────────────────────────── */}
         <div className="flex flex-col justify-between w-full md:w-[380px] shrink-0 bg-card px-10 py-10">
-
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 self-start group mb-10">
             <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-foreground">
@@ -145,13 +151,21 @@ function LoginPageInner() {
           {/* Heading */}
           <div className="mb-8">
             <p className="font-serif text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
-              {mode === "login" ? "Welcome back" : "Get started"}
+              {mode === 'login' ? 'Welcome back' : 'Get started'}
             </p>
             <h1 className="text-2xl font-medium tracking-tight text-foreground font-serif leading-tight">
-              {mode === "login" ? (
-                <>Sign in to your<br /><span className="text-[#a86f44]">workspace.</span></>
+              {mode === 'login' ? (
+                <>
+                  Sign in to your
+                  <br />
+                  <span className="text-[#a86f44]">workspace.</span>
+                </>
               ) : (
-                <>Create your<br /><span className="text-[#a86f44]">account.</span></>
+                <>
+                  Create your
+                  <br />
+                  <span className="text-[#a86f44]">account.</span>
+                </>
               )}
             </h1>
           </div>
@@ -160,7 +174,7 @@ function LoginPageInner() {
           <div className="space-y-2 mb-6">
             <button
               id="btn-oauth-github"
-              onClick={() => handleOAuth("github")}
+              onClick={() => handleOAuth('github')}
               className="w-full flex items-center justify-center gap-3 h-10 rounded-sm border border-border bg-secondary hover:bg-secondary/60 text-xs font-medium text-foreground transition-colors cursor-pointer"
             >
               <Github className="h-4 w-4" />
@@ -168,7 +182,7 @@ function LoginPageInner() {
             </button>
             <button
               id="btn-oauth-google"
-              onClick={() => handleOAuth("google")}
+              onClick={() => handleOAuth('google')}
               className="w-full flex items-center justify-center gap-3 h-10 rounded-sm border border-border bg-secondary hover:bg-secondary/60 text-xs font-medium text-foreground transition-colors cursor-pointer"
             >
               <Chrome className="h-4 w-4" />
@@ -227,9 +241,12 @@ function LoginPageInner() {
               </div>
             </div>
 
-            {mode === "login" && (
+            {mode === 'login' && (
               <div className="flex justify-end">
-                <button type="button" className="font-serif text-[10px] uppercase tracking-widest text-muted-foreground hover:text-[#a86f44] transition-colors cursor-pointer">
+                <button
+                  type="button"
+                  className="font-serif text-[10px] uppercase tracking-widest text-muted-foreground hover:text-[#a86f44] transition-colors cursor-pointer"
+                >
                   Forgot password?
                 </button>
               </div>
@@ -258,11 +275,11 @@ function LoginPageInner() {
               {loading ? (
                 <span className="flex items-center gap-2">
                   <span className="w-3.5 h-3.5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
-                  {mode === "login" ? "Signing in…" : "Creating account…"}
+                  {mode === 'login' ? 'Signing in…' : 'Creating account…'}
                 </span>
               ) : (
                 <>
-                  {mode === "login" ? "Sign in" : "Create account"}
+                  {mode === 'login' ? 'Sign in' : 'Create account'}
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                 </>
               )}
@@ -272,12 +289,12 @@ function LoginPageInner() {
           {/* Toggle + footer */}
           <div className="flex flex-col gap-4 mt-auto">
             <p className="text-xs text-muted-foreground">
-              {mode === "login" ? "No account yet?" : "Already have an account?"}{" "}
+              {mode === 'login' ? 'No account yet?' : 'Already have an account?'}{' '}
               <button
                 onClick={switchMode}
                 className="text-[#a86f44] hover:text-foreground transition-colors cursor-pointer font-medium"
               >
-                {mode === "login" ? "Sign up free" : "Sign in"}
+                {mode === 'login' ? 'Sign up free' : 'Sign in'}
               </button>
             </p>
             <p className="font-serif text-[9px] uppercase tracking-widest text-muted-foreground/40">
@@ -288,17 +305,14 @@ function LoginPageInner() {
 
         {/* ── Right: ThermodynamicGrid ───────────────────── */}
         <div className="relative hidden md:flex flex-1 flex-col items-center justify-center overflow-hidden min-h-[500px]">
-          <ThermodynamicGrid
-            resolution={22}
-            coolingFactor={0.97}
-            className="absolute inset-0"
-          />
+          <ThermodynamicGrid resolution={22} coolingFactor={0.97} className="absolute inset-0" />
 
           {/* Overlay quote */}
           <div className="relative z-10 px-10 text-center pointer-events-none select-none">
             <blockquote className="text-lg font-serif font-medium text-foreground/90 leading-snug mb-4">
-              "The best way to learn<br />engineering is to{" "}
-              <span className="text-[#a86f44]">engineer something.</span>"
+              "The best way to learn
+              <br />
+              engineering is to <span className="text-[#a86f44]">engineer something.</span>"
             </blockquote>
             <p className="font-serif text-[10px] uppercase tracking-widest text-muted-foreground/60">
               — The Praxis Manifesto
@@ -310,7 +324,6 @@ function LoginPageInner() {
             Move cursor to explore
           </p>
         </div>
-
       </div>
     </div>
   )

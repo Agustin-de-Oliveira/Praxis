@@ -179,6 +179,7 @@ Rules:
 ### SCN-003 — JWT Auth with Refresh Tokens
 
 #### @pm_bot Opening Message
+
 ```
 Opening message (verbatim, from the ticket):
 "Antes del demo del jueves necesito que las rutas protegidas tengan auth real.
@@ -188,6 +189,7 @@ No rompas el registro que ya funciona."
 ```
 
 #### @senior_dev PR Review Questions
+
 ```
 PR_REVIEW_QUESTIONS:
 1. "El refresh token lo estás guardando en memoria. ¿Qué pasa cuando el servidor se reinicia?"
@@ -195,6 +197,7 @@ PR_REVIEW_QUESTIONS:
 ```
 
 #### @senior_dev Debrief Note
+
 ```
 "En producción, los refresh tokens van en la base de datos, no en memoria.
 Redis si necesitás revocación rápida. Lo que armaste funciona — pero no sobrevive un restart."
@@ -205,23 +208,27 @@ Redis si necesitás revocación rápida. Lo que armaste funciona — pero no sob
 ### SCN-007 — The Friday Deploy
 
 #### @pm_bot Opening Message
+
 ```
 "Hay un deploy a las 6. Necesito rate limiting en /api/search antes de que salga a producción,
 el cliente se quejó de abuse."
 ```
 
 #### @backend_dev Event 1 (inject_commit at 20min)
+
 ```
 "ey pushié un fix rápido antes del deploy, espero no haber roto nada lol"
 ```
 
 #### @pm_bot Event 2 (scope creep after checkpoint 2)
+
 ```
 "Oye, el cliente también mencionó /api/export, ¿podemos meterle rate limiting ahí también?
 Es quick supongo"
 ```
 
 #### @senior_dev Event 3 (CI break, time_remaining:10min)
+
 ```
 Triggered only if developer asks for help after CI breaks.
 Response: "Mirá el paso 3 del CI log."
@@ -229,6 +236,7 @@ If not asked: [no response — intentional silence]
 ```
 
 #### @senior_dev PR Review Question
+
 ```
 "Si el rate limiter cae, ¿la API sigue funcionando o explota todo?"
 ```
@@ -257,8 +265,8 @@ Before using any prompt in production, verify:
 
 ### Model Version Log
 
-| Date | Model | Notes |
-|------|-------|-------|
+| Date       | Model               | Notes                                         |
+| ---------- | ------------------- | --------------------------------------------- |
 | 2026-05-07 | Not yet implemented | Prompt templates only — no live inference yet |
 
 ---

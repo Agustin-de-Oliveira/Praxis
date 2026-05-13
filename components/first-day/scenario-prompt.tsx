@@ -1,13 +1,13 @@
-"use client"
+'use client'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // components/first-day/scenario-prompt.tsx
 // "Ready to start?" — clean blur-in animations, Dithering background.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { motion, type Variants } from "framer-motion"
-import { Zap, SkipForward } from "lucide-react"
-import { Dithering } from "@paper-design/shaders-react"
+import { motion, type Variants } from 'framer-motion'
+import { Zap, SkipForward } from 'lucide-react'
+import { Dithering } from '@paper-design/shaders-react'
 
 interface ScenarioPromptProps {
   onStart: () => void
@@ -22,11 +22,11 @@ const container: Variants = {
 }
 
 const reveal: Variants = {
-  hidden: { opacity: 0, filter: "blur(6px)" },
+  hidden: { opacity: 0, filter: 'blur(6px)' },
   visible: {
     opacity: 1,
-    filter: "blur(0px)",
-    transition: { duration: 0.3, ease: "easeOut" as const },
+    filter: 'blur(0px)',
+    transition: { duration: 0.3, ease: 'easeOut' as const },
   },
 }
 
@@ -38,7 +38,7 @@ export default function ScenarioPrompt({ onStart, onSkip }: ScenarioPromptProps)
       {/* Background Dithering */}
       <div className="absolute inset-0 h-full w-full pointer-events-none">
         <Dithering
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: '100%', width: '100%' }}
           colorBack="hsla(0,0%,0%,1)"
           colorFront="hsl(0,0%,5%)"
           shape="warp"
@@ -75,8 +75,8 @@ export default function ScenarioPrompt({ onStart, onSkip }: ScenarioPromptProps)
           variants={reveal}
           className="text-sm text-white/40 leading-relaxed mb-10 text-center"
         >
-          We matched a beginner-friendly scenario to your profile.
-          You'll have AI teammates, hints, and checkpoints throughout.
+          We matched a beginner-friendly scenario to your profile. You'll have AI teammates, hints,
+          and checkpoints throughout.
         </motion.p>
 
         {/* Divider */}

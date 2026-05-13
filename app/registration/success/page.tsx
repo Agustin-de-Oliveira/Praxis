@@ -1,25 +1,24 @@
-"use client"
+'use client'
 
-import { motion } from "framer-motion"
-import { useRouter } from "next/navigation"
-import { ArrowRight, Terminal } from "lucide-react"
-import { Dithering } from "@paper-design/shaders-react"
-import Image from "next/image"
+import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
+import { ArrowRight, Terminal } from 'lucide-react'
+import { Dithering } from '@paper-design/shaders-react'
+import Image from 'next/image'
 
 export default function RegistrationSuccessPage() {
   const router = useRouter()
 
   const handleContinue = () => {
-    router.push("/os")
+    router.push('/os')
   }
 
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-[#050505] overflow-hidden px-6">
-
       {/* Background Ambience */}
       <div className="absolute inset-0 pointer-events-none">
         <Dithering
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: '100%', width: '100%' }}
           colorBack="hsla(0,0%,0%,1)"
           colorFront="hsl(0,0%,5%)"
           shape="warp"
@@ -30,12 +29,12 @@ export default function RegistrationSuccessPage() {
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 40, scale: 0.95, filter: "blur(10px)" }}
-        animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+        initial={{ opacity: 0, y: 40, scale: 0.95, filter: 'blur(10px)' }}
+        animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
         transition={{
           duration: 1.2,
           ease: [0.16, 1, 0.3, 1], // Heavy smooth easeOutExpo-like
-          delay: 0.2
+          delay: 0.2,
         }}
         className="relative z-10 w-full max-w-2xl overflow-hidden rounded-sm border border-border bg-card shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)]"
       >
@@ -66,8 +65,9 @@ export default function RegistrationSuccessPage() {
             </h1>
 
             <p className="text-muted-foreground leading-relaxed mb-8">
-              Your engineering identity has been provisioned. You are now entering <strong>Praxis OS</strong>,
-              a high-fidelity environment designed for senior technical evaluation and professional growth.
+              Your engineering identity has been provisioned. You are now entering{' '}
+              <strong>Praxis OS</strong>, a high-fidelity environment designed for senior technical
+              evaluation and professional growth.
             </p>
 
             <h3 className="text-sm font-serif font-medium text-[#a86f44] uppercase tracking-widest mb-4">
@@ -77,15 +77,24 @@ export default function RegistrationSuccessPage() {
             <ul className="space-y-4 mb-10 text-sm text-muted-foreground list-none p-0">
               <li className="flex gap-3">
                 <span className="text-[#a86f44] font-mono">01.</span>
-                <span><strong>Initialize Dossier:</strong> Curate your professional trajectory using our Resume Studio.</span>
+                <span>
+                  <strong>Initialize Dossier:</strong> Curate your professional trajectory using our
+                  Resume Studio.
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="text-[#a86f44] font-mono">02.</span>
-                <span><strong>Diagnostic Crucible:</strong> Undergo real-world engineering simulations to validate your seniority.</span>
+                <span>
+                  <strong>Diagnostic Crucible:</strong> Undergo real-world engineering simulations
+                  to validate your seniority.
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="text-[#a86f44] font-mono">03.</span>
-                <span><strong>Direct Deployment:</strong> Verified profiles are surfaced to our exclusive network of engineering firms.</span>
+                <span>
+                  <strong>Direct Deployment:</strong> Verified profiles are surfaced to our
+                  exclusive network of engineering firms.
+                </span>
               </li>
             </ul>
 

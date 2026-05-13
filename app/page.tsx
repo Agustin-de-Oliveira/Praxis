@@ -1,21 +1,16 @@
-"use client";
+'use client'
 
-
-import Link from "next/link";
-import { motion, type Variants } from "framer-motion";
-import {
-  ArrowRight,
-  Terminal,
-  Play,
-} from "lucide-react";
-import { HeroCard } from "@/components/hero-card";
-import AboutSection from "@/components/hero-ascii-one";
-import { Dithering } from "@paper-design/shaders-react";
-import { Navbar } from "@/components/navbar";
-import { AboutBento } from "@/components/about-bento";
-import { HighlightsSection } from "@/components/highlights-section";
-import { ScenarioLibrary } from "@/components/scenario-library";
-import { TestimonialsSection } from "@/components/testimonials-section";
+import Link from 'next/link'
+import { motion, type Variants } from 'framer-motion'
+import { ArrowRight, Terminal, Play } from 'lucide-react'
+import { HeroCard } from '@/components/hero-card'
+import AboutSection from '@/components/hero-ascii-one'
+import { Dithering } from '@paper-design/shaders-react'
+import { Navbar } from '@/components/navbar'
+import { AboutBento } from '@/components/about-bento'
+import { HighlightsSection } from '@/components/highlights-section'
+import { ScenarioLibrary } from '@/components/scenario-library'
+import { TestimonialsSection } from '@/components/testimonials-section'
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -26,7 +21,7 @@ const containerVariants: Variants = {
       delayChildren: 0.2,
     },
   },
-};
+}
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -38,7 +33,7 @@ const itemVariants: Variants = {
       ease: [0.21, 0.47, 0.32, 0.98],
     },
   },
-};
+}
 
 export default function LandingPage() {
   return (
@@ -46,7 +41,7 @@ export default function LandingPage() {
       <Navbar />
       <div className="absolute inset-0 h-full w-full">
         <Dithering
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: '100%', width: '100%' }}
           colorBack="hsla(0, 0%, 0%, 1.00)"
           colorFront="hsl(0, 0%, 5%)"
           shape="warp"
@@ -65,12 +60,8 @@ export default function LandingPage() {
         animate="visible"
         variants={containerVariants}
       >
-
         {/* Hero Section */}
-        <motion.header
-          variants={itemVariants}
-          className="mb-16"
-        >
+        <motion.header variants={itemVariants} className="mb-16">
           <HeroCard />
         </motion.header>
 
@@ -92,7 +83,7 @@ export default function LandingPage() {
           variants={itemVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: '-100px' }}
           className="mb-40"
           id="features"
         >
@@ -104,7 +95,7 @@ export default function LandingPage() {
           variants={itemVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: '-100px' }}
           className="mb-40"
           id="missions"
         >
@@ -116,7 +107,7 @@ export default function LandingPage() {
           variants={itemVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: '-100px' }}
           className="mb-40"
         >
           <TestimonialsSection />
@@ -127,14 +118,15 @@ export default function LandingPage() {
           variants={itemVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: '-100px' }}
           className="py-20 text-center"
         >
           <h2 className="mb-6 text-3xl font-medium tracking-tight text-foreground md:text-4xl font-serif">
             Enter the workstation.
           </h2>
           <p className="mb-10 text-muted-foreground">
-            Join thousands of developers navigating real engineering days, incidents, and team dynamics.
+            Join thousands of developers navigating real engineering days, incidents, and team
+            dynamics.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
@@ -162,13 +154,11 @@ export default function LandingPage() {
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <img src="/logo.png" className="h-4 w-4" alt="Praxis Logo" />
-              <span className="font-sans text-sm font-medium tracking-tight">
-                praxis
-              </span>
+              <span className="font-sans text-sm font-medium tracking-tight">praxis</span>
             </div>
-            <a 
-              href="https://twitter.com/thebtjackson" 
-              target="_blank" 
+            <a
+              href="https://twitter.com/thebtjackson"
+              target="_blank"
               rel="noopener noreferrer"
               className="font-mono text-[7px] uppercase tracking-widest text-muted-foreground/30 hover:text-foreground transition-colors"
             >
@@ -198,5 +188,5 @@ export default function LandingPage() {
         </motion.footer>
       </motion.div>
     </div>
-  );
+  )
 }

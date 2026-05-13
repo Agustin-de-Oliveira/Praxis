@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight, BookOpen } from 'lucide-react'
 
 export default function AboutSection() {
   return (
@@ -19,7 +19,9 @@ export default function AboutSection() {
           </h2>
 
           <p className="text-muted-foreground text-sm md:text-base max-w-md mb-10 leading-relaxed font-sans opacity-80">
-            Bridge the gap between theory and the actual job. Enter a high-fidelity workstation that mimics a real engineering day, complete with a simulated team and live production incidents.
+            Bridge the gap between theory and the actual job. Enter a high-fidelity workstation that
+            mimics a real engineering day, complete with a simulated team and live production
+            incidents.
           </p>
 
           <div className="flex flex-wrap gap-4">
@@ -43,7 +45,14 @@ export default function AboutSection() {
           <div className="absolute inset-0 pointer-events-none opacity-50 mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
           <div className="absolute top-4 right-4 font-serif text-[8px] text-white/20 uppercase tracking-widest">
-            Photo by <a href="https://unsplash.com/@wistomsin" target="_blank">Tom Barrett</a> on <a href="https://unsplash.com/" target="_blank">Unsplash</a>
+            Photo by{' '}
+            <a href="https://unsplash.com/@wistomsin" target="_blank">
+              Tom Barrett
+            </a>{' '}
+            on{' '}
+            <a href="https://unsplash.com/" target="_blank">
+              Unsplash
+            </a>
           </div>
 
           {/* Vignette */}
@@ -51,5 +60,5 @@ export default function AboutSection() {
         </div>
       </div>
     </div>
-  );
+  )
 }

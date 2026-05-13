@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // components/first-day/transition-screen.tsx
@@ -7,9 +7,9 @@
 // Animations: blur-in only (no Y translation, no scale).
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { motion, type Variants } from "framer-motion"
-import { CheckCircle, ArrowRight } from "lucide-react"
-import { Dithering } from "@paper-design/shaders-react"
+import { motion, type Variants } from 'framer-motion'
+import { CheckCircle, ArrowRight } from 'lucide-react'
+import { Dithering } from '@paper-design/shaders-react'
 
 // ── Animation system ──────────────────────────────────────────────────────────
 // Items reveal by clearing blur + fading in — feels sharp and intentional.
@@ -21,16 +21,16 @@ const container: Variants = {
 }
 
 const reveal: Variants = {
-  hidden: { opacity: 0, filter: "blur(6px)" },
+  hidden: { opacity: 0, filter: 'blur(6px)' },
   visible: {
     opacity: 1,
-    filter: "blur(0px)",
-    transition: { duration: 0.35, ease: "easeOut" as const },
+    filter: 'blur(0px)',
+    transition: { duration: 0.35, ease: 'easeOut' as const },
   },
   exit: {
     opacity: 0,
-    filter: "blur(4px)",
-    transition: { duration: 0.2, ease: "easeIn" as const },
+    filter: 'blur(4px)',
+    transition: { duration: 0.2, ease: 'easeIn' as const },
   },
 }
 
@@ -45,13 +45,18 @@ interface TransitionScreenProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function TransitionScreen({ role, stack, handle, onContinue }: TransitionScreenProps) {
+export default function TransitionScreen({
+  role,
+  stack,
+  handle,
+  onContinue,
+}: TransitionScreenProps) {
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#050505]">
       {/* Background Dithering */}
       <div className="absolute inset-0 h-full w-full pointer-events-none">
         <Dithering
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: '100%', width: '100%' }}
           colorBack="hsla(0,0%,0%,1)"
           colorFront="hsl(0,0%,5%)"
           shape="warp"
@@ -101,10 +106,9 @@ export default function TransitionScreen({ role, stack, handle, onContinue }: Tr
             Based on your profile
           </p>
           <p className="text-sm text-white/60 leading-relaxed">
-            As a <span className="text-white font-medium">{role}</span>, working
-            primarily with{" "}
-            <span className="text-white font-medium">{stack}</span> — we've
-            prepared your first engineering scenarios.
+            As a <span className="text-white font-medium">{role}</span>, working primarily with{' '}
+            <span className="text-white font-medium">{stack}</span> — we've prepared your first
+            engineering scenarios.
           </p>
         </motion.div>
 

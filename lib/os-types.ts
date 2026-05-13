@@ -3,7 +3,7 @@
 // Types for the persistent Praxis OS shell.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import type { Scenario, ScenarioProgress } from "./scenario-types"
+import type { Scenario, ScenarioProgress } from './scenario-types'
 
 export interface UserProfile {
   id: string

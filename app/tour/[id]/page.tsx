@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // app/tour/[id]/page.tsx
@@ -13,23 +13,23 @@
 //   - Exit button
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState } from "react"
-import Link from "next/link"
-import { motion, AnimatePresence, type Variants } from "framer-motion"
-import { ArrowLeft, Compass } from "lucide-react"
-import { Dithering } from "@paper-design/shaders-react"
+import { useState } from 'react'
+import Link from 'next/link'
+import { motion, AnimatePresence, type Variants } from 'framer-motion'
+import { ArrowLeft, Compass } from 'lucide-react'
+import { Dithering } from '@paper-design/shaders-react'
 
-import TourProgressBar from "@/components/tour/tour-progress-bar"
-import PhaseStoryline from "@/components/tour/phase-storyline"
-import PhaseTicket from "@/components/tour/phase-ticket"
-import PhaseOrientation from "@/components/tour/phase-orientation"
-import PhaseImplement from "@/components/tour/phase-implement"
-import PhaseTesting from "@/components/tour/phase-testing"
-import PhaseCheckpoints from "@/components/tour/phase-checkpoints"
-import PhasePRReview from "@/components/tour/phase-pr-review"
-import PhaseDebrief from "@/components/tour/phase-debrief"
-import type { TourPhase } from "@/lib/first-day-data"
-import { SCN008_CHECKPOINTS } from "@/lib/first-day-data"
+import TourProgressBar from '@/components/tour/tour-progress-bar'
+import PhaseStoryline from '@/components/tour/phase-storyline'
+import PhaseTicket from '@/components/tour/phase-ticket'
+import PhaseOrientation from '@/components/tour/phase-orientation'
+import PhaseImplement from '@/components/tour/phase-implement'
+import PhaseTesting from '@/components/tour/phase-testing'
+import PhaseCheckpoints from '@/components/tour/phase-checkpoints'
+import PhasePRReview from '@/components/tour/phase-pr-review'
+import PhaseDebrief from '@/components/tour/phase-debrief'
+import type { TourPhase } from '@/lib/first-day-data'
+import { SCN008_CHECKPOINTS } from '@/lib/first-day-data'
 
 // ── Phase transition: pure opacity fade ──────────────────────────────────────
 
@@ -37,18 +37,18 @@ const phaseVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { duration: 0.25, ease: "easeOut" as const },
+    transition: { duration: 0.25, ease: 'easeOut' as const },
   },
   exit: {
     opacity: 0,
-    transition: { duration: 0.18, ease: "easeIn" as const },
+    transition: { duration: 0.18, ease: 'easeIn' as const },
   },
 }
 
 // ── Tour page ─────────────────────────────────────────────────────────────────
 
 export default function TourPage() {
-  const [phase, setPhase] = useState<TourPhase>("storyline")
+  const [phase, setPhase] = useState<TourPhase>('storyline')
   const [checkpointsDone, setCheckpointsDone] = useState(0)
 
   // ── Phase advance ───────────────────────────────────────────────────────
@@ -57,7 +57,7 @@ export default function TourPage() {
 
   const handleCheckpointsDone = (cnt: number) => {
     setCheckpointsDone(cnt)
-    advance("pr")
+    advance('pr')
   }
 
   // ── Render ──────────────────────────────────────────────────────────────
@@ -67,7 +67,7 @@ export default function TourPage() {
       {/* Shared Dithering background */}
       <div className="absolute inset-0 h-full w-full pointer-events-none">
         <Dithering
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: '100%', width: '100%' }}
           colorBack="hsla(0,0%,0%,1)"
           colorFront="hsl(0,0%,5%)"
           shape="warp"
@@ -107,56 +107,111 @@ export default function TourPage() {
       {/* ── Phase content area ───────────────────────────────────────────── */}
       <div className="pt-[88px] pb-24 px-6 flex justify-center">
         <AnimatePresence mode="wait">
-          {phase === "storyline" && (
-            <motion.div key="storyline" variants={phaseVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
-              <PhaseStoryline onContinue={() => advance("ticket")} />
+          {phase === 'storyline' && (
+            <motion.div
+              key="storyline"
+              variants={phaseVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="w-full"
+            >
+              <PhaseStoryline onContinue={() => advance('ticket')} />
             </motion.div>
           )}
 
-          {phase === "ticket" && (
-            <motion.div key="ticket" variants={phaseVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
-              <PhaseTicket onContinue={() => advance("orientation")} />
+          {phase === 'ticket' && (
+            <motion.div
+              key="ticket"
+              variants={phaseVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="w-full"
+            >
+              <PhaseTicket onContinue={() => advance('orientation')} />
             </motion.div>
           )}
 
-          {phase === "orientation" && (
-            <motion.div key="orientation" variants={phaseVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
-              <PhaseOrientation onContinue={() => advance("implement")} />
+          {phase === 'orientation' && (
+            <motion.div
+              key="orientation"
+              variants={phaseVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="w-full"
+            >
+              <PhaseOrientation onContinue={() => advance('implement')} />
             </motion.div>
           )}
 
-          {phase === "implement" && (
-            <motion.div key="implement" variants={phaseVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
+          {phase === 'implement' && (
+            <motion.div
+              key="implement"
+              variants={phaseVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="w-full"
+            >
               <PhaseImplement onContinue={(target) => advance(target)} />
             </motion.div>
           )}
 
-          {phase === "testing" && (
-            <motion.div key="testing" variants={phaseVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
-              <PhaseTesting onContinue={() => advance("checkpoint")} />
+          {phase === 'testing' && (
+            <motion.div
+              key="testing"
+              variants={phaseVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="w-full"
+            >
+              <PhaseTesting onContinue={() => advance('checkpoint')} />
             </motion.div>
           )}
 
-          {phase === "checkpoint" && (
-            <motion.div key="checkpoint" variants={phaseVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
+          {phase === 'checkpoint' && (
+            <motion.div
+              key="checkpoint"
+              variants={phaseVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="w-full"
+            >
               <PhaseCheckpoints onContinue={handleCheckpointsDone} />
             </motion.div>
           )}
 
-          {phase === "pr" && (
-            <motion.div key="pr" variants={phaseVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
-              <PhasePRReview onContinue={() => advance("debrief")} />
+          {phase === 'pr' && (
+            <motion.div
+              key="pr"
+              variants={phaseVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="w-full"
+            >
+              <PhasePRReview onContinue={() => advance('debrief')} />
             </motion.div>
           )}
 
-          {phase === "debrief" && (
-            <motion.div key="debrief" variants={phaseVariants} initial="hidden" animate="visible" exit="exit" className="w-full">
+          {phase === 'debrief' && (
+            <motion.div
+              key="debrief"
+              variants={phaseVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="w-full"
+            >
               <PhaseDebrief />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-
     </div>
   )
 }

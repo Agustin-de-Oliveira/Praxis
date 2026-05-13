@@ -5,28 +5,28 @@
 // protected routes. See docs/TECHNICAL_ARCHITECTURE.md.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { createServerClient } from "@supabase/ssr"
-import { NextResponse, type NextRequest } from "next/server"
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
 
 // Routes that require an authenticated session (prefix match)
-const PROTECTED_PREFIXES = ["/tour", "/first-day"]
+const PROTECTED_PREFIXES = ['/tour', '/first-day']
 
 // Routes authenticated users should not see (bounce them to workstation)
-const AUTH_ONLY_PATHS = ["/login"]
+const AUTH_ONLY_PATHS = ['/login']
 
 function isProtectedPath(pathname: string): boolean {
-  if (pathname === "/resume" || pathname.startsWith("/resume/")) {
+  if (pathname === '/resume' || pathname.startsWith('/resume/')) {
     return true
   }
   if (PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
     return true
   }
   // /scenario/[id] only — do not match /scenarios (library)
-  if (pathname === "/scenario" || pathname.startsWith("/scenario/")) {
+  if (pathname === '/scenario' || pathname.startsWith('/scenario/')) {
     return true
   }
   // /os and nested OS routes only — avoid accidental /osx-style matches
-  if (pathname === "/os" || pathname.startsWith("/os/")) {
+  if (pathname === '/os' || pathname.startsWith('/os/')) {
     return true
   }
   return false
@@ -45,9 +45,7 @@ export async function proxy(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
@@ -66,15 +64,15 @@ export async function proxy(request: NextRequest) {
 
   if (isProtectedPath(pathname) && !user) {
     const loginUrl = request.nextUrl.clone()
-    loginUrl.pathname = "/login"
+    loginUrl.pathname = '/login'
     return NextResponse.redirect(loginUrl)
   }
 
   const isAuthOnly = AUTH_ONLY_PATHS.some((p) => pathname.startsWith(p))
   if (isAuthOnly && user) {
     const workstationUrl = request.nextUrl.clone()
-    workstationUrl.pathname = "/os"
-    workstationUrl.search = ""
+    workstationUrl.pathname = '/os'
+    workstationUrl.search = ''
     return NextResponse.redirect(workstationUrl)
   }
 
@@ -82,7 +80,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 }

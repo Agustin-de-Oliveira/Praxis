@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // components/first-day/scenario-cards.tsx
@@ -6,13 +6,20 @@
 // Blur-in stagger, no scale, no whileHover motion — CSS transitions only.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { motion, type Variants } from "framer-motion"
+import { motion, type Variants } from 'framer-motion'
 import {
-  Clock, Star, ArrowRight, Compass,
-  Database, Globe, Cloud, ShieldCheck, Code,
-} from "lucide-react"
-import { Dithering } from "@paper-design/shaders-react"
-import type { SimpleScenario } from "@/lib/first-day-data"
+  Clock,
+  Star,
+  ArrowRight,
+  Compass,
+  Database,
+  Globe,
+  Cloud,
+  ShieldCheck,
+  Code,
+} from 'lucide-react'
+import { Dithering } from '@paper-design/shaders-react'
+import type { SimpleScenario } from '@/lib/first-day-data'
 
 // ── Category → icon ───────────────────────────────────────────────────────────
 
@@ -21,14 +28,14 @@ const CATEGORY_ICON: Record<string, React.ElementType> = {
   Frontend: Globe,
   DevOps: Cloud,
   Security: ShieldCheck,
-  "Full-Stack": Code,
+  'Full-Stack': Code,
 }
 
 const DIFFICULTY_COLOR: Record<string, string> = {
-  "Beginner": "text-emerald-400 border-emerald-500/20 bg-emerald-500/5",
-  "Beginner / Intermediate": "text-[#a86f44] border-[#a86f44]/20 bg-[#a86f44]/5",
-  "Intermediate": "text-sky-400 border-sky-500/20 bg-sky-500/5",
-  "Advanced": "text-purple-400 border-purple-500/20 bg-purple-500/5",
+  Beginner: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5',
+  'Beginner / Intermediate': 'text-[#a86f44] border-[#a86f44]/20 bg-[#a86f44]/5',
+  Intermediate: 'text-sky-400 border-sky-500/20 bg-sky-500/5',
+  Advanced: 'text-purple-400 border-purple-500/20 bg-purple-500/5',
 }
 
 // ── Animation variants ────────────────────────────────────────────────────────
@@ -40,16 +47,16 @@ const container: Variants = {
 }
 
 const reveal: Variants = {
-  hidden: { opacity: 0, filter: "blur(6px)" },
+  hidden: { opacity: 0, filter: 'blur(6px)' },
   visible: {
     opacity: 1,
-    filter: "blur(0px)",
-    transition: { duration: 0.3, ease: "easeOut" as const },
+    filter: 'blur(0px)',
+    transition: { duration: 0.3, ease: 'easeOut' as const },
   },
   exit: {
     opacity: 0,
-    filter: "blur(4px)",
-    transition: { duration: 0.2, ease: "easeIn" as const },
+    filter: 'blur(4px)',
+    transition: { duration: 0.2, ease: 'easeIn' as const },
   },
 }
 
@@ -62,7 +69,7 @@ interface ScenarioCardProps {
 
 function ScenarioCard({ scenario, onSelect }: ScenarioCardProps) {
   const Icon = CATEGORY_ICON[scenario.category] ?? Code
-  const difficultyClass = DIFFICULTY_COLOR[scenario.difficulty] ?? DIFFICULTY_COLOR["Beginner"]
+  const difficultyClass = DIFFICULTY_COLOR[scenario.difficulty] ?? DIFFICULTY_COLOR['Beginner']
   const isFeatured = scenario.isFeatured
 
   return (
@@ -72,9 +79,10 @@ function ScenarioCard({ scenario, onSelect }: ScenarioCardProps) {
       className={`
         relative group rounded-sm border bg-[#0A0A0A] cursor-pointer
         transition-colors duration-200 flex flex-col
-        ${isFeatured
-          ? "border-[#a86f44]/30 hover:border-[#a86f44]/60"
-          : "border-[#171717] hover:border-white/12"
+        ${
+          isFeatured
+            ? 'border-[#a86f44]/30 hover:border-[#a86f44]/60'
+            : 'border-[#171717] hover:border-white/12'
         }
       `}
     >
@@ -85,8 +93,8 @@ function ScenarioCard({ scenario, onSelect }: ScenarioCardProps) {
             <div
               className={`p-2 rounded-sm border transition-colors ${
                 isFeatured
-                  ? "border-[#a86f44]/25 text-[#a86f44] bg-[#a86f44]/5"
-                  : "border-white/8 text-white/30 group-hover:text-white/50"
+                  ? 'border-[#a86f44]/25 text-[#a86f44] bg-[#a86f44]/5'
+                  : 'border-white/8 text-white/30 group-hover:text-white/50'
               }`}
             >
               <Icon size={15} />
@@ -116,16 +124,14 @@ function ScenarioCard({ scenario, onSelect }: ScenarioCardProps) {
         {/* Title */}
         <h3
           className={`font-serif text-base font-medium mb-2 leading-snug transition-colors ${
-            isFeatured ? "text-white" : "text-white/70 group-hover:text-white/90"
+            isFeatured ? 'text-white' : 'text-white/70 group-hover:text-white/90'
           }`}
         >
           {scenario.title}
         </h3>
 
         {/* Description */}
-        <p className="text-xs text-white/35 leading-relaxed mb-4 flex-1">
-          {scenario.description}
-        </p>
+        <p className="text-xs text-white/35 leading-relaxed mb-4 flex-1">{scenario.description}</p>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5 mb-4">
@@ -146,15 +152,17 @@ function ScenarioCard({ scenario, onSelect }: ScenarioCardProps) {
               <Clock className="w-3 h-3" />
               {scenario.estimatedDuration}
             </span>
-            <span className={`px-1.5 py-0.5 rounded-sm border font-mono text-[9px] uppercase tracking-wider ${difficultyClass}`}>
+            <span
+              className={`px-1.5 py-0.5 rounded-sm border font-mono text-[9px] uppercase tracking-wider ${difficultyClass}`}
+            >
               {scenario.difficulty}
             </span>
           </div>
           <ArrowRight
             className={`w-3.5 h-3.5 transition-all duration-200 ${
               isFeatured
-                ? "text-[#a86f44] group-hover:translate-x-0.5"
-                : "text-white/15 group-hover:text-white/40 group-hover:translate-x-0.5"
+                ? 'text-[#a86f44] group-hover:translate-x-0.5'
+                : 'text-white/15 group-hover:text-white/40 group-hover:translate-x-0.5'
             }`}
           />
         </div>
@@ -183,7 +191,7 @@ export default function ScenarioCards({ scenarios, role, stack, onSelect }: Scen
       {/* Background Dithering */}
       <div className="absolute inset-0 h-full w-full pointer-events-none">
         <Dithering
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: '100%', width: '100%' }}
           colorBack="hsla(0,0%,0%,1)"
           colorFront="hsl(0,0%,5%)"
           shape="warp"
@@ -209,8 +217,7 @@ export default function ScenarioCards({ scenarios, role, stack, onSelect }: Scen
               Select your first scenario
             </h2>
             <p className="text-sm text-white/35 max-w-md leading-relaxed">
-              Curated for a{" "}
-              <span className="text-white/60">{role}</span> working with{" "}
+              Curated for a <span className="text-white/60">{role}</span> working with{' '}
               <span className="text-white/60">{stack}</span>. The featured one is Tour-guided.
             </p>
           </motion.div>
@@ -230,7 +237,7 @@ export default function ScenarioCards({ scenarios, role, stack, onSelect }: Scen
             variants={reveal}
             className="mt-10 text-center font-mono text-[9px] text-white/18 uppercase tracking-widest"
           >
-            More scenarios unlock as you complete these ·{" "}
+            More scenarios unlock as you complete these ·{' '}
             <span className="text-[#a86f44]/40">Tour Mode</span> includes step-by-step guidance
           </motion.p>
         </motion.div>

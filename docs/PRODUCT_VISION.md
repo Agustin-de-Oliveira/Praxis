@@ -22,14 +22,14 @@ There is a well-documented gap between learning to code and performing in a prof
 
 ## Target Personas
 
-| Persona | Core Pain |
-|---------|-----------|
+| Persona                                   | Core Pain                                                                            |
+| ----------------------------------------- | ------------------------------------------------------------------------------------ |
 | **Bootcamp graduates** (0–6 mo post-grad) | "I finished the curriculum but I don't know what a first week on the job looks like" |
-| **Self-taught developers** | "I can build projects, but I freeze in a real codebase with real deadlines" |
-| **CS students** (final year) | "I need practical experience before internships and first roles" |
-| **Career switchers** | "I have domain expertise but zero engineering workplace experience" |
-| **Hiring managers** | "I need juniors who can contribute in weeks, not months" |
-| **Bootcamps & schools** | "Our graduates struggle to get and keep their first roles — it reflects on us" |
+| **Self-taught developers**                | "I can build projects, but I freeze in a real codebase with real deadlines"          |
+| **CS students** (final year)              | "I need practical experience before internships and first roles"                     |
+| **Career switchers**                      | "I have domain expertise but zero engineering workplace experience"                  |
+| **Hiring managers**                       | "I need juniors who can contribute in weeks, not months"                             |
+| **Bootcamps & schools**                   | "Our graduates struggle to get and keep their first roles — it reflects on us"       |
 
 **Priority order for GTM:** Bootcamp graduates → Self-taught devs → CS students → Career switchers.
 
@@ -44,6 +44,7 @@ Praxis is a high-fidelity simulation platform where developers practice real eng
 Instead of teaching code, Praxis teaches **the job**.
 
 Users don't solve algorithm puzzles. They:
+
 1. **Pick up a ticket** from a simulated PM
 2. **Work in a realistic codebase** (pre-configured repo, tests, CI)
 3. **Interact with simulated teammates** — senior devs, PMs, designers
@@ -73,25 +74,25 @@ The calibration challenge should never be a hard gate. If the user struggles, Pr
 
 ## Differentiation
 
-| Traditional Platform | Praxis |
-|---------------------|--------|
-| Isolated coding exercises | Full-stack scenarios in realistic environments |
-| Pass/fail test cases | Automated validators + qualitative AI feedback |
-| Solo experience | Simulated team (PM, senior dev, designer) |
-| Teach syntax & algorithms | Teach the workflow, the tools, the soft skills |
-| Gamified badges | XP mapped to real job ladder competencies |
-| One-size-fits-all | Calibrated role paths based on a realistic first challenge |
+| Traditional Platform      | Praxis                                                     |
+| ------------------------- | ---------------------------------------------------------- |
+| Isolated coding exercises | Full-stack scenarios in realistic environments             |
+| Pass/fail test cases      | Automated validators + qualitative AI feedback             |
+| Solo experience           | Simulated team (PM, senior dev, designer)                  |
+| Teach syntax & algorithms | Teach the workflow, the tools, the soft skills             |
+| Gamified badges           | XP mapped to real job ladder competencies                  |
+| One-size-fits-all         | Calibrated role paths based on a realistic first challenge |
 
 ### Competitive Landscape
 
-| Platform | What they do | Where Praxis wins |
-|----------|-------------|-------------------|
-| LeetCode / HackerRank | Algorithm puzzles, interview prep | Praxis teaches the job, not the interview |
-| Codecademy / freeCodeCamp | Syntax & fundamentals courses | Praxis assumes you can code — it teaches you to *work* |
-| Wilco | Developer simulations | Praxis leans harder into team dynamics and editorial brand |
-| Exercism | Mentored coding exercises | Focused on language mastery, not workplace readiness |
-| Boot.dev | Backend learning path | Course-based, no simulation or team element |
-| GitHub Copilot / AI tutors | Real-time coding assistance | Tools, not structured learning. Praxis is the curriculum |
+| Platform                   | What they do                      | Where Praxis wins                                          |
+| -------------------------- | --------------------------------- | ---------------------------------------------------------- |
+| LeetCode / HackerRank      | Algorithm puzzles, interview prep | Praxis teaches the job, not the interview                  |
+| Codecademy / freeCodeCamp  | Syntax & fundamentals courses     | Praxis assumes you can code — it teaches you to _work_     |
+| Wilco                      | Developer simulations             | Praxis leans harder into team dynamics and editorial brand |
+| Exercism                   | Mentored coding exercises         | Focused on language mastery, not workplace readiness       |
+| Boot.dev                   | Backend learning path             | Course-based, no simulation or team element                |
+| GitHub Copilot / AI tutors | Real-time coding assistance       | Tools, not structured learning. Praxis is the curriculum   |
 
 ### Praxis Moat
 
@@ -138,16 +139,16 @@ Each scenario awards XP in one or more skill categories. Skill levels run 1–5 
 
 ## Brand Guidelines
 
-| Element | Specification |
-|---------|---------------|
-| **Primary font** | Noto Serif (headings, editorial accents) |
-| **Body font** | Inter (paragraphs, UI text) |
-| **Mono font** | JetBrains Mono (code, terminal, technical labels) |
-| **Accent color** | Copper `#a86f44` |
-| **Background** | Obsidian `#050505` |
-| **Card surfaces** | `#0A0A0A` with `#171717` borders |
-| **Text hierarchy** | White `#FFFFFF` → Muted `#737373` |
-| **Border radius** | `rounded-sm` (2px) — sharp, engineered feel |
+| Element              | Specification                                                          |
+| -------------------- | ---------------------------------------------------------------------- |
+| **Primary font**     | Noto Serif (headings, editorial accents)                               |
+| **Body font**        | Inter (paragraphs, UI text)                                            |
+| **Mono font**        | JetBrains Mono (code, terminal, technical labels)                      |
+| **Accent color**     | Copper `#a86f44`                                                       |
+| **Background**       | Obsidian `#050505`                                                     |
+| **Card surfaces**    | `#0A0A0A` with `#171717` borders                                       |
+| **Text hierarchy**   | White `#FFFFFF` → Muted `#737373`                                      |
+| **Border radius**    | `rounded-sm` (2px) — sharp, engineered feel                            |
 | **Visual signature** | Dithering shader backgrounds, editorial serif headings, copper accents |
 
 ### Tone of Voice
@@ -157,9 +158,11 @@ Direct, confident, grounded. Not hype-y. Not academic.
 Like talking to a senior engineer who respects your time.
 
 **Write like this:**
+
 > "You missed the part where the CI fails because of a missing env var. That's the lesson."
 
 **Not like this:**
+
 > "Great job! You've completed the JWT Authentication Challenge! 🎉 Keep it up!"
 
 ---

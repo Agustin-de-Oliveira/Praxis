@@ -1,17 +1,17 @@
-import React, { useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import React, { useRef, useEffect } from 'react'
+import { cn } from '@/lib/utils'
 
 interface ThermodynamicGridProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Grid density. Lower = chunky, Higher = smooth.
    * Default: 25
    */
-  resolution?: number;
+  resolution?: number
   /**
    * Cooling rate (0 to 1). Higher = trails fade faster.
    * Default: 0.98
    */
-  coolingFactor?: number;
+  coolingFactor?: number
 }
 
 const ThermodynamicGrid = ({
@@ -21,87 +21,87 @@ const ThermodynamicGrid = ({
   style,
   ...props
 }: ThermodynamicGridProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container) return;
+    const canvas = canvasRef.current
+    const container = containerRef.current
+    if (!canvas || !container) return
 
-    const ctx = canvas.getContext("2d", { alpha: false }); // No transparency for perf
-    if (!ctx) return;
+    const ctx = canvas.getContext('2d', { alpha: false }) // No transparency for perf
+    if (!ctx) return
 
     // Simulation State
-    let grid: Float32Array; // Temperature map (0.0 - 1.0)
-    let cols = 0;
-    let rows = 0;
-    let width = 0;
-    let height = 0;
+    let grid: Float32Array // Temperature map (0.0 - 1.0)
+    let cols = 0
+    let rows = 0
+    let width = 0
+    let height = 0
 
     // Mouse State
-    const mouse = { x: -1000, y: -1000, prevX: -1000, prevY: -1000, active: false };
+    const mouse = { x: -1000, y: -1000, prevX: -1000, prevY: -1000, active: false }
 
     // --- COLOR PALETTE (Neutral "Lunar" Look) ---
     const getThermalColor = (t: number) => {
       // Monochrome palette: dark obsidian → slate grey → bright white
       // 0.0 = #050505 (obsidian)
       // 1.0 = #FFFFFF (white)
-      const val = Math.round(t * 240 + 15); // Scale to 15-255 range
+      const val = Math.round(t * 240 + 15) // Scale to 15-255 range
 
-      return `rgb(${val}, ${val}, ${val})`;
-    };
+      return `rgb(${val}, ${val}, ${val})`
+    }
 
     const resize = () => {
-      width = container.offsetWidth;
-      height = container.offsetHeight;
-      canvas.width = width;
-      canvas.height = height;
+      width = container.offsetWidth
+      height = container.offsetHeight
+      canvas.width = width
+      canvas.height = height
 
       // Re-init grid
-      cols = Math.ceil(width / resolution);
-      rows = Math.ceil(height / resolution);
-      grid = new Float32Array(cols * rows).fill(0);
-    };
+      cols = Math.ceil(width / resolution)
+      rows = Math.ceil(height / resolution)
+      grid = new Float32Array(cols * rows).fill(0)
+    }
 
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
-      mouse.active = true;
-    };
+      const rect = container.getBoundingClientRect()
+      mouse.x = e.clientX - rect.left
+      mouse.y = e.clientY - rect.top
+      mouse.active = true
+    }
 
     const handleMouseLeave = () => {
-      mouse.active = false;
-    };
+      mouse.active = false
+    }
 
     // --- PHYSICS LOOP ---
     const update = () => {
       // 1. INJECT HEAT (Brush)
       if (mouse.active) {
-        const dx = mouse.x - mouse.prevX;
-        const dy = mouse.y - mouse.prevY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const steps = Math.ceil(dist / (resolution / 2));
+        const dx = mouse.x - mouse.prevX
+        const dy = mouse.y - mouse.prevY
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        const steps = Math.ceil(dist / (resolution / 2))
 
         for (let s = 0; s <= steps; s++) {
-          const t = steps > 0 ? s / steps : 0;
-          const x = mouse.prevX + dx * t;
-          const y = mouse.prevY + dy * t;
+          const t = steps > 0 ? s / steps : 0
+          const x = mouse.prevX + dx * t
+          const y = mouse.prevY + dy * t
 
-          const col = Math.floor(x / resolution);
-          const row = Math.floor(y / resolution);
+          const col = Math.floor(x / resolution)
+          const row = Math.floor(y / resolution)
 
-          const radius = 2;
+          const radius = 2
           for (let i = -radius; i <= radius; i++) {
             for (let j = -radius; j <= radius; j++) {
-              const c = col + i;
-              const r = row + j;
+              const c = col + i
+              const r = row + j
               if (c >= 0 && c < cols && r >= 0 && r < rows) {
-                const idx = c + r * cols;
-                const d = Math.sqrt(i * i + j * j);
+                const idx = c + r * cols
+                const d = Math.sqrt(i * i + j * j)
                 if (d <= radius) {
-                  grid[idx] = Math.min(1.0, grid[idx] + 0.3 * (1 - d / radius));
+                  grid[idx] = Math.min(1.0, grid[idx] + 0.3 * (1 - d / radius))
                 }
               }
             }
@@ -109,72 +109,72 @@ const ThermodynamicGrid = ({
         }
       }
 
-      mouse.prevX = mouse.x;
-      mouse.prevY = mouse.y;
+      mouse.prevX = mouse.x
+      mouse.prevY = mouse.y
 
       // 2. RENDER & DIFFUSE
-      ctx.fillStyle = "#050505";
-      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = '#050505'
+      ctx.fillRect(0, 0, width, height)
 
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          const idx = c + r * cols;
-          const temp = grid[idx];
+          const idx = c + r * cols
+          const temp = grid[idx]
 
           // Cooling
-          grid[idx] *= coolingFactor;
+          grid[idx] *= coolingFactor
 
           // VISUALIZATION
           if (temp > 0.05) {
-            const x = c * resolution;
-            const y = r * resolution;
+            const x = c * resolution
+            const y = r * resolution
 
-            ctx.fillStyle = getThermalColor(temp);
+            ctx.fillStyle = getThermalColor(temp)
 
-            const size = resolution * (0.8 + temp * 0.4);
-            const offset = (resolution - size) / 2;
+            const size = resolution * (0.8 + temp * 0.4)
+            const offset = (resolution - size) / 2
 
-            ctx.beginPath();
-            ctx.rect(x + offset, y + offset, size, size);
-            ctx.fill();
+            ctx.beginPath()
+            ctx.rect(x + offset, y + offset, size, size)
+            ctx.fill()
           } else {
             if (c % 2 === 0 && r % 2 === 0) {
-              const x = c * resolution;
-              const y = r * resolution;
-              ctx.fillStyle = "#121212"; 
-              ctx.fillRect(x + resolution / 2 - 1, y + resolution / 2 - 1, 2, 2);
+              const x = c * resolution
+              const y = r * resolution
+              ctx.fillStyle = '#121212'
+              ctx.fillRect(x + resolution / 2 - 1, y + resolution / 2 - 1, 2, 2)
             }
           }
         }
       }
 
-      requestAnimationFrame(update);
-    };
+      requestAnimationFrame(update)
+    }
 
-    window.addEventListener("resize", resize);
-    container.addEventListener("mousemove", handleMouseMove);
-    container.addEventListener("mouseleave", handleMouseLeave);
+    window.addEventListener('resize', resize)
+    container.addEventListener('mousemove', handleMouseMove)
+    container.addEventListener('mouseleave', handleMouseLeave)
 
-    resize();
-    update();
+    resize()
+    update()
 
     return () => {
-      window.removeEventListener("resize", resize);
-      container.removeEventListener("mousemove", handleMouseMove);
-      container.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, [resolution, coolingFactor]);
+      window.removeEventListener('resize', resize)
+      container.removeEventListener('mousemove', handleMouseMove)
+      container.removeEventListener('mouseleave', handleMouseLeave)
+    }
+  }, [resolution, coolingFactor])
 
   return (
     <div
       ref={containerRef}
-      className={cn("absolute inset-0 z-0 overflow-hidden bg-[#050505]", className)}
+      className={cn('absolute inset-0 z-0 overflow-hidden bg-[#050505]', className)}
       style={style}
       {...props}
     >
       <canvas ref={canvasRef} className="block w-full h-full" />
     </div>
-  );
-};
+  )
+}
 
-export default ThermodynamicGrid;
+export default ThermodynamicGrid

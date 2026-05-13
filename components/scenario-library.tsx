@@ -1,76 +1,81 @@
-'use client';
+'use client'
 
-import { ArrowRight, Clock, Zap, Lock, Database, Box, Globe } from "lucide-react";
-import Link from "next/link";
+import { ArrowRight, Clock, Zap, Lock, Database, Box, Globe } from 'lucide-react'
+import Link from 'next/link'
 
 const scenarios = [
   {
-    id: "SCN-001",
-    title: "Deploy a Node.js API to Kubernetes",
-    description: "Configure deployments, services, and ingress. Handle rolling updates and health checks in a live cluster.",
-    category: "DevOps",
-    difficulty: "ADVANCED",
+    id: 'SCN-001',
+    title: 'Deploy a Node.js API to Kubernetes',
+    description:
+      'Configure deployments, services, and ingress. Handle rolling updates and health checks in a live cluster.',
+    category: 'DevOps',
+    difficulty: 'ADVANCED',
     xp: 850,
-    duration: "~2h",
-    tags: ["Node.js", "K8s", "Docker"],
+    duration: '~2h',
+    tags: ['Node.js', 'K8s', 'Docker'],
     icon: Box,
   },
   {
-    id: "SCN-002",
-    title: "Build a Redis-backed Rate Limiter",
-    description: "Implement sliding window rate limiting with Redis. Handle edge cases like burst traffic and distributed locks.",
-    category: "Backend",
-    difficulty: "INTERMEDIATE",
+    id: 'SCN-002',
+    title: 'Build a Redis-backed Rate Limiter',
+    description:
+      'Implement sliding window rate limiting with Redis. Handle edge cases like burst traffic and distributed locks.',
+    category: 'Backend',
+    difficulty: 'INTERMEDIATE',
     xp: 650,
-    duration: "~1.5h",
-    tags: ["Redis", "Express", "Lua"],
+    duration: '~1.5h',
+    tags: ['Redis', 'Express', 'Lua'],
     icon: Zap,
   },
   {
-    id: "SCN-003",
-    title: "Implement JWT Auth with Refresh Tokens",
-    description: "Build a complete auth flow with access/refresh token rotation, secure cookie storage, and logout invalidation.",
-    category: "Security",
-    difficulty: "INTERMEDIATE",
+    id: 'SCN-003',
+    title: 'Implement JWT Auth with Refresh Tokens',
+    description:
+      'Build a complete auth flow with access/refresh token rotation, secure cookie storage, and logout invalidation.',
+    category: 'Security',
+    difficulty: 'INTERMEDIATE',
     xp: 720,
-    duration: "~1.5h",
-    tags: ["JWT", "OAuth", "Node.js"],
+    duration: '~1.5h',
+    tags: ['JWT', 'OAuth', 'Node.js'],
     icon: Lock,
   },
   {
-    id: "SCN-004",
-    title: "Instrument a Service with OpenTelemetry",
-    description: "Add distributed tracing, metrics, and structured logging to a microservice. Debug a latency issue using trace data.",
-    category: "Observability",
-    difficulty: "ADVANCED",
+    id: 'SCN-004',
+    title: 'Instrument a Service with OpenTelemetry',
+    description:
+      'Add distributed tracing, metrics, and structured logging to a microservice. Debug a latency issue using trace data.',
+    category: 'Observability',
+    difficulty: 'ADVANCED',
     xp: 900,
-    duration: "~2.5h",
-    tags: ["OTel", "Grafana", "Go"],
+    duration: '~2.5h',
+    tags: ['OTel', 'Grafana', 'Go'],
     icon: Globe,
   },
   {
-    id: "SCN-005",
-    title: "Optimize a Cold PostgreSQL Query",
-    description: "Analyze explain plans, add composite indexes, and restructure a query to handle 100k req/s on a production dataset.",
-    category: "Database",
-    difficulty: "EXPERT",
+    id: 'SCN-005',
+    title: 'Optimize a Cold PostgreSQL Query',
+    description:
+      'Analyze explain plans, add composite indexes, and restructure a query to handle 100k req/s on a production dataset.',
+    category: 'Database',
+    difficulty: 'EXPERT',
     xp: 1100,
-    duration: "~3h",
-    tags: ["SQL", "PostgreSQL", "Indexing"],
+    duration: '~3h',
+    tags: ['SQL', 'PostgreSQL', 'Indexing'],
     icon: Database,
   },
-];
+]
 
 function getDifficultyStyle(difficulty: string) {
   switch (difficulty) {
-    case "EXPERT":
-      return "border-[#a86f44]/30 bg-[#a86f44]/5 text-[#a86f44]";
-    case "ADVANCED":
-      return "border-foreground/15 bg-foreground/5 text-foreground/70";
-    case "INTERMEDIATE":
-      return "border-muted-foreground/20 bg-muted-foreground/5 text-muted-foreground";
+    case 'EXPERT':
+      return 'border-[#a86f44]/30 bg-[#a86f44]/5 text-[#a86f44]'
+    case 'ADVANCED':
+      return 'border-foreground/15 bg-foreground/5 text-foreground/70'
+    case 'INTERMEDIATE':
+      return 'border-muted-foreground/20 bg-muted-foreground/5 text-muted-foreground'
     default:
-      return "border-muted-foreground/20 bg-muted-foreground/5 text-muted-foreground";
+      return 'border-muted-foreground/20 bg-muted-foreground/5 text-muted-foreground'
   }
 }
 
@@ -86,7 +91,8 @@ export function ScenarioLibrary() {
             Current Workstream
           </h2>
           <p className="mt-2 text-sm text-muted-foreground max-w-lg">
-            9:13 AM — Production incident reported. Incoming mail from Lead Architect. The repository is mid-migration. Choose your entry point.
+            9:13 AM — Production incident reported. Incoming mail from Lead Architect. The
+            repository is mid-migration. Choose your entry point.
           </p>
         </div>
         <Link
@@ -100,7 +106,7 @@ export function ScenarioLibrary() {
 
       <div className="space-y-3">
         {scenarios.map((scenario) => {
-          const Icon = scenario.icon;
+          const Icon = scenario.icon
           return (
             <div
               key={scenario.id}
@@ -134,7 +140,10 @@ export function ScenarioLibrary() {
                 </p>
                 <div className="flex items-center gap-2 mt-1">
                   {scenario.tags.map((tag) => (
-                    <span key={tag} className="rounded-sm border border-border bg-secondary/50 px-1.5 py-0.5 font-serif text-[9px] text-muted-foreground uppercase tracking-wider">
+                    <span
+                      key={tag}
+                      className="rounded-sm border border-border bg-secondary/50 px-1.5 py-0.5 font-serif text-[9px] text-muted-foreground uppercase tracking-wider"
+                    >
                       {tag}
                     </span>
                   ))}
@@ -143,7 +152,9 @@ export function ScenarioLibrary() {
 
               {/* Meta */}
               <div className="flex md:flex-col items-end md:items-end gap-3 md:gap-2 shrink-0">
-                <span className={`rounded-sm border px-2 py-0.5 font-serif text-[9px] uppercase tracking-wider ${getDifficultyStyle(scenario.difficulty)}`}>
+                <span
+                  className={`rounded-sm border px-2 py-0.5 font-serif text-[9px] uppercase tracking-wider ${getDifficultyStyle(scenario.difficulty)}`}
+                >
                   {scenario.difficulty}
                 </span>
                 <div className="flex items-center gap-1 text-muted-foreground">
@@ -155,9 +166,9 @@ export function ScenarioLibrary() {
                 </span>
               </div>
             </div>
-          );
+          )
         })}
       </div>
     </section>
-  );
+  )
 }

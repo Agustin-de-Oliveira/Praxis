@@ -10,7 +10,7 @@ The validation engine is what makes Praxis a simulator rather than a tutorial. I
 
 **Core principle:** Validate outputs, not implementations.
 
-A user should be able to implement JWT auth however they want. The validator checks: does `/login` return a valid token? Does a protected route reject unauthorized requests? The *how* is their business.
+A user should be able to implement JWT auth however they want. The validator checks: does `/login` return a valid token? Does a protected route reject unauthorized requests? The _how_ is their business.
 
 ---
 
@@ -47,6 +47,7 @@ User Action (e.g., "Run validator")
 Makes an HTTP request to the user's running service and validates the response.
 
 **Config:**
+
 ```json
 {
   "type": "http_response",
@@ -75,6 +76,7 @@ Makes an HTTP request to the user's running service and validates the response.
 Validates that a request is properly rejected.
 
 **Config:**
+
 ```json
 {
   "type": "http_rejects",
@@ -96,6 +98,7 @@ Validates that a request is properly rejected.
 Checks that a file exists at a given path in the user's working directory.
 
 **Config:**
+
 ```json
 {
   "type": "file_exists",
@@ -115,6 +118,7 @@ Checks that a file exists at a given path in the user's working directory.
 Runs a test command and checks the exit code.
 
 **Config:**
+
 ```json
 {
   "type": "test_pass",
@@ -138,6 +142,7 @@ Runs a test command and checks the exit code.
 Checks if a specific file contains a required pattern.
 
 **Config:**
+
 ```json
 {
   "type": "code_contains",
@@ -206,6 +211,7 @@ Checks if a specific file contains a required pattern.
 ### Step 1 — Static Validators Only
 
 Start with validators that don't require a running environment:
+
 - `file_exists` — safe, no execution
 - `code_contains` — safe, no execution
 
@@ -224,6 +230,7 @@ User runs their service locally. Praxis calls it via a user-provided URL (e.g., 
 ### Step 3 — Sandboxed Execution (Phase 2+)
 
 For `test_pass` and arbitrary command validation, we need a sandboxed environment. Options:
+
 - **Docker container** — Spin up per validation run; expensive but isolated
 - **WebAssembly sandbox** — Fast, cheap, limited to supported languages
 - **E2B.dev** — Managed code execution sandbox (evaluate this)

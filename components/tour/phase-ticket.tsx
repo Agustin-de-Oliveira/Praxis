@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // components/tour/phase-ticket.tsx
@@ -6,23 +6,23 @@
 // Slides in from right, border pulses copper, acceptance criteria stagger in.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { motion, type Variants } from "framer-motion"
-import { Bell, Check, ArrowRight } from "lucide-react"
-import { SCN008_TICKET, SCN008_TEAM } from "@/lib/first-day-data"
+import { motion, type Variants } from 'framer-motion'
+import { Bell, Check, ArrowRight } from 'lucide-react'
+import { SCN008_TICKET, SCN008_TEAM } from '@/lib/first-day-data'
 
 // ── Variants ──────────────────────────────────────────────────────────────────
 
 const tourVariants: Variants = {
-  hidden: { opacity: 0, filter: "blur(6px)" },
+  hidden: { opacity: 0, filter: 'blur(6px)' },
   visible: {
     opacity: 1,
-    filter: "blur(0px)",
-    transition: { duration: 0.35, ease: "easeOut" as const },
+    filter: 'blur(0px)',
+    transition: { duration: 0.35, ease: 'easeOut' as const },
   },
   exit: {
     opacity: 0,
-    filter: "blur(4px)",
-    transition: { duration: 0.2, ease: "easeIn" as const },
+    filter: 'blur(4px)',
+    transition: { duration: 0.2, ease: 'easeIn' as const },
   },
 }
 
@@ -33,13 +33,17 @@ const stagger: Variants = {
 }
 
 const listItem: Variants = {
-  hidden: { opacity: 0, filter: "blur(4px)" },
-  visible: { opacity: 1, filter: "blur(0px)", transition: { duration: 0.25, ease: "easeOut" as const } },
+  hidden: { opacity: 0, filter: 'blur(4px)' },
+  visible: {
+    opacity: 1,
+    filter: 'blur(0px)',
+    transition: { duration: 0.25, ease: 'easeOut' as const },
+  },
 }
 
 // ── PM avatar ─────────────────────────────────────────────────────────────────
 
-const pm = SCN008_TEAM.find((t) => t.handle === "pm_bot")!
+const pm = SCN008_TEAM.find((t) => t.handle === 'pm_bot')!
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -61,13 +65,9 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
       <motion.div
         className="flex items-center gap-3 px-4 py-3 rounded-sm border border-[#a86f44]/40 bg-[#a86f44]/8 mb-6"
         animate={{
-          borderColor: [
-            "rgba(168,111,68,0.4)",
-            "rgba(168,111,68,0.9)",
-            "rgba(168,111,68,0.4)",
-          ],
+          borderColor: ['rgba(168,111,68,0.4)', 'rgba(168,111,68,0.9)', 'rgba(168,111,68,0.4)'],
         }}
-        transition={{ duration: 2, repeat: 3, ease: "easeInOut" }}
+        transition={{ duration: 2, repeat: 3, ease: 'easeInOut' }}
       >
         <motion.div
           animate={{ scale: [1, 1.25, 1] }}
@@ -113,17 +113,15 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
 
           {/* Body (render markdown-style bold) */}
           <p className="text-sm text-white/50 leading-relaxed mb-6 whitespace-pre-line">
-            {SCN008_TICKET.body
-              .split(/\*\*(.*?)\*\*/g)
-              .map((part, i) =>
-                i % 2 === 1 ? (
-                  <span key={i} className="text-white font-medium">
-                    {part}
-                  </span>
-                ) : (
-                  part
-                )
-              )}
+            {SCN008_TICKET.body.split(/\*\*(.*?)\*\*/g).map((part, i) =>
+              i % 2 === 1 ? (
+                <span key={i} className="text-white font-medium">
+                  {part}
+                </span>
+              ) : (
+                part
+              )
+            )}
           </p>
 
           {/* Acceptance criteria */}
@@ -157,8 +155,8 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
 
       {/* CTA */}
       <motion.div
-        initial={{ opacity: 0, filter: "blur(6px)" }}
-        animate={{ opacity: 1, filter: "blur(0px)" }}
+        initial={{ opacity: 0, filter: 'blur(6px)' }}
+        animate={{ opacity: 1, filter: 'blur(0px)' }}
         transition={{ delay: 1.2, duration: 0.4 }}
         className="mt-6"
       >

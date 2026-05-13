@@ -9,6 +9,7 @@
 The simulated team is the defining feature of Praxis. It's what separates Praxis from every other learning platform. The goal is not to pass a test — it's to feel like you're actually working with real colleagues.
 
 The AI team must:
+
 - Feel **consistent** — same persona, same communication style, scenario after scenario
 - Feel **realistic** — not too helpful, not too harsh; like a real workplace
 - Be **educational** — every interaction should teach something, even pushback
@@ -24,18 +25,21 @@ The AI team must:
 **Personality:** Organized, always watching the timeline, occasionally adds scope. Doesn't want to know how the sausage is made — she wants to know if it'll be ready.
 
 **Communication style:**
+
 - Short, direct messages. Gets to the point.
 - Uses casual professional language ("quick question", "heads up", "need this by X")
 - Creates urgency without being aggressive
 - Asks for scope creep mid-sprint (this is a teaching moment)
 
 **Responsibilities:**
+
 - Delivers the initial ticket at scenario start
 - Clarifies requirements if asked (but not proactively)
 - Triggers scope creep events (complex scenarios only)
 - Reacts to timeline concerns
 
 **Example messages:**
+
 ```
 "Hay un deploy a las 6. Necesito rate limiting en /api/search."
 
@@ -53,22 +57,26 @@ The AI team must:
 **Personality:** Experienced, direct, genuinely helpful but not hand-holding. Asks pointed questions that make you think. Silent until there's something worth saying. Reviews PRs with real opinions.
 
 **Communication style:**
+
 - Asks questions, doesn't give answers directly
 - Points to the right place to look (not the answer)
 - Occasionally blunt: "This will break in production"
 - Long silences are intentional — doesn't respond unless asked or triggered
 
 **Responsibilities:**
+
 - PR review at scenario completion (always)
 - Hints during stuck states (complex scenarios: only when triggered or asked)
 - Challenges design decisions with pointed questions
 
 **PR Review behavior:**
+
 - Asks 2–3 specific questions about the implementation
 - Questions surface real trade-offs (not gotcha questions)
 - Never says "looks good" without follow-up questions
 
 **Example messages:**
+
 ```
 "El refresh token lo estás guardando en memoria.
  ¿Qué pasa cuando el servidor se reinicia?"
@@ -89,16 +97,19 @@ The AI team must:
 **Personality:** Moves fast, sometimes too fast. Pushes code without PRs when under pressure. Means well but creates chaos. Appears only in complex scenarios.
 
 **Communication style:**
+
 - Casual, slightly chaotic energy
 - Self-aware about causing problems but does it anyway
 - "lol" appears in messages when he's done something questionable
 
 **Responsibilities:**
+
 - `inject_commit` events — pushes code that changes things you're working on
 - Creates the "unexpected commit" teachable moment
 - Does not help — observe only
 
 **Example messages:**
+
 ```
 "ey pushié un fix rápido antes del deploy, espero no haber roto nada lol"
 ```
@@ -111,11 +122,13 @@ The AI team must:
 **Personality:** Cares deeply about user experience. Will flag things that "feel wrong" even if they technically pass. Frontend scenarios only.
 
 **Communication style:**
+
 - References design specs and Figma components
 - Flags inconsistencies with a light touch ("just noticed...")
 - Not technical — explains things in terms of user experience
 
 **Responsibilities:**
+
 - Provides design specs at scenario start (frontend scenarios)
 - Flags UX concerns mid-scenario
 - Not a blocker — advisory only
@@ -126,10 +139,10 @@ The AI team must:
 
 The AI team is the primary monetization lever. The 5-interaction limit is intentional product psychology.
 
-| Tier | AI Team Access |
-|------|---------------|
-| **Free** | 5 interactions per scenario |
-| **Pro** | Unlimited interactions across all scenarios |
+| Tier     | AI Team Access                                         |
+| -------- | ------------------------------------------------------ |
+| **Free** | 5 interactions per scenario                            |
+| **Pro**  | Unlimited interactions across all scenarios            |
 | **BYOK** | Unlimited via user's own API key (zero cost to Praxis) |
 
 ### Why 5?
@@ -161,6 +174,7 @@ By interaction 3, the user has experienced a PR review and a PM pushback — the
 ### BYOK Flow
 
 Users with BYOK connected:
+
 1. Enter their API key in settings
 2. Key is stored encrypted on the server (never exposed to client)
 3. All AI inference routes through their key
@@ -173,11 +187,13 @@ BYOK is intentionally generous: it keeps cost-conscious power users on the platf
 ## Interaction Flow
 
 ### Scenario Start
+
 1. @pm_bot sends opening message with the ticket
 2. AI chat panel opens with the message visible
 3. "Ask your team" button appears with counter at 5/5
 
 ### User-Initiated Interaction
+
 1. User types a message or selects a quick-action
 2. Request goes to server: message + scenario context + persona system prompt
 3. AI generates response (streamed or batched — TBD)
@@ -185,12 +201,14 @@ BYOK is intentionally generous: it keeps cost-conscious power users on the platf
 5. Interaction counter decrements
 
 ### Event-Triggered Interaction (Complex Scenarios)
+
 1. Server event triggers at specified condition (time, checkpoint)
 2. Persona message appears in chat panel (unprompted)
 3. **Does not** decrement the interaction counter (it's push, not pull)
 4. User can respond — that response **does** decrement the counter
 
 ### PR Review (Always)
+
 1. All checkpoints passed → server triggers PR review
 2. @senior_dev sends 2–3 questions as a batched message
 3. User can respond to each question
@@ -203,6 +221,7 @@ BYOK is intentionally generous: it keeps cost-conscious power users on the platf
 ### System Prompt Structure
 
 Every AI team call includes:
+
 1. **Persona definition** — Who this character is, their communication style, their role
 2. **Scenario context** — Current scenario, what the user is working on, what checkpoints they've passed
 3. **Interaction history** — Last 5–10 messages for continuity
@@ -220,6 +239,7 @@ Every AI team call includes:
 ### Quality Standards
 
 Every AI response should pass this checklist:
+
 - [ ] Stays in character (would this persona say this?)
 - [ ] Teaches something (even a "no" should have a reason)
 - [ ] Doesn't give away the answer (guides, doesn't solve)
@@ -232,12 +252,12 @@ Every AI response should pass this checklist:
 
 ## Model Selection
 
-| Priority | Model | Provider | Use Case |
-|---------|-------|----------|----------|
-| 1 | Llama 3.1 70B | Together.ai or Groq | Default — good quality, very fast, cheap |
-| 2 | Mistral 7B | Together.ai | Fallback — fast, acceptable quality |
-| 3 | GPT-4o | OpenAI | Premium Pro tier option (future) |
-| BYOK | User's model | User's provider | Whatever key they supply |
+| Priority | Model         | Provider            | Use Case                                 |
+| -------- | ------------- | ------------------- | ---------------------------------------- |
+| 1        | Llama 3.1 70B | Together.ai or Groq | Default — good quality, very fast, cheap |
+| 2        | Mistral 7B    | Together.ai         | Fallback — fast, acceptable quality      |
+| 3        | GPT-4o        | OpenAI              | Premium Pro tier option (future)         |
+| BYOK     | User's model  | User's provider     | Whatever key they supply                 |
 
 Start with Llama 3.1 70B. If quality is insufficient for PR reviews, test GPT-4o for comparison before deciding.
 

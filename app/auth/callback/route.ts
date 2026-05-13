@@ -5,15 +5,15 @@
 // Exchanges the `code` for a session, then redirects to the intended destination.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
-import { NextResponse, type NextRequest } from "next/server"
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+import { NextResponse, type NextRequest } from 'next/server'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
-  const code = searchParams.get("code")
+  const code = searchParams.get('code')
   // `next` can be used to redirect to a specific page after login
-  const next = searchParams.get("next") ?? "/os?welcome=1"
+  const next = searchParams.get('next') ?? '/os?welcome=1'
 
   if (code) {
     const cookieStore = await cookies()
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Code missing or exchange failed — redirect to login with an error param
-  const errorUrl = new URL("/login", origin)
-  errorUrl.searchParams.set("error", "auth_callback_error")
+  const errorUrl = new URL('/login', origin)
+  errorUrl.searchParams.set('error', 'auth_callback_error')
   return NextResponse.redirect(errorUrl)
 }

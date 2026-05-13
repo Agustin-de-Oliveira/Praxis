@@ -6,12 +6,12 @@
 
 ## Prerequisites
 
-| Tool | Version | Notes |
-|------|---------|-------|
-| Node.js | 20+ | Use nvm or fnm for version management |
-| pnpm | 9+ | Preferred package manager (`npm i -g pnpm`) |
-| Git | any | |
-| Supabase account | — | For database and auth |
+| Tool             | Version | Notes                                       |
+| ---------------- | ------- | ------------------------------------------- |
+| Node.js          | 20+     | Use nvm or fnm for version management       |
+| pnpm             | 9+      | Preferred package manager (`npm i -g pnpm`) |
+| Git              | any     |                                             |
+| Supabase account | —       | For database and auth                       |
 
 ---
 
@@ -84,15 +84,15 @@ pnpm dev
 
 App runs at **`http://localhost:3000`**
 
-| Route | Description |
-|-------|-------------|
-| `/` | Landing page |
-| `/login` | Auth — login/register |
-| `/onboarding` | New user role selection |
-| `/dashboard` | User dashboard (WIP) |
-| `/scenarios` | Scenario library |
-| `/scenario/[id]` | Active scenario board |
-| `/learning` | Learning module (WIP) |
+| Route            | Description             |
+| ---------------- | ----------------------- |
+| `/`              | Landing page            |
+| `/login`         | Auth — login/register   |
+| `/onboarding`    | New user role selection |
+| `/dashboard`     | User dashboard (WIP)    |
+| `/scenarios`     | Scenario library        |
+| `/scenario/[id]` | Active scenario board   |
+| `/learning`      | Learning module (WIP)   |
 
 ---
 
@@ -122,11 +122,13 @@ pnpm lint         # ESLint
 Supabase Auth is configured via `utils/supabase/client.ts`, `utils/supabase/server.ts`, and `proxy.ts`. The app uses the `@supabase/ssr` package for server-side session handling.
 
 **Required Supabase settings:**
+
 - Enable Email/Password auth in **Authentication → Providers**
 - Set Site URL to `http://localhost:3000` in **Authentication → URL Configuration** (for local dev)
 - Set redirect URLs to include `http://localhost:3000/**`
 
 **Auth flow:**
+
 - Login/Register → `/login`
 - On successful auth → Supabase creates session → redirect to `/dashboard`
 - Session is managed via cookies (server-side) using `@supabase/ssr`
@@ -135,17 +137,17 @@ Supabase Auth is configured via `utils/supabase/client.ts`, `utils/supabase/serv
 
 ## 8. Key Files to Know
 
-| File | Purpose |
-|------|---------|
-| `app/globals.css` | All design tokens and base styles |
-| `lib/scenario-types.ts` | Scenario and progress TypeScript contracts |
-| `lib/os-types.ts` | Praxis OS profile and shell contracts |
-| `utils/supabase/client.ts` | Browser Supabase client |
-| `utils/supabase/server.ts` | Server Component Supabase client |
-| `proxy.ts` | Supabase session refresh and route protection |
-| `components/scenario/board.tsx` | Main scenario experience component |
-| `components/scenario/ide.tsx` | In-browser code editor |
-| `components/scenario-library.tsx` | Scenario browse/filter view |
+| File                              | Purpose                                       |
+| --------------------------------- | --------------------------------------------- |
+| `app/globals.css`                 | All design tokens and base styles             |
+| `lib/scenario-types.ts`           | Scenario and progress TypeScript contracts    |
+| `lib/os-types.ts`                 | Praxis OS profile and shell contracts         |
+| `utils/supabase/client.ts`        | Browser Supabase client                       |
+| `utils/supabase/server.ts`        | Server Component Supabase client              |
+| `proxy.ts`                        | Supabase session refresh and route protection |
+| `components/scenario/board.tsx`   | Main scenario experience component            |
+| `components/scenario/ide.tsx`     | In-browser code editor                        |
+| `components/scenario-library.tsx` | Scenario browse/filter view                   |
 
 ---
 

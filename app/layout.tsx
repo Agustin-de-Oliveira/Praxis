@@ -1,32 +1,29 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Outfit, Noto_Serif, JetBrains_Mono } from 'next/font/google'
+import { Inter, Noto_Serif, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const inter = Inter({ 
-  subsets: ["latin"],
+const inter = Inter({
+  subsets: ['latin'],
   variable: '--font-inter',
-});
+})
 
-const outfit = Outfit({ 
-  subsets: ["latin"],
-  variable: '--font-outfit',
-});
 
-const notoSerif = Noto_Serif({ 
-  subsets: ["latin"],
+const notoSerif = Noto_Serif({
+  subsets: ['latin'],
   variable: '--font-noto-serif',
   weight: ['400', '700'],
-});
+})
 
 const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
+  subsets: ['latin'],
   variable: '--font-jetbrains-mono',
-});
+})
 
 export const metadata: Metadata = {
   title: 'Praxis - The Workplace Simulation Game',
-  description: 'Experience the reality of engineering before your first day. Survive production incidents, technical debt, and team dynamics in an immersive workstation.',
+  description:
+    'Experience the reality of engineering before your first day. Survive production incidents, technical debt, and team dynamics in an immersive workstation.',
   generator: 'praxis',
   icons: {
     icon: [
@@ -60,7 +57,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark bg-background">
-      <body className={`${inter.variable} ${notoSerif.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+      <body
+        className={`${inter.variable} ${notoSerif.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+      >
         <SmoothScroll />
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

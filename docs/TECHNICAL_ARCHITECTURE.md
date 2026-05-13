@@ -41,30 +41,30 @@
 
 ## Technology Stack
 
-| Layer | Technology | Version | Rationale |
-|-------|-----------|---------|-----------|
-| **Framework** | Next.js | 16.2.4 | SSR for landing/SEO; App Router for OS & experience |
-| **UI Library** | React | 19 | Concurrent features, better Suspense |
-| **Animations** | Framer Motion | 12.x | Scenario board modals, page transitions |
-| **Styling** | Tailwind CSS | v4 | Design token system via `@theme` directive |
-| **Icons** | Phosphor Icons + Lucide | latest | Phosphor for UI, Lucide for shadcn/ui |
-| **Component Library** | shadcn/ui (Radix UI primitives) | latest | Accessible, unstyled, fully owned |
-| **Font (Serif)** | Noto Serif | via next/font | Editorial headings |
-| **Font (Sans)** | Inter | via next/font | Body text and UI |
-| **Font (Mono)** | JetBrains Mono | via next/font | Code, terminal, technical labels |
-| **Shader Background** | @paper-design/shaders-react | 0.0.76 | Dithering effect on landing page |
-| **Database** | PostgreSQL via Supabase | latest | Auth, user data, progress, scenario metadata |
-| **Data Access** | Supabase JS + `@supabase/ssr` | latest | Direct table access, SSR session cookies, and route protection |
-| **Auth** | Supabase Auth + `@supabase/ssr` | latest | JWT sessions, SSR-compatible |
-| **AI Inference** | Together.ai / Groq | — | Llama 3 / Mistral, 10–20x cheaper than GPT-4 |
-| **AI Fallback** | BYOK | — | User's own OpenAI/Anthropic/Groq key |
-| **Scroll** | Lenis | 1.3.x | Smooth scroll on landing page |
-| **Forms** | React Hook Form + Zod | latest | Type-safe form validation |
-| **Charts** | Recharts | 2.15.x | XP/progress visualization |
-| **Analytics** | Vercel Analytics | 1.6.x | Usage tracking, funnel analysis |
-| **IDE Editor** | Monaco Editor (via @monaco-editor/react) | latest | Industry standard, powerful intellisense, familiar DX |
-| **Hosting** | Vercel | — | Frontend; automatic deploys from main |
-| **Future API** | Railway or Render | — | If API is extracted from Next.js |
+| Layer                 | Technology                               | Version       | Rationale                                                      |
+| --------------------- | ---------------------------------------- | ------------- | -------------------------------------------------------------- |
+| **Framework**         | Next.js                                  | 16.2.4        | SSR for landing/SEO; App Router for OS & experience            |
+| **UI Library**        | React                                    | 19            | Concurrent features, better Suspense                           |
+| **Animations**        | Framer Motion                            | 12.x          | Scenario board modals, page transitions                        |
+| **Styling**           | Tailwind CSS                             | v4            | Design token system via `@theme` directive                     |
+| **Icons**             | Phosphor Icons + Lucide                  | latest        | Phosphor for UI, Lucide for shadcn/ui                          |
+| **Component Library** | shadcn/ui (Radix UI primitives)          | latest        | Accessible, unstyled, fully owned                              |
+| **Font (Serif)**      | Noto Serif                               | via next/font | Editorial headings                                             |
+| **Font (Sans)**       | Inter                                    | via next/font | Body text and UI                                               |
+| **Font (Mono)**       | JetBrains Mono                           | via next/font | Code, terminal, technical labels                               |
+| **Shader Background** | @paper-design/shaders-react              | 0.0.76        | Dithering effect on landing page                               |
+| **Database**          | PostgreSQL via Supabase                  | latest        | Auth, user data, progress, scenario metadata                   |
+| **Data Access**       | Supabase JS + `@supabase/ssr`            | latest        | Direct table access, SSR session cookies, and route protection |
+| **Auth**              | Supabase Auth + `@supabase/ssr`          | latest        | JWT sessions, SSR-compatible                                   |
+| **AI Inference**      | Together.ai / Groq                       | —             | Llama 3 / Mistral, 10–20x cheaper than GPT-4                   |
+| **AI Fallback**       | BYOK                                     | —             | User's own OpenAI/Anthropic/Groq key                           |
+| **Scroll**            | Lenis                                    | 1.3.x         | Smooth scroll on landing page                                  |
+| **Forms**             | React Hook Form + Zod                    | latest        | Type-safe form validation                                      |
+| **Charts**            | Recharts                                 | 2.15.x        | XP/progress visualization                                      |
+| **Analytics**         | Vercel Analytics                         | 1.6.x         | Usage tracking, funnel analysis                                |
+| **IDE Editor**        | Monaco Editor (via @monaco-editor/react) | latest        | Industry standard, powerful intellisense, familiar DX          |
+| **Hosting**           | Vercel                                   | —             | Frontend; automatic deploys from main                          |
+| **Future API**        | Railway or Render                        | —             | If API is extracted from Next.js                               |
 
 ---
 
@@ -142,24 +142,31 @@ praxis/
 ## Key Technical Decisions
 
 ### 1. Next.js App Router (not Pages Router)
+
 The App Router enables co-located Server Components, streaming, and Server Actions. Landing page routes benefit from SSR for SEO. Dashboard and scenario routes use client components for interactivity.
 
 ### 2. Supabase JS over an ORM
+
 Praxis no longer uses Drizzle or Prisma. The app reads and writes Supabase tables directly through `supabase-js` and `@supabase/ssr`. TypeScript contracts live in `lib/scenario-types.ts` and should be kept in sync with the Supabase schema.
 
 ### 3. Supabase for Auth + Database
+
 Single managed service for both auth and database reduces infrastructure complexity for a solo founder. Supabase Auth handles JWTs, sessions, and SSR cookies out of the box via `@supabase/ssr`. Root [`proxy.ts`](../proxy.ts) (Next.js proxy convention; formerly `middleware.ts`) runs `createServerClient` and `getUser()` on matched requests so sessions refresh and updated cookies reach the browser; [`utils/supabase/server.ts`](../utils/supabase/server.ts) reads the same cookies in Server Components and route handlers. Protected prefixes (e.g. `/os`, `/scenario/…`, `/tour`) redirect to `/login` when unauthenticated. The legacy `/onboarding` route redirects into `/os` where in-shell onboarding runs.
 
 ### 4. AI via Together.ai/Groq (not OpenAI)
+
 Llama 3 and Mistral are 10–20x cheaper than GPT-4 for inference. For PR review questions and PM pushback, the quality difference is negligible. BYOK as a tier means zero AI cost for that segment.
 
 ### 5. Tailwind CSS v4
+
 The new `@theme` directive allows defining design tokens directly in CSS, which is cleaner than `tailwind.config.js` and works better with CSS custom properties. All design tokens live in `globals.css`.
 
 ### 6. Scenario Board as Client Component
+
 The scenario board (`components/scenario/board.tsx`) is a complex, stateful UI — checkpoint tracking, AI chat, ticket detail modal, timer. It's a Client Component with server data fetched via props at the page level.
 
 ### 7. Checkpoint Validation (Planned)
+
 Checkpoints will be validated server-side via custom validator scripts. Each scenario's `validationRules` JSON field defines what the validator checks. See [VALIDATION_ENGINE.md](./VALIDATION_ENGINE.md).
 
 ---

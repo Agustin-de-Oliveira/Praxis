@@ -1,23 +1,23 @@
-"use client"
+'use client'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // app/first-day/page.tsx
 // Post-onboarding "First Day" orchestrator.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { AnimatePresence, motion, type Variants } from "framer-motion"
-import Link from "next/link"
+import { useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { AnimatePresence, motion, type Variants } from 'framer-motion'
+import Link from 'next/link'
 
-import TransitionScreen from "@/components/first-day/transition-screen"
-import ScenarioPrompt from "@/components/first-day/scenario-prompt"
-import ScenarioCards from "@/components/first-day/scenario-cards"
-import { getRecommendedScenarios, type RoleId } from "@/lib/first-day-data"
+import TransitionScreen from '@/components/first-day/transition-screen'
+import ScenarioPrompt from '@/components/first-day/scenario-prompt'
+import ScenarioCards from '@/components/first-day/scenario-cards'
+import { getRecommendedScenarios, type RoleId } from '@/lib/first-day-data'
 
 // ── Flow step type ────────────────────────────────────────────────────────────
 
-type Step = "welcome" | "selection"
+type Step = 'welcome' | 'selection'
 
 // ── Page transition: pure opacity fade ──────────────────────────────────────
 
@@ -25,53 +25,53 @@ const pageVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { duration: 0.25, ease: "easeOut" as const },
+    transition: { duration: 0.25, ease: 'easeOut' as const },
   },
   exit: {
     opacity: 0,
-    transition: { duration: 0.2, ease: "easeIn" as const },
+    transition: { duration: 0.2, ease: 'easeIn' as const },
   },
 }
 
 // ── Role labels ──────────────────────────────────────────────────────────────
 
 const ROLE_LABELS: Record<string, string> = {
-  frontend: "Frontend Engineer",
-  backend: "Backend Engineer",
-  fullstack: "Full-Stack Engineer",
-  devops: "DevOps / SRE",
-  security: "Security Engineer",
+  frontend: 'Frontend Engineer',
+  backend: 'Backend Engineer',
+  fullstack: 'Full-Stack Engineer',
+  devops: 'DevOps / SRE',
+  security: 'Security Engineer',
 }
 
 const STACK_LABELS: Record<string, string> = {
-  "JavaScript / TypeScript": "Node.js / TypeScript",
-  Python: "Python / FastAPI",
-  Go: "Go",
-  Java: "Java / Spring",
-  "C# / .NET": ".NET / C#",
-  Ruby: "Ruby on Rails",
-  Other: "your stack",
+  'JavaScript / TypeScript': 'Node.js / TypeScript',
+  Python: 'Python / FastAPI',
+  Go: 'Go',
+  Java: 'Java / Spring',
+  'C# / .NET': '.NET / C#',
+  Ruby: 'Ruby on Rails',
+  Other: 'your stack',
 }
 
 function FirstDayInner() {
   const router = useRouter()
   const params = useSearchParams()
 
-  const roleId = (params.get("role") ?? "backend") as RoleId
-  const langRaw = params.get("lang") ?? "JavaScript / TypeScript"
-  const handle = params.get("handle") ?? "engineer"
+  const roleId = (params.get('role') ?? 'backend') as RoleId
+  const langRaw = params.get('lang') ?? 'JavaScript / TypeScript'
+  const handle = params.get('handle') ?? 'engineer'
 
-  const roleLabel = ROLE_LABELS[roleId] ?? "Backend Engineer"
+  const roleLabel = ROLE_LABELS[roleId] ?? 'Backend Engineer'
   const stackLabel = STACK_LABELS[langRaw] ?? langRaw
   const scenarios = getRecommendedScenarios(roleId)
 
-  const [step, setStep] = useState<Step>("welcome")
+  const [step, setStep] = useState<Step>('welcome')
   const [showSkipModal, setShowSkipModal] = useState(false)
 
-  const handleTransitionContinue = () => setStep("selection")
+  const handleTransitionContinue = () => setStep('selection')
 
   const handleSelectScenario = (id: string) => {
-    const tourEnabled = ["SCN-008"]
+    const tourEnabled = ['SCN-008']
     if (tourEnabled.includes(id)) {
       router.push(`/tour/${id}`)
     } else {
@@ -81,10 +81,9 @@ function FirstDayInner() {
 
   return (
     <div className="relative min-h-screen bg-[#050505] overflow-x-hidden">
-      
       {/* Subtle Skip Button */}
       <div className="fixed top-8 right-10 z-[100]">
-        <button 
+        <button
           onClick={() => setShowSkipModal(true)}
           className="font-serif text-[10px] uppercase tracking-widest text-muted-foreground/30 hover:text-foreground transition-colors cursor-pointer"
         >
@@ -96,28 +95,29 @@ function FirstDayInner() {
       <AnimatePresence>
         {showSkipModal && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6 backdrop-blur-md bg-black/60">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="w-full max-w-md bg-card border border-border p-10 rounded-sm shadow-2xl relative overflow-hidden"
             >
               <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#a86f44]/10 rounded-full blur-3xl pointer-events-none" />
-              
+
               <h3 className="text-2xl font-serif font-medium text-white mb-6 leading-tight">
                 You are bypassing the <span className="italic text-[#a86f44]">simulation.</span>
               </h3>
-              
+
               <p className="text-xs text-muted-foreground mb-8 leading-relaxed">
-                By skipping, you will miss the high-fidelity engineering workstation experience including:
+                By skipping, you will miss the high-fidelity engineering workstation experience
+                including:
               </p>
-              
+
               <ul className="space-y-4 mb-10">
                 {[
-                  "Interactive workstation with real-time IDE feedback",
-                  "Direct code reviews from Senior AI Personas",
-                  "Simulated PR cycle and CI/CD validation",
-                  "Performance debrief and skill progression metrics"
+                  'Interactive workstation with real-time IDE feedback',
+                  'Direct code reviews from Senior AI Personas',
+                  'Simulated PR cycle and CI/CD validation',
+                  'Performance debrief and skill progression metrics',
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-[11px] text-white/80">
                     <div className="mt-1 w-1 h-1 rounded-full bg-[#a86f44]" />
@@ -127,7 +127,7 @@ function FirstDayInner() {
               </ul>
 
               <div className="flex flex-col gap-3">
-                <button 
+                <button
                   onClick={() => setShowSkipModal(false)}
                   className="h-12 w-full rounded-sm bg-[#a86f44] text-white text-xs font-medium hover:bg-[#a86f44]/90 transition-colors cursor-pointer"
                 >
@@ -145,7 +145,7 @@ function FirstDayInner() {
       </AnimatePresence>
 
       <AnimatePresence mode="wait">
-        {step === "welcome" && (
+        {step === 'welcome' && (
           <motion.div
             key="welcome"
             variants={pageVariants}
@@ -162,7 +162,7 @@ function FirstDayInner() {
           </motion.div>
         )}
 
-        {step === "selection" && (
+        {step === 'selection' && (
           <motion.div
             key="selection"
             variants={pageVariants}

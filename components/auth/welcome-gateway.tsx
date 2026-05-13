@@ -1,22 +1,22 @@
-"use client"
+'use client'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Welcome gateway shown after auth — explains the Praxis OS handoff.
 // Migrated from RegistrationSuccess UI for premium aesthetic.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { motion } from "framer-motion"
-import { Terminal, ArrowRight } from "lucide-react"
-import { Dithering } from "@paper-design/shaders-react"
-import Image from "next/image"
+import { motion } from 'framer-motion'
+import { Terminal, ArrowRight } from 'lucide-react'
+import { Dithering } from '@paper-design/shaders-react'
+import Image from 'next/image'
 
 type WelcomeGatewayProps = {
-  variant?: "inline" | "fullscreen"
+  variant?: 'inline' | 'fullscreen'
   onContinue: () => void
 }
 
-export function WelcomeGateway({ variant = "fullscreen", onContinue }: WelcomeGatewayProps) {
-  if (variant === "inline") {
+export function WelcomeGateway({ variant = 'fullscreen', onContinue }: WelcomeGatewayProps) {
+  if (variant === 'inline') {
     return (
       <motion.div
         initial={{ opacity: 0, y: 12 }}
@@ -51,7 +51,7 @@ export function WelcomeGateway({ variant = "fullscreen", onContinue }: WelcomeGa
       {/* Background Ambience */}
       <div className="absolute inset-0 pointer-events-none">
         <Dithering
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: '100%', width: '100%' }}
           colorBack="hsla(0,0%,0%,1)"
           colorFront="hsl(0,0%,5%)"
           shape="warp"
@@ -62,12 +62,12 @@ export function WelcomeGateway({ variant = "fullscreen", onContinue }: WelcomeGa
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 40, scale: 0.95, filter: "blur(10px)" }}
-        animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+        initial={{ opacity: 0, y: 40, scale: 0.95, filter: 'blur(10px)' }}
+        animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
         transition={{
           duration: 1.2,
           ease: [0.16, 1, 0.3, 1],
-          delay: 0.1
+          delay: 0.1,
         }}
         className="relative z-10 w-full max-w-2xl overflow-hidden rounded-sm border border-white/10 bg-[#0c0c0c] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)]"
       >
@@ -98,8 +98,9 @@ export function WelcomeGateway({ variant = "fullscreen", onContinue }: WelcomeGa
             </h1>
 
             <p className="text-white/40 leading-relaxed mb-8">
-              Your engineering identity has been provisioned. You are now entering <strong>Praxis OS</strong>,
-              a high-fidelity environment designed for senior technical evaluation and professional growth.
+              Your engineering identity has been provisioned. You are now entering{' '}
+              <strong>Praxis OS</strong>, a high-fidelity environment designed for senior technical
+              evaluation and professional growth.
             </p>
 
             <h3 className="text-sm font-serif font-medium text-[#a86f44] uppercase tracking-widest mb-4">
@@ -109,15 +110,24 @@ export function WelcomeGateway({ variant = "fullscreen", onContinue }: WelcomeGa
             <ul className="space-y-4 mb-10 text-sm text-white/30 list-none p-0">
               <li className="flex gap-3">
                 <span className="text-[#a86f44] font-mono">01.</span>
-                <span><strong>Initialize Dossier:</strong> Curate your professional trajectory using our Resume Studio.</span>
+                <span>
+                  <strong>Initialize Dossier:</strong> Curate your professional trajectory using our
+                  Resume Studio.
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="text-[#a86f44] font-mono">02.</span>
-                <span><strong>Diagnostic Crucible:</strong> Undergo real-world engineering simulations to validate your seniority.</span>
+                <span>
+                  <strong>Diagnostic Crucible:</strong> Undergo real-world engineering simulations
+                  to validate your seniority.
+                </span>
               </li>
               <li className="flex gap-3">
                 <span className="text-[#a86f44] font-mono">03.</span>
-                <span><strong>Direct Deployment:</strong> Verified profiles are surfaced to our exclusive network of engineering firms.</span>
+                <span>
+                  <strong>Direct Deployment:</strong> Verified profiles are surfaced to our
+                  exclusive network of engineering firms.
+                </span>
               </li>
             </ul>
 

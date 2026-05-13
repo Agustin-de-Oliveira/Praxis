@@ -10,17 +10,18 @@ The internal atomic unit of Praxis is a **scenario** — a self-contained, time-
 
 There are three types:
 
-| Type | Duration | Events | AI Team Mode | Goal |
-|------|----------|--------|--------------|------|
-| **Simple** | 1–1.5h | None | Reactive (responds when asked) | Linear task with clear outcome |
-| **Complex** | 2–3h | Triggered events with consequences | Active (injects messages, reviews, disruptions) | Multi-step task under realistic pressure |
-| **End-to-End** | TBD | TBD | Full cast | Complete project; user ships something they own |
+| Type           | Duration | Events                             | AI Team Mode                                    | Goal                                            |
+| -------------- | -------- | ---------------------------------- | ----------------------------------------------- | ----------------------------------------------- |
+| **Simple**     | 1–1.5h   | None                               | Reactive (responds when asked)                  | Linear task with clear outcome                  |
+| **Complex**    | 2–3h     | Triggered events with consequences | Active (injects messages, reviews, disruptions) | Multi-step task under realistic pressure        |
+| **End-to-End** | TBD      | TBD                                | Full cast                                       | Complete project; user ships something they own |
 
 ### Entry Scenario: Calibration Challenge
 
 The first scenario is presented as a calibration challenge. After building a dossier in **Résumé Studio**, the user applies for a job in the **OS Browser** and receives a technical task.
 
 Goal:
+
 - Calibrate initial level and skill baseline
 - Infer role fit and target track
 - Unlock the **First Week** employee arc
@@ -106,44 +107,44 @@ Scenario {
 
 > **Golden Rule:** Every event must have a clear lesson behind it, even if the user doesn't see it coming. Events are not random obstacles — they are deliberately designed teachable moments.
 
-| Rule | Description |
-|------|-------------|
-| **Purpose-driven** | Each event teaches one specific professional skill (git blame, scope negotiation, CI debugging) |
+| Rule                   | Description                                                                                                   |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Purpose-driven**     | Each event teaches one specific professional skill (git blame, scope negotiation, CI debugging)               |
 | **Realistic triggers** | Triggers must feel natural — a co-worker pushing code before a deadline, a PM asking for more during a sprint |
-| **Graduated pressure** | Early events are lower stakes; final events should create time pressure or uncertainty |
-| **Silent until asked** | `@senior_dev` should withhold hints until prompted — simulates real workplace dynamics |
-| **Tracked in debrief** | Every event that involves a key decision should be logged in `moments_tracked` |
+| **Graduated pressure** | Early events are lower stakes; final events should create time pressure or uncertainty                        |
+| **Silent until asked** | `@senior_dev` should withhold hints until prompted — simulates real workplace dynamics                        |
+| **Tracked in debrief** | Every event that involves a key decision should be logged in `moments_tracked`                                |
 
 ### Event Trigger Reference
 
-| Trigger | Fires When |
-|---------|-----------|
-| `time:20min` | 20 minutes after scenario start |
-| `checkpoint_2_passed` | User passes checkpoint #2 |
+| Trigger                | Fires When                      |
+| ---------------------- | ------------------------------- |
+| `time:20min`           | 20 minutes after scenario start |
+| `checkpoint_2_passed`  | User passes checkpoint #2       |
 | `time_remaining:10min` | 10 minutes before estimated end |
-| `manual` | Triggered by admin for testing |
+| `manual`               | Triggered by admin for testing  |
 
 ### Event Action Reference
 
-| Action | Effect |
-|--------|--------|
+| Action          | Effect                                                        |
+| --------------- | ------------------------------------------------------------- |
 | `inject_commit` | A new commit appears in the repo, potentially breaking things |
-| `send_message` | An AI teammate sends a Slack-like message |
-| `break_ci` | The CI pipeline starts failing with a specific error |
+| `send_message`  | An AI teammate sends a Slack-like message                     |
+| `break_ci`      | The CI pipeline starts failing with a specific error          |
 
 ---
 
 ## Current Scenario Library
 
-| ID | Title | Type | Category | Difficulty | Duration | Status |
-|----|-------|------|----------|-----------|----------|--------|
-| SCN-008 | Add User Profile Endpoint | Simple | Backend | Beginner / Intermediate | ~1h | ✅ Vertical Slice |
-| SCN-001 | Deploy a Node.js API to Kubernetes | Simple | DevOps | Advanced | ~2h | ⬜ Draft |
-| SCN-002 | Build a Redis-backed Rate Limiter | Simple | Backend | Intermediate | ~1.5h | ⬜ Draft |
-| SCN-003 | Implement JWT Auth with Refresh Tokens | Simple | Security | Intermediate | ~1.5h | 🔄 Authored |
-| SCN-004 | Instrument a Service with OpenTelemetry | Simple | Observability | Advanced | ~2.5h | ⬜ Draft |
-| SCN-005 | Optimize a Cold PostgreSQL Query | Simple | Database | Expert | ~3h | ⬜ Draft |
-| SCN-007 | The Friday Deploy | Complex | Backend + DevOps | Advanced | ~2h | 🔄 Authored |
+| ID      | Title                                   | Type    | Category         | Difficulty              | Duration | Status            |
+| ------- | --------------------------------------- | ------- | ---------------- | ----------------------- | -------- | ----------------- |
+| SCN-008 | Add User Profile Endpoint               | Simple  | Backend          | Beginner / Intermediate | ~1h      | ✅ Vertical Slice |
+| SCN-001 | Deploy a Node.js API to Kubernetes      | Simple  | DevOps           | Advanced                | ~2h      | ⬜ Draft          |
+| SCN-002 | Build a Redis-backed Rate Limiter       | Simple  | Backend          | Intermediate            | ~1.5h    | ⬜ Draft          |
+| SCN-003 | Implement JWT Auth with Refresh Tokens  | Simple  | Security         | Intermediate            | ~1.5h    | 🔄 Authored       |
+| SCN-004 | Instrument a Service with OpenTelemetry | Simple  | Observability    | Advanced                | ~2.5h    | ⬜ Draft          |
+| SCN-005 | Optimize a Cold PostgreSQL Query        | Simple  | Database         | Expert                  | ~3h      | ⬜ Draft          |
+| SCN-007 | The Friday Deploy                       | Complex | Backend + DevOps | Advanced                | ~2h      | 🔄 Authored       |
 
 ---
 
@@ -167,12 +168,12 @@ Express API with `src/middleware/auth.ts` already implemented. `src/routes/profi
 
 ### Checkpoints
 
-| # | Description | Validation |
-|---|-------------|-----------|
-| 1 | 401 for unauthenticated requests | `GET /api/profile` returns 401 without token |
-| 2 | Returns correct user data | `res.json()` contains name, email, etc. |
-| 3 | Sensitive fields excluded | `passwordHash` is removed from the response |
-| 4 | Input validation & error handling | Handle null users and DB errors with clean JSON |
+| #   | Description                       | Validation                                      |
+| --- | --------------------------------- | ----------------------------------------------- |
+| 1   | 401 for unauthenticated requests  | `GET /api/profile` returns 401 without token    |
+| 2   | Returns correct user data         | `res.json()` contains name, email, etc.         |
+| 3   | Sensitive fields excluded         | `passwordHash` is removed from the response     |
+| 4   | Input validation & error handling | Handle null users and DB errors with clean JSON |
 
 ### AI Team
 
@@ -207,12 +208,12 @@ Express API with users in PostgreSQL, bcrypt for passwords. `/register` and `/lo
 
 ### Checkpoints
 
-| # | Description | Validation |
-|---|-------------|-----------|
-| 1 | `/login` returns valid access token + refresh token | Response contains both tokens; JWT is structurally valid |
-| 2 | Protected route rejects requests without token with 401 | `GET /me` without auth header returns 401 |
-| 3 | `/refresh` generates new access token without password | New valid access token returned given a valid refresh token |
-| 4 | Expired tokens are rejected correctly | Token with `exp` in the past returns 401 |
+| #   | Description                                             | Validation                                                  |
+| --- | ------------------------------------------------------- | ----------------------------------------------------------- |
+| 1   | `/login` returns valid access token + refresh token     | Response contains both tokens; JWT is structurally valid    |
+| 2   | Protected route rejects requests without token with 401 | `GET /me` without auth header returns 401                   |
+| 3   | `/refresh` generates new access token without password  | New valid access token returned given a valid refresh token |
+| 4   | Expired tokens are rejected correctly                   | Token with `exp` in the past returns 401                    |
 
 ### AI Team
 
@@ -221,6 +222,7 @@ Express API with users in PostgreSQL, bcrypt for passwords. `/register` and `/lo
 **@senior_dev:** Triggers PR review once all checkpoints pass.
 
 PR review questions:
+
 - "El refresh token lo estás guardando en memoria. ¿Qué pasa cuando el servidor se reinicia?"
 - "¿Por qué 15 minutos para el access token? ¿Qué tradeoff estás haciendo ahí?"
 
@@ -252,16 +254,17 @@ Functional Express API with multiple endpoints, no rate limiting, passing tests.
 
 ### Checkpoints
 
-| # | Description | Validation |
-|---|-------------|-----------|
-| 1 | Rate limiting implemented on `/api/search` | Requests beyond limit return 429 |
-| 2 | Rate limiter tests pass | Test suite green |
-| 3 | Rate limiter survives burst of 100 requests | Stress test passes |
-| 4 | Deploy pipeline green | CI/CD passes all stages |
+| #   | Description                                 | Validation                       |
+| --- | ------------------------------------------- | -------------------------------- |
+| 1   | Rate limiting implemented on `/api/search`  | Requests beyond limit return 429 |
+| 2   | Rate limiter tests pass                     | Test suite green                 |
+| 3   | Rate limiter survives burst of 100 requests | Stress test passes               |
+| 4   | Deploy pipeline green                       | CI/CD passes all stages          |
 
 ### Events
 
 **Event 1** — `trigger: time:20min`
+
 ```
 action: inject_commit
 payload: @backend_dev pushes to main without a PR
@@ -274,6 +277,7 @@ lesson: git blame, reading diffs, team communication
 ```
 
 **Event 2** — `trigger: checkpoint_2_passed`
+
 ```
 action: send_message
 ai_message (@pm_bot): "Oye, el cliente también mencionó /api/export,
@@ -283,6 +287,7 @@ lesson: handling scope creep, learning to say no
 ```
 
 **Event 3** — `trigger: time_remaining:10min`
+
 ```
 action: break_ci
 payload: missing env variable in the CI pipeline for the rate limiter
@@ -302,11 +307,11 @@ lesson: debugging something you didn't write
 
 ### Debrief — Moments Tracked
 
-| Moment | What We're Evaluating |
-|--------|----------------------|
-| Reaction to unexpected commit | Did they read the diff? Did they `git blame`? Did they communicate? |
-| Response to PM scope creep | Did they accept it silently? Push back? Negotiate a follow-up ticket? |
-| Time to diagnose CI failure | How long before they checked the CI log? Did they ask for help appropriately? |
+| Moment                        | What We're Evaluating                                                         |
+| ----------------------------- | ----------------------------------------------------------------------------- |
+| Reaction to unexpected commit | Did they read the diff? Did they `git blame`? Did they communicate?           |
+| Response to PM scope creep    | Did they accept it silently? Push back? Negotiate a follow-up ticket?         |
+| Time to diagnose CI failure   | How long before they checked the CI log? Did they ask for help appropriately? |
 
 - **senior_would_do_differently:** Rate limiter with graceful degradation — if Redis is down, fail open (not hard crash)
 - **optional_reading:** Circuit breaker pattern, Redis-backed rate limiting in production
@@ -318,6 +323,7 @@ lesson: debugging something you didn't write
 ### Before You Write a Scenario
 
 Answer these questions:
+
 1. What is the **one real thing** a junior dev struggles with that this scenario addresses?
 2. What does the repo need to look like at the start? (What's there, what's missing, what's broken)
 3. What are the 3–5 observable checkpoints that prove the task is done?

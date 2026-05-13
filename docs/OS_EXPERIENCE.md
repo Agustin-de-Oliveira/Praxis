@@ -17,6 +17,7 @@ Do not ask the user to fill out onboarding because the app needs data.
 Ask the user to build a candidate profile because they are trying to get hired.
 
 The OS should make every setup action feel like part of the world:
+
 - profile data becomes a CV
 - role selection becomes job targeting
 - experience level becomes calibration
@@ -32,11 +33,13 @@ The OS should make every setup action feel like part of the world:
 The user lands in a clean Praxis OS workspace. It is not yet a full employee workstation. It is a candidate environment.
 
 Initial available apps:
+
 - `Mail.exe`
 - `Browser.exe`
 - `Terminal.exe`
 
 Candidate web surfaces live inside `Browser.exe`, not as separate native apps:
+
 - profile / CV builder
 - job board
 - company pages
@@ -44,6 +47,7 @@ Candidate web surfaces live inside `Browser.exe`, not as separate native apps:
 - application status
 
 The first boot should introduce sections diegetically:
+
 - "Candidate workspace provisioned."
 - "Mail access enabled."
 - "Job board index mounted."
@@ -54,6 +58,7 @@ The first boot should introduce sections diegetically:
 Instead of a traditional onboarding form, the user opens `Browser.exe` and builds a CV/profile in a web portal.
 
 Data to collect:
+
 - name or handle
 - target role
 - experience level
@@ -68,6 +73,7 @@ The tone is not "tell us about yourself"; it is "prepare your application packet
 The browser recommends fictional companies and roles based on the CV.
 
 Example companies:
+
 - **Northstar Health** — healthtech; backend, privacy, reliability
 - **OrbitCart** — commerce; frontend, performance, payments
 - **SignalForge** — devtools; infra, observability, CI/CD
@@ -88,6 +94,7 @@ This unlocks the first code challenge.
 ### 5. Calibration Challenge
 
 The first technical challenge should not be an algorithm puzzle. It should be a small realistic work task:
+
 - fix a stubbed endpoint
 - read a small repo
 - add a test
@@ -95,6 +102,7 @@ The first technical challenge should not be an algorithm puzzle. It should be a 
 - debug a failing request
 
 The challenge measures:
+
 - code comprehension
 - debugging behavior
 - test usage
@@ -105,6 +113,7 @@ The challenge measures:
 The result calibrates the user's initial level and recommended track.
 
 The user should not hard-fail out of the product. If they struggle, the story adapts:
+
 - offer a retry
 - provide a mentor hint
 - recommend a trainee path
@@ -115,6 +124,7 @@ The user should not hard-fail out of the product. If they struggle, the story ad
 After completion, the user receives an offer or trial-week message.
 
 This unlocks the employee version of the OS:
+
 - team mail
 - mission-specific tools
 - codebase access
@@ -134,17 +144,18 @@ The first challenge is both narrative and diagnostic.
 
 Suggested calibration dimensions:
 
-| Dimension | Signal |
-|-----------|--------|
-| Code reading | Opens relevant files, follows existing patterns |
-| Debugging | Uses logs/tests/terminal instead of guessing |
-| Implementation | Passes observable checkpoints |
+| Dimension        | Signal                                            |
+| ---------------- | ------------------------------------------------- |
+| Code reading     | Opens relevant files, follows existing patterns   |
+| Debugging        | Uses logs/tests/terminal instead of guessing      |
+| Implementation   | Passes observable checkpoints                     |
 | Security hygiene | Avoids leaking sensitive fields or bypassing auth |
-| Testing | Runs or writes tests when appropriate |
-| Communication | Asks the team focused questions when stuck |
-| Pace | Completes within expected time bands |
+| Testing          | Runs or writes tests when appropriate             |
+| Communication    | Asks the team focused questions when stuck        |
+| Pace             | Completes within expected time bands              |
 
 Outputs:
+
 - initial track recommendation
 - starting difficulty
 - first-week mission order
