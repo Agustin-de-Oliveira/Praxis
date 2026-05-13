@@ -1,9 +1,9 @@
 'use client';
 
 const stats = [
-  { value: "50+", label: "Real-world scenarios", sublabel: "across backend, infra & security" },
-  { value: "12k", label: "Hours practiced", sublabel: "by developers worldwide" },
-  { value: "94%", label: "Say they felt prepared", sublabel: "before their first day" },
+  { value: "50+", label: "Operational Incidents", sublabel: "across backend, infra & security" },
+  { value: "12k", label: "Sessions Logged", sublabel: "by developers worldwide" },
+  { value: "94%", label: "Survived the Week", sublabel: "with positive team reputation" },
 ];
 
 export function AboutBento() {
@@ -49,14 +49,14 @@ export function AboutBento() {
         {/* Wide CTA strip */}
         <div className="md:col-span-3 rounded-sm border border-border bg-card p-6 flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-foreground">Ready to start?</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Pick a scenario and jump in.</p>
+            <p className="text-sm font-medium text-foreground">Ready for active duty?</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Select an incident and stabilize the system.</p>
           </div>
           <a
             href="#missions"
             className="font-serif text-[10px] uppercase tracking-widest text-[#a86f44] hover:text-foreground transition-colors"
           >
-            Browse missions →
+            Review Workstream →
           </a>
         </div>
 

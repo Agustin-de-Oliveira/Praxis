@@ -15,6 +15,7 @@ export const PROGRAMS = [
   { id: "board", title: "Kanban.exe", icon: Layout, defaultSize: { w: 1400, h: 600 }, defaultPos: { x: 120, y: 120 } },
   { id: "ide", title: "Ide.exe", icon: Code, defaultSize: { w: 1100, h: 700 }, defaultPos: { x: 160, y: 160 } },
   { id: "team", title: "Teams.exe", icon: Users, defaultSize: { w: 600, h: 500 }, defaultPos: { x: 200, y: 200 } },
+  { id: "resume", title: "Résumé Studio", icon: HardDrive, defaultSize: { w: 1000, h: 700 }, defaultPos: { x: 220, y: 220 } },
   { id: "credentials.txt", title: "credentials.txt", icon: FileText, defaultSize: { w: 400, h: 300 }, defaultPos: { x: 240, y: 240 } },
   { id: "notes.txt", title: "Important!.txt", icon: FileText, defaultSize: { w: 400, h: 400 }, defaultPos: { x: 280, y: 280 } },
 ] as const

@@ -1,95 +1,143 @@
 "use client"
 
-// ─────────────────────────────────────────────────────────────────────────────
-// OS boot splash — staged lines + progress bar (Praxis workstation loading).
-// ─────────────────────────────────────────────────────────────────────────────
+import { useEffect, useState, useRef } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
-import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
-
-const BOOT_LINES = [
-  "[ ok ] Secure session validated",
-  "[ ok ] Provisioning workspace context",
-  "[ ok ] Mounting virtual filesystem",
-  "[ ok ] Linking inbox & tooling",
+const BOOT_LOG = [
+  "Initializing Praxis Kernel v4.1.0-candidate (gcc version 13.2.0)...",
+  "Memory: 65536k/1048576k available (12288k kernel code, 2048k reserved)",
+  "Checking integrity of virtual hardware...",
+  "CPU0: Quantum Core i9 (V-Tech) at 4.20GHz",
+  "Console: colour dummy device 80x25",
+  "Mounting VFS: root filesystem on /dev/sda1 (ext4)",
+  "devtmpfs: initialized",
+  "rtc_cmos 00:00: setting system clock to 2026-05-11 UTC",
+  "Starting systemd version 255-praxis...",
+  "[  OK  ] Created slice User Slice of UID 1001 (candidate).",
+  "[  OK  ] Reached target Local File Systems.",
+  "Starting Candidate Workspace Orchestrator...",
+  "[  OK  ] Started D-Bus System Message Bus.",
+  "[  OK  ] Started Network Manager.",
+  "[  OK  ] Reached target Network.",
+  "Configuring candidate environment...",
+  "Provisioning 'Elena' virtual assistant context...",
+  "Linking secure vault: /home/candidate/.praxis/vault",
+  "[  OK  ] Mounting praxis://browser index...",
+  "[  OK  ] Mounting praxis://mail gateway...",
+  "[  OK  ] Provisioning default engineering tools...",
+  "Verifying candidate identity... [AUTHORIZED]",
+  "Establishing encrypted tunnel to Praxis Central...",
+  "[  OK  ] Tunnel active: prx-tunnel-01",
+  "[  OK  ] Reached target Multi-User System.",
+  "[  OK  ] Reached target Graphical Interface.",
+  "Candidate workspace provisioned. Boot sequence complete.",
 ]
 
+const PRAXIS_ASCII = `
+   ____  ____  _____  __  _____ ____
+  / __ \\/ __ \\/ __  |/  |/  /  / ___/
+ / /_/ / /_/ / /_/  / /|_/ /  /\\___ \\ 
+/ ____/ _, _/ __   / /  / /  /____/ / 
+/_/   /_/ |_/_/  |_/_/  /_/  /_____/  
+`
+
 type OsBootScreenProps = {
-  /** 0–1; parent can animate from outside or rely on timed durationMs */
-  minDurationMs?: number
-  className?: string
+  onComplete?: () => void
 }
 
-export function OsBootScreen({ minDurationMs = 2800, className }: OsBootScreenProps) {
-  const [visibleLines, setVisibleLines] = useState(0)
-  const [progress, setProgress] = useState(0)
+export function OsBootScreen({ onComplete }: OsBootScreenProps) {
+  const [lines, setLines] = useState<number>(0)
+  const logEndRef = useRef<HTMLDivElement>(null)
+
+  // Proper React-driven loop
+  useEffect(() => {
+    // If we finished all lines, wait a bit and then trigger onComplete
+    if (lines >= BOOT_LOG.length) {
+      const finalTimer = setTimeout(() => {
+        if (onComplete) onComplete()
+      }, 800)
+      return () => clearTimeout(finalTimer)
+    }
+
+    // Determine delay for current line
+    const currentLineText = BOOT_LOG[lines]
+    let delay = Math.random() * 30 + 10
+    if (currentLineText.includes("[  OK  ]")) delay = Math.random() * 80 + 10
+    if (currentLineText.includes("Starting")) delay = 150
+
+    const timer = setTimeout(() => {
+      setLines(prev => prev + 1)
+    }, delay)
+
+    return () => clearTimeout(timer)
+  }, [lines, onComplete])
 
   useEffect(() => {
-    const lineInterval = Math.max(480, Math.floor(minDurationMs / (BOOT_LINES.length + 1)))
-    let i = 0
-    const lineTimer = setInterval(() => {
-      i += 1
-      setVisibleLines((n) => Math.min(n + 1, BOOT_LINES.length))
-      if (i >= BOOT_LINES.length) clearInterval(lineTimer)
-    }, lineInterval)
-    const start = performance.now()
-    const tick = () => {
-      const elapsed = performance.now() - start
-      const p = Math.min(1, elapsed / minDurationMs)
-      setProgress(p)
-      if (p < 1) requestAnimationFrame(tick)
-    }
-    const raf = requestAnimationFrame(tick)
-    return () => {
-      clearInterval(lineTimer)
-      cancelAnimationFrame(raf)
-    }
-  }, [minDurationMs])
+    logEndRef.current?.scrollIntoView({ behavior: "auto" })
+  }, [lines])
 
   return (
-    <div
-      className={`fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-[#050505] text-foreground px-8 ${className ?? ""}`}
+    <motion.div
+      initial={{ opacity: 1 }}
+      exit={{ 
+        opacity: 0, 
+        scale: 1.1,
+        filter: "brightness(3) blur(15px)",
+        transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+      }}
+      className="fixed inset-0 z-[10000] bg-black text-[#bbbbbb] font-mono p-8 overflow-hidden select-none"
     >
-      <div className="w-full max-w-md">
-        <div className="flex items-center justify-between mb-6">
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">Praxis OS</span>
-          <span className="font-mono text-[10px] text-[#a86f44]/80 uppercase tracking-widest">
-            {(progress * 100).toFixed(0)}%
-          </span>
+      {/* CRT Scanline / Flicker Overlay */}
+      <div className="absolute inset-0 pointer-events-none z-50 opacity-[0.05] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
+
+      <div className="max-w-4xl mx-auto flex flex-col h-full">
+        {/* ASCII LOGO */}
+        <div className="mb-10 text-[#a86f44] opacity-80 whitespace-pre leading-none text-[10px] md:text-xs">
+          {PRAXIS_ASCII}
+          <div className="mt-4 text-[10px] text-white/40">
+            PRAXIS LINUX KERNEL VERSION 4.0.2-PRAXIS (X86_64)
+          </div>
         </div>
 
-        <div className="h-[3px] w-full rounded-full bg-white/[0.06] mb-10 overflow-hidden">
-          <div
-            className="h-full rounded-full bg-[#a86f44]/90 transition-[width] duration-100 ease-linear"
-            style={{ width: `${Math.round(progress * 100)}%` }}
-          />
+        {/* LOG SCROLL */}
+        <div className="flex-1 overflow-hidden relative">
+          <div className="space-y-0.5 text-[11px] md:text-xs leading-tight">
+            {BOOT_LOG.slice(0, lines).map((line, i) => {
+              const isOk = line.includes("[  OK  ]")
+              return (
+                <div key={i} className="flex gap-4">
+                  <span className="text-white/20 shrink-0 select-none">
+                    [{ (i * 0.08).toFixed(6) }]
+                  </span>
+                  <span className={isOk ? "text-white" : ""}>
+                    {isOk ? (
+                      <>
+                        [ <span className="text-emerald-500 font-bold"> OK </span> ] {line.replace("[  OK  ]", "")}
+                      </>
+                    ) : line}
+                  </span>
+                </div>
+              )
+            })}
+            <div ref={logEndRef} className="h-4" />
+          </div>
+          
+          {/* Bottom Fade for cinematic look */}
+          <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-black to-transparent pointer-events-none" />
         </div>
 
-        <div className="space-y-2.5 font-mono text-[11px] leading-relaxed">
-          {BOOT_LINES.map((line, idx) =>
-            idx < visibleLines ? (
-              <motion.p
-                key={line}
-                initial={{ opacity: 0, x: -6 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.25 }}
-                className="text-emerald-500/85"
-              >
-                {line}
-              </motion.p>
-            ) : null
-          )}
-          {progress >= 0.98 && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-white/35 pt-2"
-            >
-              Starting shell…
-            </motion.p>
-          )}
+        {/* Bottom Status Panel */}
+        <div className="mt-6 pt-4 border-t border-white/5 flex justify-between items-center text-[10px] text-white/20 uppercase tracking-widest">
+          <div className="flex items-center gap-4">
+            <span className="animate-pulse flex items-center gap-2">
+              <div className="h-1.5 w-1.5 rounded-full bg-[#a86f44]" />
+              Booting System...
+            </span>
+            <span>TTY1</span>
+          </div>
+          <span>Praxis.host: 127.0.0.1</span>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

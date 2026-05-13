@@ -9,10 +9,9 @@ const Dithering = lazy(() =>
 );
 
 const navLinks = [
-  { name: "Missions", href: "#missions" },
-  { name: "Features", href: "#features" },
-  { name: "Stack", href: "#stack" },
-  { name: "About", href: "#about" },
+  { name: "Operational Log", href: "#missions" },
+  { name: "System Specs", href: "#features" },
+  { name: "Protocol", href: "#about" },
 ];
 
 export function Navbar() {

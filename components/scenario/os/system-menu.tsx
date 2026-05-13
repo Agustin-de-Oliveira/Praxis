@@ -5,16 +5,17 @@ import { motion, AnimatePresence } from "framer-motion"
 import { 
   ChevronLeft, ChevronRight, HardDrive, Search, X, 
   Star, FileText, Zap, Monitor, Network, Folder, File, 
-  Database as DbIcon, Ghost, Skull, Settings
+  Database as DbIcon, Ghost, Skull, Settings, Power
 } from "lucide-react"
 import { EXPLORER_FILES } from "./constants"
 
 interface SystemMenuProps {
   onClose: () => void
   onOpenProgram: (id: string) => void
+  onLogout?: () => void
 }
 
-export function SystemMenu({ onClose, onOpenProgram }: SystemMenuProps) {
+export function SystemMenu({ onClose, onOpenProgram, onLogout }: SystemMenuProps) {
   const [currentPath, setCurrentPath] = useState<string>("disk_c")
   const [history, setHistory] = useState<string[]>(["disk_c"])
   const [historyIndex, setHistoryIndex] = useState(0)
@@ -159,6 +160,14 @@ export function SystemMenu({ onClose, onOpenProgram }: SystemMenuProps) {
                >
                  <Settings size={12} className="text-white/20 group-hover:text-white/50" />
                  <span className="font-mono text-[9px] uppercase tracking-wider">OS Settings</span>
+               </button>
+               
+               <button 
+                 onClick={onLogout}
+                 className="w-full flex items-center gap-3 px-2 py-1.5 rounded-sm hover:bg-red-500/10 text-red-500/60 group transition-all text-left mt-2"
+               >
+                 <Power size={12} className="text-red-500/40 group-hover:text-red-500" />
+                 <span className="font-mono text-[9px] uppercase tracking-wider">Shutdown</span>
                </button>
              </div>
           </div>

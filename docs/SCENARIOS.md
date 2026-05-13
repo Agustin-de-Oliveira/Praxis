@@ -1,12 +1,12 @@
 # Scenarios
 
-**Last updated:** 2026-05-08 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md)
+**Last updated:** 2026-05-11 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md)
 
 ---
 
 ## Scenario Types
 
-The internal atomic unit of Praxis is a **scenario** — a self-contained, time-boxed simulation of a real engineering task. Users should experience scenarios as workplace events inside Praxis OS: hiring challenges, tickets, incidents, PR reviews, deploys, and first-week tasks.
+The internal atomic unit of Praxis is a **scenario** — a self-contained, time-boxed simulation of a real engineering task. Users experience scenarios as workplace events inside Praxis OS: hiring challenges, tickets, incidents, PR reviews, deploys, and first-week tasks.
 
 There are three types:
 
@@ -18,17 +18,16 @@ There are three types:
 
 ### Entry Scenario: Calibration Challenge
 
-The first scenario should be presented as a technical challenge from a fictional company after the user applies for a role in Candidate OS.
+The first scenario is presented as a calibration challenge. After building a dossier in **Résumé Studio**, the user applies for a job in the **OS Browser** and receives a technical task.
 
 Goal:
-- calibrate initial level
-- infer role fit
-- set starting difficulty
-- unlock the First Week arc
+- Calibrate initial level and skill baseline
+- Infer role fit and target track
+- Unlock the **First Week** employee arc
 
-The challenge should be realistic and workplace-shaped, not an algorithm puzzle. SCN-008 can be adapted for this purpose: a small endpoint task with auth context, data shaping, tests/checkpoints, and a short review.
+The challenge is workplace-shaped: SCN-008 (Add User Profile Endpoint) is used as the default calibration task. It measures code reading, debugging, and implementation correctness.
 
-Failure should branch, not block. The user may receive feedback, retry, get a mentor hint, or enter a trainee path.
+Failure branches rather than blocks: users may receive hints, retries, or a recommended trainee path.
 
 ---
 

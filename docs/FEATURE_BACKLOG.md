@@ -1,6 +1,6 @@
 # Feature Backlog
 
-**Last updated:** 2026-05-07 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md) | → [ROADMAP.md](./ROADMAP.md)
+**Last updated:** 2026-05-11 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md) | → [ROADMAP.md](./ROADMAP.md)
 
 ---
 
@@ -28,8 +28,8 @@ Features are scored on two axes:
 | **Auth session persistence** | 3 | 2 | Login works but sessions break on refresh |
 | **Scenario data seed** | 3 | 1 | SCN-003 + SCN-007 need to be in the DB |
 | **XP award on completion** | 3 | 2 | Core progression loop |
-| **Candidate OS entry arc** | 3 | 3 | Replace onboarding with CV builder, job applications, response mail, calibration challenge, and offer |
-| **Profile dossier** | 3 | 2 | Browser-based replacement for a conventional dashboard; shows CV, calibration, progress, and skill growth |
+| **Candidate OS entry arc** | 3 | 3 | ✅ Done — Implemented as Candidate OS → Résumé Studio → Job Board flow |
+| **Profile dossier** | 3 | 2 | ✅ Done — Standalone Résumé Studio at `/resume` |
 
 ---
 

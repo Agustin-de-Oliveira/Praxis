@@ -80,13 +80,13 @@ export function ScenarioLibrary() {
       <div className="mb-10 flex items-end justify-between">
         <div>
           <p className="font-serif text-[10px] uppercase tracking-widest text-[#a86f44] mb-4">
-            Scenario Library
+            Operational Log
           </p>
           <h2 className="text-3xl font-medium tracking-tight text-foreground md:text-4xl font-serif">
-            Your backlog is ready.
+            Current Workstream
           </h2>
           <p className="mt-2 text-sm text-muted-foreground max-w-lg">
-            Each scenario is a self-contained ticket — scoped, reviewed, and ready to ship. Pick one and start building.
+            9:13 AM — Production incident reported. Incoming mail from Lead Architect. The repository is mid-migration. Choose your entry point.
           </p>
         </div>
         <Link

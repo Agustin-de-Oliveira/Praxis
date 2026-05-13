@@ -34,6 +34,7 @@ import HubView from "./hub-view"
 import ScenarioBriefing from "./scenario-briefing"
 import MailApp from "./os/mail-app"
 import TerminalApp from "./os/terminal-app"
+import { ResumeStudio } from "../resume/resume-studio"
 
 interface DesktopProps {
   scenario: Scenario
@@ -399,6 +400,7 @@ export default function DesktopOrchestrator({ scenario, initialProgress }: Deskt
                       {win.id === "team" && <TeamView aiTeam={scenario.ai_team} />}
                       {win.id === "mail" && <MailApp scenario={scenario} onDownload={(file) => setShowSaveDialog({ fileName: file })} />}
                       {win.id === "terminal" && <TerminalApp onRepoCloned={() => setIsRepoCloned(true)} onCloningStart={() => {}} isRepoCloned={isRepoCloned} ticketKey={scenario.ticket.key} />}
+                      {win.id === "resume" && <ResumeStudio isStandalone={false} />}
                       {win.id === "settings" && (
                         <PreferencesModal 
                           scenario={scenario}

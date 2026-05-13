@@ -23,7 +23,7 @@ The core insight: there's a documented 3–6 month "reality shock" when junior d
 | Scenario Library | ✅ Done | Library view with filters |
 | Scenario Board UI | ✅ Done | Windowed OS environment with Mail, Terminal, and IDE |
 | Onboarding Flow | ✅ Done | Contextual OS initiation sequence complete |
-| Auth flow | 🔄 In Progress | Supabase auth scaffolded; session persistence pending |
+| Auth flow | ✅ Done | Supabase auth integrated (login, callback, session refresh) |
 | Checkpoint validation | 🔄 In Progress | Client-side simulation done; Server-side pending |
 | Database schema | 🔄 In Progress | Supabase tables defined; migrations/policies need consolidation |
 | AI team integration | 🔄 In Progress | Persona logic implemented in tour; Live AI pending |
@@ -90,10 +90,8 @@ BYOK:        Free tier + unlimited AI via user's own API key
 
 ---
 
-## Next Actions
-
-- [ ] Wire up Supabase auth (login/register pages exist, need session handling)
 - [ ] Implement Server-side checkpoint validation — see [VALIDATION_ENGINE.md](./VALIDATION_ENGINE.md)
 - [ ] Finalize Supabase schema migrations and RLS policies for user progress tracking
-- [ ] Build the User Dashboard (Progress tracking & Skill Tree overview)
+- [ ] Build the User Dashboard (XP tracking & Skill Tree visualization)
 - [ ] Integrate Live AI responses into the Scenario Board
+- [ ] Expand Scenario Library with SCN-003 and SCN-007

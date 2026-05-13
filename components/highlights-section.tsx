@@ -5,23 +5,23 @@ import { Timer, Code, Trophy, Activity } from "lucide-react";
 const highlights = [
   {
     icon: Code,
-    title: "Write real code",
-    description: "No multiple choice. No toy examples. Ship features, fix bugs, and deploy to production-grade clusters.",
+    title: "Immersive Workstation",
+    description: "Enter a high-fidelity OS. Check your mail, respond to incidents, and manage your team from a persistent terminal.",
   },
   {
     icon: Timer,
-    title: "Time-boxed missions",
-    description: "Every scenario is scoped like a real sprint ticket — clear acceptance criteria, deadline pressure included.",
+    title: "Narrative Arcs",
+    description: "Progression isn't just XP. It's reputation, trust, and access to more critical systems as you move from Trainee to Lead.",
   },
   {
     icon: Trophy,
-    title: "Earn verified XP",
-    description: "Automated validators grade your work. Progress is tracked, skills are mapped to industry frameworks.",
+    title: "Real Feedback",
+    description: "Not just checks. Get code reviews, team feedback, and post-mortems that feel human and carry emotional weight.",
   },
   {
     icon: Activity,
-    title: "Fail safely",
-    description: "Break things without consequences. Roll back, retry, learn from the blast radius — that's the point.",
+    title: "Professional Survival",
+    description: "Survive the Friday deploy, navigate technical debt, and make tradeoffs that impact the team's long-term health.",
   },
 ];
 
@@ -33,8 +33,8 @@ export function HighlightsSection() {
           How it works
         </p>
         <h2 className="text-3xl md:text-4xl font-medium tracking-tight text-foreground font-serif">
-          Built for the way<br />
-          <span className="text-[#a86f44]">engineers actually learn.</span>
+          Engineered for the way<br />
+          <span className="text-[#a86f44]">professional growth happens.</span>
         </h2>
       </div>
 

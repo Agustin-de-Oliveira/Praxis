@@ -32,17 +32,17 @@ export function HeroCard() {
                 <div className="relative z-10 px-6 max-w-4xl mx-auto text-center flex flex-col items-center">
 
                     <h2 className="text-5xl md:text-7xl lg:text-[72px] font-medium tracking-tighter text-foreground mb-8 leading-[1.0] font-serif">
-                        Experience real work, <br />
-                        <span className="text-[#a86f44]">before the first day.</span>
+                        Survive the engineering day, <br />
+                        <span className="text-[#a86f44]">before it starts.</span>
                     </h2>
 
                     <p className="text-muted-foreground text-base md:text-lg max-w-2xl mb-12 leading-relaxed">
-                        Praxis is a high-fidelity learning platform for developers. Practice in realistic environments with a simulated team to bridge the gap between code and career.
+                        Praxis is an interactive workplace simulation game. Experience the reality of engineering teams, production incidents, and technical debt through an immersive workstation.
                     </p>
 
                     <button className="group relative inline-flex h-12 items-center justify-center gap-3 rounded-sm p-[2px] bg-linear-to-b from-[#fdfdfd] via-[#fdfdfd] to-[#f1f1f1] cursor-pointer transition-all duration-300">
                         <span className="flex h-full w-full items-center justify-center gap-3 rounded-[calc(0.125rem-2px)] bg-[#f1f1f1] px-10 text-sm font-medium text-primary-foreground">
-                            <span className="relative z-10">Start Practicing</span>
+                            <span className="relative z-10">Enter Workstation</span>
                             <ArrowRight className="h-4 w-4 relative z-10 transition-transform duration-300 group-hover:translate-x-1" />
                         </span>
                     </button>

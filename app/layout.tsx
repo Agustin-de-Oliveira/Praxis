@@ -25,8 +25,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Praxis - Real Job Simulation for Developers',
-  description: 'Experience real tech work before your first job. Pick a role, join a team, and complete scenarios that mimic actual workplace situations.',
+  title: 'Praxis - The Workplace Simulation Game',
+  description: 'Experience the reality of engineering before your first day. Survive production incidents, technical debt, and team dynamics in an immersive workstation.',
   generator: 'praxis',
   icons: {
     icon: [

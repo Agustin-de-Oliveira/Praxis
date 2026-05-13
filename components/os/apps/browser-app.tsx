@@ -8,6 +8,18 @@
 import { useCallback, useMemo, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
+import ProfileApp from "./profile-app"
+import { ResumeStudio } from "@/components/resume/resume-studio"
+import {
+  COMPANIES,
+  getCompany,
+  getJob,
+  getRecommendedJobs,
+  JOB_POSTINGS,
+  type CandidateApplication,
+  type CandidateProfileDraft,
+  type CandidateStage,
+} from "@/lib/candidate-data"
 import {
   ArrowLeft,
   ArrowRight,
@@ -27,16 +39,6 @@ import {
 } from "lucide-react"
 import type { Scenario } from "@/lib/scenario-types"
 import type { UserProfile } from "@/lib/os-types"
-import {
-  COMPANIES,
-  getCompany,
-  getJob,
-  getRecommendedJobs,
-  JOB_POSTINGS,
-  type CandidateApplication,
-  type CandidateProfileDraft,
-  type CandidateStage,
-} from "@/lib/candidate-data"
 
 interface BrowserAppProps {
   scenarios: Scenario[]
@@ -45,12 +47,13 @@ interface BrowserAppProps {
   profile: UserProfile
   email: string
   resumeIncomplete: boolean
+  onOpenProgram: (id: string) => void
 }
 
 type BrowserView =
   | "home"
   | "results"
-  | "resume_hub"
+  | "profile"
   | "jobs"
   | "company"
   | "applications"
@@ -58,14 +61,14 @@ type BrowserView =
   | "challenge"
 
 const VIEW_URL: Record<BrowserView, string> = {
-  home: "praxis.internal",
-  results: "praxis.search",
-  resume_hub: "praxis.internal/resume",
-  jobs: "praxis.internal/jobs",
-  company: "praxis.internal/companies",
-  applications: "praxis.internal/applications",
-  docs: "praxis.internal/docs",
-  challenge: "praxis.internal/challenge",
+  home: "praxis://home",
+  results: "praxis://search",
+  profile: "praxis://profile",
+  jobs: "praxis://jobs",
+  company: "praxis://companies",
+  applications: "praxis://applications",
+  docs: "praxis://docs",
+  challenge: "praxis://challenge",
 }
 
 type HistFrame = { view: BrowserView; companyId?: string }
@@ -93,13 +96,13 @@ function tabCompanyId(tab: BrowserTab): string | undefined {
 function defaultTitle(view: BrowserView): string {
   switch (view) {
     case "home":
-      return "Home"
+      return "Candidate Portal"
     case "results":
       return "Search"
-    case "resume_hub":
-      return "Résumé"
+    case "profile":
+      return "Engineering Dossier"
     case "jobs":
-      return "Jobs"
+      return "Opportunities"
     case "company":
       return "Company"
     case "applications":
@@ -120,6 +123,7 @@ export default function BrowserApp({
   profile,
   email,
   resumeIncomplete,
+  onOpenProgram,
 }: BrowserAppProps) {
   const router = useRouter()
 
@@ -180,7 +184,6 @@ export default function BrowserApp({
     [activeTabId]
   )
 
-  /** Push a new frame onto active tab history (truncates redo stack). */
   const navigateTab = useCallback(
     (
       targetView: BrowserView,
@@ -286,20 +289,13 @@ export default function BrowserApp({
     [syncOmniboxFromTab]
   )
 
-  const SITES = useMemo<SiteSuggestion[]>(
+  const SITES: SiteSuggestion[] = useMemo(
     () => [
-      { label: "Home", keywords: ["home", "portal", "start"], kind: "view", view: "home" },
       {
-        label: "Résumé Studio (full dossier)",
-        keywords: ["studio", "dossier", "packet", "file cv"],
-        kind: "external",
-        href: "/resume",
-      },
-      {
-        label: "Résumé portal (browser)",
-        keywords: ["resume", "résumé", "cv landing"],
+        label: "Engineering Dossier (Profile)",
+        keywords: ["profile", "resume", "cv", "dossier", "me"],
         kind: "view",
-        view: "resume_hub",
+        view: "profile",
       },
       { label: "Jobs board", keywords: ["jobs", "roles", "work", "careers"], kind: "view", view: "jobs" },
       {
@@ -308,8 +304,8 @@ export default function BrowserApp({
         kind: "view",
         view: "applications",
       },
-      { label: "Docs", keywords: ["docs", "help", "readme", "manual"], kind: "view", view: "docs" },
-      { label: "Candidate index", keywords: ["search", "find", "lookup"], kind: "view", view: "results" },
+      { label: "Protocol Docs", keywords: ["docs", "help", "readme", "manual"], kind: "view", view: "docs" },
+      { label: "Search Index", keywords: ["search", "find", "lookup"], kind: "view", view: "results" },
     ],
     []
   )
@@ -318,11 +314,16 @@ export default function BrowserApp({
     const input = (raw ?? omnibox).trim().toLowerCase()
     if (!input) return
 
-    const stripped = input.replace(/^https:\/\//, "").replace(/\/+$/, "")
+    // Handle praxis:// scheme
+    const stripped = input.replace(/^praxis:\/\//, "").replace(/\/+$/, "")
     const pathLike = stripped.replace(/^praxis\.internal\/?/, "")
 
-    if (pathLike === "resume" || pathLike === "/resume" || stripped === "/resume") {
-      router.push("/resume")
+    if (pathLike === "profile" || pathLike === "resume") {
+      navigateTab("profile")
+      return
+    }
+    if (pathLike === "home") {
+      navigateTab("home")
       return
     }
     if (pathLike.includes("jobs") || pathLike === "jobs") {
@@ -342,25 +343,29 @@ export default function BrowserApp({
       return
     }
     if (pathLike.includes("companies")) {
-      navigateTab("company")
+      const parts = pathLike.split("/")
+      const cid = parts[1] || selectedCompanyId
+      navigateTab("company", { companyId: cid })
       return
     }
 
-    const flat = stripped.split(/\s+/).join(" ")
+    const flat = input.split(/\s+/).join(" ")
 
     for (const site of SITES) {
       if (site.keywords.some((kw) => flat.includes(kw))) {
+        if (site.kind === "view") {
+          navigateTab(site.view)
+          return
+        }
         if (site.kind === "external") {
           router.push(site.href)
           return
         }
-        navigateTab(site.view)
-        return
       }
     }
 
-    navigateTab("results", { url: `praxis.search?q=${encodeURIComponent(raw ?? omnibox)}`, title: "Search" })
-    setOmnibox(`praxis.search?q=${encodeURIComponent(raw ?? omnibox)}`)
+    navigateTab("results", { url: `praxis://search?q=${encodeURIComponent(raw ?? omnibox)}`, title: "Search" })
+    setOmnibox(`praxis://search?q=${encodeURIComponent(raw ?? omnibox)}`)
   }
 
   const filteredSuggestions = useMemo(() => {
@@ -406,43 +411,28 @@ export default function BrowserApp({
     navigateTab("jobs")
   }
 
-  /** Hub for in-browser Résumé (links out to dossier page). */
-  const renderResumeHub = () => (
-    <div className="flex-1 overflow-y-auto bg-[#0c0c0c] px-10 py-12">
-      <div className="max-w-xl mx-auto border border-[#a86f44]/25 bg-gradient-to-br from-[#161108]/90 to-[#0a0908] p-10 rounded-sm shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
-        <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-[#a86f44]/70 mb-4">Privileged surface</p>
-        <h1 className="font-serif text-3xl text-[#ebe6dc] mb-4 leading-tight">Résumé Studio</h1>
-        <p className="text-sm text-white/45 leading-relaxed mb-8">
-          The dossier wizard lives outside this chrome—paper form, archival typography, engineered for profile population.
-          Praxis tours will route you here when your packet is incomplete.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3">
-          <button
-            type="button"
-            onClick={() => router.push("/resume")}
-            className="flex-1 h-11 rounded-sm bg-[#a86f44] text-[#111] font-mono text-[11px] uppercase tracking-widest font-semibold hover:brightness-105 cursor-pointer"
-          >
-            Open Résumé Studio
-          </button>
-          <button
-            type="button"
-            onClick={() => navigateTab("home")}
-            className="flex-1 h-11 rounded-sm border border-white/10 text-white/50 font-mono text-[11px] uppercase tracking-widest hover:bg-white/[0.04] cursor-pointer"
-          >
-            Back to portal
-          </button>
+  const renderProfile = () => {
+    if (candidateStage === "cv_incomplete") {
+      return (
+        <div className="flex-1 bg-[#121110] overflow-y-auto">
+          <ResumeStudio
+            isStandalone={false}
+            onComplete={() => {
+              setCandidateStage("jobs_available")
+              navigateTab("jobs")
+              router.refresh()
+            }}
+          />
         </div>
-        <p className="mt-8 font-mono text-[9px] text-white/25 uppercase tracking-widest">
-          Tip: type <span className="text-[#a86f44]/80">resume</span> in the omnibox from any tab.
-        </p>
-      </div>
-    </div>
-  )
+      )
+    }
+    return <ProfileApp profile={profile} email={email} activeScenarioTitle={activeScenarioTitle} />
+  }
 
   const renderHome = () => (
     <div className="flex-1 overflow-y-auto bg-[#090909] px-8 py-10">
       <div className="max-w-4xl mx-auto">
-        {resumeIncomplete && (
+        {candidateStage === "cv_incomplete" && (
           <div className="mb-8 border border-[#a86f44]/30 bg-[#a86f44]/5 px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-sm">
             <div>
               <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-1">Action required</p>
@@ -450,7 +440,7 @@ export default function BrowserApp({
             </div>
             <button
               type="button"
-              onClick={() => router.push("/resume")}
+              onClick={() => navigateTab("profile")}
               className="shrink-0 px-4 py-2 rounded-sm bg-[#a86f44] text-[#111] font-mono text-[10px] uppercase tracking-widest font-semibold cursor-pointer"
             >
               Open Résumé Studio
@@ -467,8 +457,8 @@ export default function BrowserApp({
               jobs
             </button>
             ,{" "}
-            <button type="button" onClick={() => router.push("/resume")} className="text-[#a86f44] hover:underline cursor-pointer">
-              resume
+            <button type="button" onClick={() => navigateTab("profile")} className="text-[#a86f44] hover:underline cursor-pointer">
+              profile
             </button>
             , or{" "}
             <button type="button" onClick={() => { setOmnibox("docs"); omniboxSubmit("docs") }} className="text-[#a86f44] hover:underline cursor-pointer">
@@ -479,12 +469,14 @@ export default function BrowserApp({
         </div>
 
         <div className="grid sm:grid-cols-2 gap-3 mb-12">
-          {[
-            ["Résumé Studio", "/resume — dossier wizard", () => router.push("/resume")],
-            ["Jobs", VIEW_URL.jobs, () => navigateTab("jobs")],
-            ["Applications", VIEW_URL.applications, () => navigateTab("applications")],
-            ["Company intel", VIEW_URL.company, () => navigateTab("company")],
-          ].map(([title, subtitle, fn]) => (
+          {(
+            [
+              ["Engineering Dossier", "Manage your profile", () => navigateTab("profile")],
+              ["Job Board", "Explore open roles", () => navigateTab("jobs")],
+              ["Applications", "Track your status", () => navigateTab("applications")],
+              ["Protocol Docs", "System documentation", () => navigateTab("docs")],
+            ] as [string, string, () => void][]
+          ).map(([title, subtitle, fn]) => (
             <button
               key={String(title)}
               type="button"
@@ -497,7 +489,7 @@ export default function BrowserApp({
           ))}
         </div>
 
-        {!resumeIncomplete && (
+        {candidateStage !== "cv_incomplete" && (
           <p className="font-mono text-[10px] text-white/20 uppercase tracking-widest">
             @{candidateProfile.handle} · {candidateStage.replaceAll("_", " ")}
           </p>
@@ -512,8 +504,8 @@ export default function BrowserApp({
     const results: { title: string; hint: string; run: () => void }[] = [
       {
         title: "Résumé Studio",
-        hint: `${VIEW_URL.resume_hub} — external dossier`,
-        run: () => router.push("/resume"),
+        hint: `Engineered dossier wizard — privileged`,
+        run: () => onOpenProgram("resume"),
       },
       { title: "Jobs board", hint: VIEW_URL.jobs, run: () => navigateTab("jobs") },
       {
@@ -564,11 +556,10 @@ export default function BrowserApp({
                 setSelectedJobId(job.id)
                 setSelectedCompanyId(job.companyId)
               }}
-              className={`w-full text-left p-4 mb-2 border rounded-sm transition-all cursor-pointer ${
-                selectedJobId === job.id
-                  ? "bg-white/[0.06] border-white/10"
-                  : "bg-white/[0.02] border-white/[0.05] hover:bg-white/[0.045]"
-              }`}
+              className={`w-full text-left p-4 mb-2 border rounded-sm transition-all cursor-pointer ${selectedJobId === job.id
+                ? "bg-white/[0.06] border-white/10"
+                : "bg-white/[0.02] border-white/[0.05] hover:bg-white/[0.045]"
+                }`}
             >
               <p className="font-mono text-[8px] uppercase tracking-widest text-white/20 mb-1">{company?.name}</p>
               <p className="text-sm text-white/80 mb-2">{job.title}</p>
@@ -626,7 +617,7 @@ export default function BrowserApp({
             </button>
 
             {/* Legacy simulation hook for candidate journey without full dossier */}
-            {resumeIncomplete && (
+            {candidateStage === "cv_incomplete" && (
               <p className="mt-6 text-xs text-amber-200/35 font-mono">
                 Simulation shortcut: marking CV ready jumps the board (use Résumé Studio for real filings).{" "}
                 <button type="button" onClick={completeCvSimulation} className="text-[#a86f44] underline cursor-pointer">
@@ -780,9 +771,9 @@ export default function BrowserApp({
         <div className="space-y-4">
           {[
             ["Calibration model", "The first challenge maps you into first-week arcs—no punitive fail state."],
-            ["Résumé Studio", `Full dossier at praxis.resume (route /resume). Separate from Browser chrome by design.`],
-            ["Applications", "In-browser status; sensitive mail arrives in Mail.exe."],
-            ["Searching", "Omnibox accepts paths like praxis.internal/jobs or keywords: jobs, resume, docs."],
+            ["Engineering Dossier", `Manage your profile at praxis://profile. Your history, role, and progress live here.`],
+            ["Applications", "In-browser status at praxis://applications; sensitive mail arrives in Mail.exe."],
+            ["Searching", "Omnibox accepts paths like praxis://jobs or keywords: jobs, profile, docs."],
           ].map(([title, body]) => (
             <div key={String(title)} className="border border-white/[0.06] bg-white/[0.02] p-6 rounded-sm">
               <h2 className="text-sm text-white/85 mb-2">{title}</h2>
@@ -808,11 +799,10 @@ export default function BrowserApp({
             tabIndex={0}
             onClick={() => selectTab(t.id, t)}
             onKeyDown={(e) => e.key === "Enter" && selectTab(t.id, t)}
-            className={`group relative flex items-center gap-2 min-w-[140px] max-w-[220px] pl-3 pr-2 py-2 rounded-t-sm border border-b-0 cursor-pointer shrink-0 ${
-              t.id === activeTabId
-                ? "bg-[#0f0f0f] border-white/10 border-b-transparent z-[1]"
-                : "bg-[#080808] border-transparent hover:bg-[#0a0a0a]"
-            }`}
+            className={`group relative flex items-center gap-2 min-w-[140px] max-w-[220px] pl-3 pr-2 py-2 rounded-t-sm border border-b-0 cursor-pointer shrink-0 ${t.id === activeTabId
+              ? "bg-[#0f0f0f] border-white/10 border-b-transparent z-[1]"
+              : "bg-[#080808] border-transparent hover:bg-[#0a0a0a]"
+              }`}
           >
             <Globe size={11} className={t.id === activeTabId ? "text-[#a86f44]/80" : "text-white/20"} />
             <span className="flex-1 truncate font-mono text-[10px] uppercase tracking-wide text-white/70">{t.title}</span>
@@ -948,7 +938,7 @@ export default function BrowserApp({
         )}
 
         {view === "home" && renderHome()}
-        {view === "resume_hub" && renderResumeHub()}
+        {view === "profile" && renderProfile()}
         {view === "results" && renderResults()}
         {view === "jobs" && renderJobs()}
         {view === "company" && renderCompany()}
@@ -960,7 +950,7 @@ export default function BrowserApp({
       {/* Status */}
       <div className="shrink-0 border-t border-white/[0.06] px-3 py-1.5 bg-[#090909] font-mono text-[8px] uppercase tracking-[0.2em] text-white/15 flex items-center justify-between gap-3">
         <span>
-          @{email.split("@")[0]} · tabs · dossier {resumeIncomplete ? "incomplete" : "filed"}
+          @{email.split("@")[0]} · tabs · dossier {candidateStage === "cv_incomplete" ? "incomplete" : "filed"}
         </span>
         {activeScenarioTitle ? <span className="truncate text-[#a86f44]/40 normal-case">{activeScenarioTitle}</span> : null}
       </div>

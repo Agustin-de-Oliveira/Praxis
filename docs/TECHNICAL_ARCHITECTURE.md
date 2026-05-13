@@ -1,6 +1,6 @@
 # Technical Architecture
 
-**Last updated:** 2026-05-07 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md)
+**Last updated:** 2026-05-11 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md)
 
 ---
 
@@ -9,9 +9,8 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         Frontend                             │
-│              Next.js 16 + React 19 + Framer Motion           │
-│         Landing Page / Scenario Library / Board / OS Shell        │
-│          (Window Management, Mail, Terminal, Monaco IDE)          │
+│   Landing Page / OS Shell (Window Management, Mail, Browser)   │
+│   In-OS Portals (Résumé Studio, Jobs, Apps, Terminal, IDE)     │
 └─────────────────────────┬───────────────────────────────────┘
                           │ fetch / Server Actions / tRPC
                           ▼
@@ -44,7 +43,7 @@
 
 | Layer | Technology | Version | Rationale |
 |-------|-----------|---------|-----------|
-| **Framework** | Next.js | 16.2.4 | SSR for landing/SEO; App Router for dashboard |
+| **Framework** | Next.js | 16.2.4 | SSR for landing/SEO; App Router for OS & experience |
 | **UI Library** | React | 19 | Concurrent features, better Suspense |
 | **Animations** | Framer Motion | 12.x | Scenario board modals, page transitions |
 | **Styling** | Tailwind CSS | v4 | Design token system via `@theme` directive |
@@ -79,25 +78,33 @@ praxis/
 │   ├── page.tsx                  # Landing page
 │   ├── login/                    # Auth pages
 │   ├── onboarding/               # New user setup (role, goals)
+│   ├── os/                       # Praxis OS Core
+│   │   ├── page.tsx              # Main OS shell & boot sequence
+│   │   └── ?welcome=1            # Welcome gateway trigger
+│   ├── resume/                   # Résumé Studio
+│   │   └── page.tsx              # Standalone engineering dossier
 │   ├── scenarios/                # Scenario library (browse, filter)
 │   └── scenario/                 # Active scenario experience
-│       ├── [id]/
-│       │   ├── page.tsx          # Board view (ticket, AI team, checkpoints)
-│       │   └── ide/              # In-browser IDE (future)
+│       └── [id]/
+│           └── page.tsx          # Board view (ticket, AI team, checkpoints)
 │
 ├── components/
-│   ├── ui/                       # shadcn/ui primitives (owned, not imported)
-│   ├── scenario/
-│   │   ├── desktop-orchestrator.tsx # Main OS window manager & state
-│   │   ├── scenario-briefing.tsx  # Initial mission entry sequence
-│   │   ├── board.tsx             # Legacy scenario board (transitioning to windowed)
-│   │   ├── dynamic-ide.tsx       # Monaco-powered code editor with integrated terminal
-│   │   └── os/                   # Simulated OS Applications
+│   ├── ui/                       # shadcn/ui primitives
+│   ├── os/                       # Praxis OS Shell Components
+│   │   ├── praxis-desktop.tsx    # Desktop orchestrator & state
+│   │   ├── os-boot-screen.tsx    # Immersive boot sequence
+│   │   └── apps/                 # Simulated OS Applications
+│   │       ├── browser-app.tsx   # Tabbed chrome with omnibox & portals
 │   │       ├── mail-app.tsx      # Internal communication (Gmail-style)
-│   │       ├── terminal-app.tsx  # CLI for git operations and filesystem
-│   │       ├── preferences-modal.tsx # System settings (Theme, Fonts, Accents)
-│   │       ├── window-frame.tsx  # Draggable/resizable window container
-│   │       └── constants.ts      # Program definitions and icons
+│   │       ├── terminal-app.tsx  # CLI for git and filesystem
+│   │       └── window-frame.tsx  # Draggable/resizable container
+│   ├── resume/
+│   │   └── resume-studio.tsx     # Archival dossier builder
+│   ├── auth/
+│   │   └── welcome-gateway.tsx   # Post-auth transition UI
+│   ├── scenario/
+│   │   ├── desktop-orchestrator.tsx # Active scenario manager
+│   │   └── dynamic-ide.tsx       # Monaco-powered code editor
 │   ├── scenario-library.tsx      # Browsable scenario grid
 │   ├── navbar.tsx                # Top navigation
 │   ├── hero-card.tsx             # Landing page hero section
@@ -108,10 +115,12 @@ praxis/
 │   └── smooth-scroll.tsx         # Lenis scroll provider
 │
 ├── lib/
-│   ├── scenario-types.ts         # Scenario and progress TypeScript contracts
+│   ├── candidate-data.ts         # Job board, companies, and profile specs
+│   ├── resume-wizard-config.ts   # Configuration for Resume Studio steps
+│   ├── scenario-types.ts         # Scenario/progress TS contracts
 │   ├── os-types.ts               # Praxis OS shell types
 │   └── utils.ts                  # cn() and shared utilities
-├── proxy.ts                      # Supabase session refresh + protected-route redirects (Next.js 16+)
+├── proxy.ts                      # Supabase session refresh + protected-route redirects
 ├── utils/
 │   └── supabase/
 │       ├── client.ts             # Browser Supabase client

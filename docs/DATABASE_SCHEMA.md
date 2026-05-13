@@ -43,7 +43,7 @@ Extends Supabase Auth. The app currently treats `profiles.id` as the authenticat
 | `role` | `text` | Selected track: frontend, backend, fullstack, devops, security |
 | `level` | `integer` | Displayed in Praxis OS |
 | `total_xp` | `integer` | Displayed in profile/OS views |
-| `onboarding_completed` | `boolean` | Gates `/os`; incomplete users redirect to `/onboarding` |
+| `onboarding_completed` | `boolean` | Gates `/os`; incomplete users redirect to `/resume` (Résumé Studio) |
 | `os_tutorial_completed` | `boolean` | Optional flag used by OS first-boot logic |
 | `created_at` | `timestamp` | Recommended |
 | `updated_at` | `timestamp` | Updated during onboarding |

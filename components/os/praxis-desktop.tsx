@@ -6,7 +6,7 @@
 // Owns window state, active scenario, and provisions apps.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import {
   ArrowLeft, Save, Trash2, Wifi, Volume2, Search, Bluetooth,
@@ -16,7 +16,7 @@ import {
   ArrowRight, RotateCw, Home, Lock, ChevronRight, LogIn, HardDrive, Folder, File,
   Database as DbIcon, Ghost, Skull, Clock, ShieldCheck, Zap, Play, CheckCircle,
   AlertTriangle, MoreVertical, Paperclip, CheckCircle2, AlertCircle, Star,
-  Send, Archive, Inbox, Trash
+  Send, Archive, Inbox, Trash, MessageSquare
 } from "lucide-react"
 import { Dithering } from "@paper-design/shaders-react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -41,6 +41,9 @@ import TeamView from "@/components/scenario/team-view"
 import MarketplaceApp from "./apps/marketplace-app"
 import { WelcomeGateway } from "@/components/auth/welcome-gateway"
 import { OsBootScreen } from "@/components/os/os-boot-screen"
+import { ResumeStudio } from "@/components/resume/resume-studio"
+import { Notification } from "@/components/os/notification"
+import TourChat from "@/components/os/apps/tour-chat"
 
 import type { OSProps } from "@/lib/os-types"
 import type { Scenario } from "@/lib/scenario-types"
@@ -55,6 +58,8 @@ const OS_PROGRAMS = [
   { id: "browser", title: "Browser.exe", icon: Globe, defaultSize: { w: 1200, h: 700 }, defaultPos: { x: 80, y: 40 } },
   { id: "terminal", title: "Terminal.exe", icon: Terminal, defaultSize: { w: 700, h: 450 }, defaultPos: { x: 140, y: 140 } },
   { id: "marketplace", title: "Market.exe", icon: ShoppingBag, defaultSize: { w: 900, h: 600 }, defaultPos: { x: 120, y: 80 } },
+  { id: "resume", title: "Résumé Studio", icon: HardDrive, defaultSize: { w: 1100, h: 740 }, defaultPos: { x: 100, y: 50 } },
+  { id: "tour", title: "Tour.exe", icon: MessageSquare, defaultSize: { w: 500, h: 700 }, defaultPos: { x: 400, y: 100 }, hidden: true },
 
   // Mission-provisioned apps (locked/hidden until 'installed' via Market or progress)
   { id: "board", title: "Kanban.exe", icon: Layout, defaultSize: { w: 1400, h: 600 }, defaultPos: { x: 120, y: 120 }, missionOnly: true },
@@ -92,6 +97,7 @@ export default function PraxisDesktop({
   resumeIncomplete, welcomeFromAuth,
 }: OSProps) {
   const router = useRouter()
+  const supabase = createClient()
   const [phase, setPhase] = useState<OsPhase>(() => (welcomeFromAuth ? "welcome" : "boot"))
 
   // ── OS state ──
@@ -103,10 +109,19 @@ export default function PraxisDesktop({
   const [osTheme, setOsTheme] = useState<"obsidian" | "steel">("obsidian")
   const [isWrapped, setIsWrapped] = useState(true)
   const [osFont, setOsFont] = useState<"inter" | "jetbrains">("jetbrains")
-  const [bgShape, setBgShape] = useState("warp")
+  const [bgShape, setBgShape] = useState("sphere")
   const [accentColor, setAccentColor] = useState("#a86f44")
   const [applyFontToHeaders, setApplyFontToHeaders] = useState(false)
+  const [showTopBar, setShowTopBar] = useState(true)
+  const [taskbarPosition, setTaskbarPosition] = useState<"top" | "bottom">("bottom")
+  const [hideExtensions, setHideExtensions] = useState(false)
+  const [enableSounds, setEnableSounds] = useState(true)
+  const [bootSoundVariant, setBootSoundVariant] = useState<"default" | "v1" | "v2">("default")
   const [time, setTime] = useState<Date | null>(null)
+
+  // ── Notification state ──
+  const [notifications, setNotifications] = useState<any[]>([])
+  const onboardingSent = useRef(false)
 
   // ── Mission state ──
   const [currentScenario, setCurrentScenario] = useState<Scenario | null>(activeScenario)
@@ -124,17 +139,41 @@ export default function PraxisDesktop({
     if (!welcomeFromAuth && phase === "welcome") setPhase("boot")
   }, [welcomeFromAuth, phase])
 
-  useEffect(() => {
-    if (phase !== "boot") return
-    const t = setTimeout(() => setPhase("runtime"), 2800)
-    return () => clearTimeout(t)
-  }, [phase])
 
-  const dismissWelcome = () => {
+  const playSound = useCallback((type: "click" | "notify" | "boot") => {
+    if (!enableSounds) return
+    const bootSounds = {
+      default: "/sounds/os-boot.wav",
+      v1: "/sounds/os-startup1.wav",
+      v2: "/sounds/os-startup2.wav"
+    }
+    const sounds = {
+      click: "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3",
+      notify: "https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3",
+      boot: bootSounds[bootSoundVariant]
+    }
+    const audio = new Audio(sounds[type])
+    audio.volume = 0.2
+    audio.play().catch(() => { }) // Ignore autoplay blocks
+  }, [enableSounds, bootSoundVariant])
+
+  const dismissWelcome = useCallback(() => {
     setPhase("boot")
+    setTimeout(() => playSound("boot"), 500)
     router.replace("/os")
     router.refresh()
-  }
+  }, [router, playSound])
+
+  const handleBootComplete = useCallback(() => {
+    setPhase("runtime")
+    setTimeout(() => playSound("boot"), 800)
+  }, [playSound])
+
+  const handleLogout = useCallback(async () => {
+    await supabase.auth.signOut()
+    router.push("/login")
+  }, [supabase, router])
+
 
   // ── UI modals ──
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; items: ContextMenuItem[] } | null>(null)
@@ -146,7 +185,6 @@ export default function PraxisDesktop({
   const [searchQuery, setSearchQuery] = useState("")
   const [activeSearchIndex, setActiveSearchIndex] = useState(0)
 
-  const supabase = createClient()
 
   // ── Clock ──
   useEffect(() => {
@@ -187,7 +225,30 @@ export default function PraxisDesktop({
     const z = nextZ + 1
     setNextZ(z)
     updateWindow(id, { isOpen: true, isMinimized: false, zIndex: z })
-  }, [nextZ, updateWindow, currentScenario])
+    playSound("click")
+  }, [nextZ, updateWindow, currentScenario, playSound])
+
+  // ── Notification Handlers ──
+  const addNotification = useCallback((notif: any) => {
+    setNotifications(prev => [...prev, { ...notif, id: Math.random().toString(36).substr(2, 9) }])
+    playSound("notify")
+  }, [playSound])
+
+  const removeNotification = useCallback((id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id))
+  }, [])
+
+  const handleNotificationClick = useCallback((id: string) => {
+    setNotifications(prev => {
+      const notif = prev.find(n => n.id === id)
+      if (notif?.action === "open_tour") {
+        openWindow("tour")
+      } else if (notif?.action === "open_mail") {
+        openWindow("mail")
+      }
+      return prev.filter(n => n.id !== id)
+    })
+  }, [openWindow])
 
   const focusWindow = useCallback((id: string) => {
     const z = nextZ + 1
@@ -197,7 +258,8 @@ export default function PraxisDesktop({
 
   const closeWindow = useCallback((id: string) => {
     updateWindow(id, { isOpen: false, isMinimized: false, isMaximized: false })
-  }, [updateWindow])
+    playSound("click")
+  }, [updateWindow, playSound])
 
   const minimizeWindow = useCallback((id: string) => {
     updateWindow(id, { isMinimized: true })
@@ -208,6 +270,29 @@ export default function PraxisDesktop({
       w.id === id ? { ...w, isMaximized: !w.isMaximized } : w
     ))
   }, [])
+
+  // Auto-open resume if incomplete
+  useEffect(() => {
+    if (phase !== "runtime") return
+
+    // Trigger onboarding notification
+    let onboardingTimer: any
+    if (!onboardingSent.current) {
+      onboardingTimer = setTimeout(() => {
+        addNotification({
+          title: "Inbound Message",
+          message: "Welcome to the Praxis candidate gateway. I've sent you a briefing mail.",
+          sender: "Elena (Eng Ops)",
+          action: "open_mail"
+        })
+        onboardingSent.current = true
+      }, 4000)
+    }
+
+    return () => {
+      if (onboardingTimer) clearTimeout(onboardingTimer)
+    }
+  }, [phase, addNotification])
 
   const togglePin = useCallback((id: string) => {
     setWindows(prev => prev.map(w => w.id === id ? { ...w, isPinned: !w.isPinned } : w))
@@ -274,9 +359,7 @@ export default function PraxisDesktop({
   function renderWindowContent(id: string) {
     switch (id) {
       case "mail":
-        return currentScenario
-          ? <MailApp scenario={currentScenario} onDownload={() => { }} />
-          : <div className="flex-1 flex items-center justify-center text-white/20"><Mail size={48} strokeWidth={1} /><p className="font-mono text-[10px] uppercase tracking-widest ml-4">No messages</p></div>
+        return <MailApp scenario={currentScenario ?? undefined} onDownload={() => { }} />
       case "browser":
         return (
           <BrowserApp
@@ -286,6 +369,17 @@ export default function PraxisDesktop({
             profile={profile}
             email={email}
             resumeIncomplete={resumeIncomplete}
+            onOpenProgram={openWindow}
+          />
+        )
+      case "resume":
+        return (
+          <ResumeStudio
+            isStandalone={false}
+            onComplete={() => {
+              closeWindow("resume")
+              router.refresh()
+            }}
           />
         )
       case "profile":
@@ -293,9 +387,22 @@ export default function PraxisDesktop({
       case "terminal":
         return <TerminalApp onRepoCloned={() => { setIsRepoCloned(true); if (Object.keys(codeState).length === 0 && currentScenario) setCodeState(currentScenario.repo_initial.files) }} onCloningStart={() => { }} isRepoCloned={isRepoCloned} ticketKey={currentScenario?.ticket?.key ?? "PRX-000"} />
       case "settings":
-        return currentScenario
-          ? <PreferencesModal scenario={currentScenario} osTheme={osTheme} setOsTheme={setOsTheme} osFont={osFont} setOsFont={setOsFont} isWrapped={isWrapped} setIsWrapped={setIsWrapped} bgShape={bgShape} setBgShape={setBgShape} accentColor={accentColor} setAccentColor={setAccentColor} applyFontToHeaders={applyFontToHeaders} setApplyFontToHeaders={setApplyFontToHeaders} />
-          : <div className="flex-1 flex items-center justify-center text-white/20"><Settings size={48} strokeWidth={1} /><p className="font-mono text-[10px] uppercase tracking-widest ml-4">Settings require an active mission</p></div>
+        return (
+          <PreferencesModal
+            scenario={currentScenario}
+            osTheme={osTheme} setOsTheme={setOsTheme}
+            osFont={osFont} setOsFont={setOsFont}
+            isWrapped={isWrapped} setIsWrapped={setIsWrapped}
+            bgShape={bgShape} setBgShape={setBgShape}
+            accentColor={accentColor} setAccentColor={setAccentColor}
+            applyFontToHeaders={applyFontToHeaders} setApplyFontToHeaders={setApplyFontToHeaders}
+            showTopBar={showTopBar} setShowTopBar={setShowTopBar}
+            taskbarPosition={taskbarPosition} setTaskbarPosition={setTaskbarPosition}
+            hideExtensions={hideExtensions} setHideExtensions={setHideExtensions}
+            enableSounds={enableSounds} setEnableSounds={setEnableSounds}
+            bootSoundVariant={bootSoundVariant} setBootSoundVariant={setBootSoundVariant}
+          />
+        )
       case "board":
         return currentScenario ? <DynamicBoard ticket={currentScenario.ticket} aiTeam={currentScenario.ai_team} checkpoints={currentScenario.checkpoints} checkpointsPassed={checkpointsPassed} /> : null
       case "ide":
@@ -304,6 +411,8 @@ export default function PraxisDesktop({
         return currentScenario ? <TeamView aiTeam={currentScenario.ai_team} /> : null
       case "marketplace":
         return <MarketplaceApp installedApps={installedApps} setInstalledApps={setInstalledApps} />
+      case "tour":
+        return <TourChat />
       case "trash":
         return <div className="flex-1 flex flex-col items-center justify-center text-white/20 gap-4"><Trash2 size={48} strokeWidth={1} /><p className="font-mono text-[10px] uppercase tracking-widest">Bin is empty</p></div>
       default:
@@ -316,195 +425,262 @@ export default function PraxisDesktop({
       <style jsx global>{`
         .os-shell { --accent: #a86f44; --accent-muted: rgba(168,111,68,0.2); }
         .os-shell.force-system-font h1,.os-shell.force-system-font h2,.os-shell.force-system-font h3,.os-shell.force-system-font h4,.os-shell.force-system-font .font-serif { font-family: inherit !important; }
+        
+        .crt-overlay {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 10002;
+          background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+          background-size: 100% 3px, 3px 100%;
+          opacity: 0.15;
+        }
+
+        .crt-vignette {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 10003;
+          background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.4) 100%);
+          box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
+        }
+
+        @keyframes scan {
+          from { transform: translateY(-100%); }
+          to { transform: translateY(100%); }
+        }
+
+        .scanline-flicker {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 10004;
+          background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.02) 50%, transparent);
+          height: 100px;
+          animation: scan 8s linear infinite;
+          opacity: 0.5;
+        }
       `}</style>
 
       <AnimatePresence mode="wait">
         {phase === "welcome" && (
           <WelcomeGateway key="welcome" variant="fullscreen" onContinue={dismissWelcome} />
         )}
+        {phase === "boot" && (
+          <OsBootScreen
+            key="boot"
+            onComplete={handleBootComplete}
+          />
+        )}
       </AnimatePresence>
-
-      {phase === "boot" && <OsBootScreen minDurationMs={2800} />}
 
       {phase === "runtime" && (
-      <>
-      <motion.div
-        initial={{ padding: 0 }}
-        animate={{ padding: isWrapped ? "2.5rem" : 0 }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className="h-screen bg-[#0a0a0a] flex items-center justify-center overflow-hidden"
-      >
-        <motion.div
-          initial={{ scale: 1.03, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-          style={{ "--accent": accentColor, "--accent-muted": `${accentColor}33` } as CSSProperties}
-          className={`os-shell w-full h-full border border-white/[0.06] shadow-[0_0_80px_-20px_rgba(168,111,68,0.08)] overflow-hidden flex flex-col relative transition-all duration-700 ${isWrapped ? "rounded-lg" : "rounded-none border-none"} ${osFont === "jetbrains" ? "font-mono" : "font-sans"} ${applyFontToHeaders ? "force-system-font" : ""}`}
-        >
-          {/* Background shader */}
-          <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
-            <Dithering style={{ height: "100%", width: "100%" }} colorBack={osTheme === "obsidian" ? "hsla(0,0%,2%,1)" : "hsla(220,10%,5%,1)"} colorFront={osTheme === "obsidian" ? "hsl(25,15%,8%)" : "hsl(210,10%,15%)"} shape={bgShape as any} pxSize={3} speed={0.1} />
-          </div>
+        <>
+          <motion.div
+            initial={{ padding: 0 }}
+            animate={{ padding: isWrapped ? "2.5rem" : 0 }}
+            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+            className="h-screen bg-[#050505] flex items-center justify-center overflow-hidden"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, filter: "blur(20px) brightness(2)" }}
+              animate={{ scale: 1, opacity: 1, filter: "blur(0px) brightness(1)" }}
+              transition={{
+                duration: 1.2,
+                ease: [0.16, 1, 0.3, 1],
+                delay: 0.1
+              }}
+              style={{
+                "--accent": accentColor,
+                "--accent-muted": `${accentColor}33`,
+                flexDirection: taskbarPosition === "top" ? "column-reverse" : "column"
+              } as CSSProperties}
+              className={`os-shell w-full h-full border border-white/[0.06] shadow-[0_0_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden flex relative transition-all duration-700 ${isWrapped ? "rounded-lg" : "rounded-none border-none"} ${osFont === "jetbrains" ? "font-mono" : "font-sans"} ${applyFontToHeaders ? "force-system-font" : ""}`}
+            >
+              {/* Background shader */}
+              <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
+                <Dithering style={{ height: "100%", width: "100%" }} colorBack={osTheme === "obsidian" ? "hsla(0,0%,2%,1)" : "hsla(220,10%,5%,1)"} colorFront={osTheme === "obsidian" ? "hsl(25,15%,8%)" : "hsl(210,10%,15%)"} shape={bgShape as any} pxSize={3} speed={0.1} />
+              </div>
 
-          {/* ── Top Bar ── */}
-          <div className="h-8 backdrop-blur-xl bg-black/40 border-b border-white/[0.06] flex items-center justify-between px-4 shrink-0 relative" style={{ zIndex: 9998 }}>
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-[9px] uppercase tracking-widest text-white/30">Praxis OS</span>
-              {currentScenario && (
-                <>
-                  <div className="w-px h-3 bg-white/[0.06]" />
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="font-mono text-[9px] text-emerald-500/60 uppercase tracking-widest">{currentScenario.ticket.key}</span>
+              {/* ── Top Bar ── */}
+              {showTopBar && (
+                <div className="h-8 backdrop-blur-xl bg-black/40 border-b border-white/[0.06] flex items-center justify-between px-4 shrink-0 relative" style={{ zIndex: 9998 }}>
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-[9px] uppercase tracking-widest text-white/30">Praxis OS</span>
+                    {currentScenario && (
+                      <>
+                        <div className="w-px h-3 bg-white/[0.06]" />
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <span className="font-mono text-[9px] text-emerald-500/60 uppercase tracking-widest">{currentScenario.ticket.key}</span>
+                        </div>
+                      </>
+                    )}
                   </div>
-                </>
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">@{profile.username ?? "dev"}</span>
+                    <span className="font-mono text-[9px] text-white/10">Lvl {profile.level}</span>
+                  </div>
+                </div>
               )}
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">@{profile.username ?? "dev"}</span>
-              <span className="font-mono text-[9px] text-white/10">Lvl {profile.level}</span>
-            </div>
-          </div>
 
-          {/* ── Desktop Area ── */}
-          <div className="flex-1 relative overflow-hidden" style={{ zIndex: 1 }} onClick={() => setSelectedIcon(null)} onContextMenu={(e) => {
-            e.preventDefault()
-            setContextMenu({
-              x: e.clientX, y: e.clientY,
-              items: [
-                { label: "Refresh Desktop", icon: RefreshCw, onClick: () => window.location.reload() },
-                { label: "OS Preferences", icon: Settings, onClick: () => openWindow("settings") },
-              ],
-            })
-          }}>
-            {/* Desktop Icons */}
-            <div className="absolute top-6 left-6 flex flex-col flex-wrap gap-x-6 gap-y-4 h-[calc(100%-40px)] pointer-events-auto" style={{ zIndex: 2 }}>
-              {OS_PROGRAMS.filter(p => !("hidden" in p && p.hidden) && installedApps.includes(p.id)).map(prog => {
-                const isOpen = openWindowIds.includes(prog.id)
-                const isSelected = selectedIcon === prog.id
-                const isMissionOnly = "missionOnly" in prog && prog.missionOnly
-                const isDisabled = isMissionOnly && !currentScenario
+              {/* ── Desktop Area ── */}
+              <div className="flex-1 relative overflow-hidden" style={{ zIndex: 1 }} onClick={() => setSelectedIcon(null)} onContextMenu={(e) => {
+                e.preventDefault()
+                setContextMenu({
+                  x: e.clientX, y: e.clientY,
+                  items: [
+                    { label: "Refresh Desktop", icon: RefreshCw, onClick: () => window.location.reload() },
+                    { label: "OS Preferences", icon: Settings, onClick: () => openWindow("settings") },
+                  ],
+                })
+              }}>
+                {/* Desktop Icons */}
+                <div className="absolute top-6 left-6 flex flex-col flex-wrap gap-x-6 gap-y-4 h-[calc(100%-40px)] pointer-events-auto" style={{ zIndex: 2 }}>
+                  {OS_PROGRAMS.filter(p => !("hidden" in p && p.hidden) && installedApps.includes(p.id)).map(prog => {
+                    const isOpen = openWindowIds.includes(prog.id)
+                    const isSelected = selectedIcon === prog.id
+                    const isMissionOnly = "missionOnly" in prog && prog.missionOnly
+                    const isDisabled = isMissionOnly && !currentScenario
 
-                return (
-                  <div
-                    key={prog.id}
-                    onClick={(e) => { e.stopPropagation(); setSelectedIcon(prog.id) }}
-                    onDoubleClick={() => !isDisabled && openWindow(prog.id)}
-                    className={`group flex flex-col items-center gap-1.5 p-2 rounded-md cursor-pointer select-none transition-all w-20 border ${isDisabled ? "opacity-20 cursor-not-allowed" :
-                        isSelected ? "bg-white/10 shadow-lg shadow-black/20 border-white/10" :
-                          "hover:bg-white/5 border-transparent"
-                      }`}
-                  >
-                    <div className={`w-10 h-10 flex items-center justify-center transition-all duration-300 ${isOpen ? "text-[#a86f44]" : isSelected ? "text-white" : "text-white/80 group-hover:text-white"
-                      }`}>
-                      <prog.icon size={20} />
-                    </div>
-                    <span className={`font-mono text-[8px] text-center uppercase tracking-widest leading-tight transition-colors ${isDisabled ? "text-white/20" :
-                        isOpen ? "text-[#a86f44]/80" : isSelected ? "text-white" : "text-white/70 group-hover:text-white/95"
-                      }`}>
-                      {prog.title}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
+                    return (
+                      <div
+                        key={prog.id}
+                        onClick={(e) => { e.stopPropagation(); setSelectedIcon(prog.id) }}
+                        onDoubleClick={() => !isDisabled && openWindow(prog.id)}
+                        className={`group flex flex-col items-center gap-1.5 p-2 rounded-md cursor-pointer select-none transition-all w-20 border ${isDisabled ? "opacity-20 cursor-not-allowed" :
+                          isSelected ? "bg-white/10 shadow-lg shadow-black/20 border-white/10" :
+                            "hover:bg-white/5 border-transparent"
+                          }`}
+                      >
+                        <div className={`w-10 h-10 flex items-center justify-center transition-all duration-300 ${isOpen ? "text-[var(--accent)]" : isSelected ? "text-white" : "text-white/80 group-hover:text-white"
+                          }`}>
+                          <prog.icon size={20} />
+                        </div>
+                        <span className={`font-mono text-[8px] text-center uppercase tracking-widest leading-tight transition-colors ${isDisabled ? "text-white/20" :
+                          isOpen ? "text-[var(--accent)]" : isSelected ? "text-white" : "text-white/70 group-hover:text-white/95"
+                          }`}>
+                          {hideExtensions ? prog.title.replace(/\.(exe|txt|studio)$/i, "") : prog.title}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
 
-            {/* ── Windows ── */}
-            <AnimatePresence mode="popLayout">
-              {windows.map(win => {
-                if (!win.isOpen) return null
-                return (
-                  <WindowFrame key={win.id} window={win} onFocus={focusWindow} onClose={closeWindow} onMinimize={minimizeWindow} onMaximize={maximizeWindow} onTogglePin={togglePin} onMove={moveWindow}>
-                    {renderWindowContent(win.id)}
-                  </WindowFrame>
-                )
-              })}
-            </AnimatePresence>
-          </div>
+                {/* ── Windows ── */}
+                <AnimatePresence mode="popLayout">
+                  {windows.map(win => {
+                    if (!win.isOpen) return null
+                    return (
+                      <WindowFrame key={win.id} window={win} onFocus={focusWindow} onClose={closeWindow} onMinimize={minimizeWindow} onMaximize={maximizeWindow} onTogglePin={togglePin} onMove={moveWindow}>
+                        {renderWindowContent(win.id)}
+                      </WindowFrame>
+                    )
+                  })}
+                </AnimatePresence>
+              </div>
 
-          {/* ── Taskbar ── */}
-          <div className="h-12 backdrop-blur-2xl bg-black/60 border-t border-white/[0.08] flex items-center justify-between px-3 shrink-0 relative" style={{ zIndex: 9999 }}>
-            <div className="flex items-center gap-1.5 h-full">
-              <button onClick={() => setShowSystemMenu(!showSystemMenu)} className={`w-10 h-10 flex items-center justify-center rounded-md border transition-all cursor-pointer group mr-2 ${showSystemMenu ? "bg-[#a86f44]/20 border-[#a86f44]/40" : "bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/10"}`}>
-                <CircleDashed size={20} className={`${showSystemMenu ? "text-[#a86f44] rotate-90" : "text-white/40 group-hover:text-[#a86f44] group-hover:rotate-90"} transition-all duration-500`} />
-              </button>
-              <div className="w-px h-6 bg-white/[0.06] mx-1" />
-              {OS_PROGRAMS.filter(p => p.id !== "trash" && installedApps.includes(p.id)).map(prog => {
-                const win = windows.find(w => w.id === prog.id)
-                const isOpen = win?.isOpen ?? false
-                const isMinimized = win?.isMinimized ?? false
-                const isFocused = isOpen && !isMinimized && win?.zIndex === Math.max(...windows.filter(w => w.isOpen && !w.isMinimized).map(w => w.zIndex))
-                const isMissionOnly = "missionOnly" in prog && prog.missionOnly
-                const isDisabled = isMissionOnly && !currentScenario
-
-                return (
-                  <button key={prog.id} onClick={() => !isDisabled && handleTaskbarClick(prog.id)} className={`relative flex items-center justify-center w-10 h-10 rounded-md transition-all ${isDisabled ? "opacity-15 cursor-not-allowed" :
-                      isFocused ? "bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] border border-white/10 cursor-pointer" :
-                        isOpen ? "bg-white/[0.03] hover:bg-white/[0.07] cursor-pointer" :
-                          "hover:bg-white/[0.02] grayscale opacity-40 cursor-pointer"
-                    }`}>
-                    <prog.icon size={18} className={isFocused ? "text-white" : "text-white/60"} />
-                    {isOpen && <div className={`absolute bottom-1 w-1 h-1 rounded-full ${isFocused ? "bg-[#a86f44]" : "bg-white/40"}`} />}
+              {/* ── Taskbar ── */}
+              <div className={`h-12 backdrop-blur-2xl bg-black/60 flex items-center justify-between px-3 shrink-0 relative ${taskbarPosition === "top" ? "border-b" : "border-t"} border-white/[0.08]`} style={{ zIndex: 9999 }}>
+                <div className="flex items-center gap-1.5 h-full">
+                  <button onClick={() => setShowSystemMenu(!showSystemMenu)} className={`w-10 h-10 flex items-center justify-center rounded-md border transition-all cursor-pointer group mr-2 ${showSystemMenu ? "bg-[var(--accent-muted)] border-[var(--accent-muted)]" : "bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/10"}`}>
+                    <CircleDashed size={20} className={`${showSystemMenu ? "text-[var(--accent)] rotate-90" : "text-white/40 group-hover:text-[var(--accent)] group-hover:rotate-90"} transition-all duration-500`} />
                   </button>
-                )
-              })}
-            </div>
-            <div className="flex items-center gap-4 px-3 h-full">
-              <div className="flex items-center gap-3 text-white/40">
-                <Search size={14} className="hover:text-white/70 cursor-pointer transition-colors" onClick={() => setIsSpotlightOpen(true)} />
-                <div className="w-px h-4 bg-white/[0.06] mx-1" />
-                <Wifi size={14} className="text-white/60" />
-                <Volume2 size={14} className="text-white/60" />
-                <BatteryCharging size={14} className="text-white/60" />
-              </div>
-              <div className="w-px h-6 bg-white/[0.06] mx-1" />
-              <div className="flex flex-col items-end min-w-[70px]" suppressHydrationWarning>
-                <span className="font-mono text-[10px] text-white/80 leading-none">{time ? time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "--:--"}</span>
-                <span className="font-mono text-[8px] text-white/40 uppercase tracking-tighter mt-1">{time ? time.toLocaleDateString([], { month: "short", day: "numeric" }) : "--- --"}</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </motion.div>
+                  <div className="w-px h-6 bg-white/[0.06] mx-1" />
+                  {OS_PROGRAMS.filter(p => p.id !== "trash" && installedApps.includes(p.id)).map(prog => {
+                    const win = windows.find(w => w.id === prog.id)
+                    const isOpen = win?.isOpen ?? false
+                    const isMinimized = win?.isMinimized ?? false
+                    const isFocused = isOpen && !isMinimized && win?.zIndex === Math.max(...windows.filter(w => w.isOpen && !w.isMinimized).map(w => w.zIndex))
+                    const isMissionOnly = "missionOnly" in prog && prog.missionOnly
+                    const isDisabled = isMissionOnly && !currentScenario
 
-      {/* ── Portal Elements ── */}
-      <AnimatePresence>
-        {isSpotlightOpen && (
-          <Spotlight searchQuery={searchQuery} activeSearchIndex={activeSearchIndex} searchResults={searchResults} setSearchQuery={setSearchQuery} setActiveSearchIndex={setActiveSearchIndex} onOpenItem={handleTaskbarClick} onClose={() => setIsSpotlightOpen(false)} />
-        )}
-        {showSystemMenu && (
-          <SystemMenu onClose={() => setShowSystemMenu(false)} onOpenProgram={handleTaskbarClick} />
-        )}
-        {contextMenu && (
-          <ContextMenu x={contextMenu.x} y={contextMenu.y} items={contextMenu.items} onClose={() => setContextMenu(null)} />
-        )}
-      </AnimatePresence>
-
-      {/* ── Suspend Mission Dialog ── */}
-      <AnimatePresence>
-        {showSuspendDialog && (
-          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="w-[440px] bg-[#0A0A0A] border border-white/10 rounded-lg shadow-2xl overflow-hidden">
-              <div className="px-5 py-3 border-b border-white/5 bg-white/[0.02]">
-                <span className="font-mono text-[10px] uppercase tracking-widest text-orange-400">Mission Conflict</span>
-              </div>
-              <div className="p-6">
-                <p className="text-sm text-white/80 mb-2">You have an active mission:</p>
-                <div className="p-3 bg-white/[0.03] border border-white/5 rounded-sm mb-4">
-                  <p className="font-mono text-[11px] text-white/60">{currentScenario?.ticket?.key} — {currentScenario?.title}</p>
+                    return (
+                      <button key={prog.id} onClick={() => !isDisabled && handleTaskbarClick(prog.id)} className={`relative flex items-center justify-center w-10 h-10 rounded-md transition-all ${isDisabled ? "opacity-15 cursor-not-allowed" :
+                        isFocused ? "bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] border border-white/10 cursor-pointer" :
+                          isOpen ? "bg-white/[0.03] hover:bg-white/[0.07] cursor-pointer" :
+                            "hover:bg-white/[0.02] grayscale opacity-40 cursor-pointer"
+                        }`}>
+                        <prog.icon size={18} className={isFocused ? "text-white" : "text-white/60"} />
+                        {isOpen && <div className={`absolute bottom-1 w-1 h-1 rounded-full ${isFocused ? "text-[var(--accent)]" : "bg-white/40"}`} />}
+                      </button>
+                    )
+                  })}
                 </div>
-                <p className="text-xs text-white/40 mb-6">Suspending will save your progress. You can resume it later from the Browser.</p>
-                <div className="flex justify-end gap-3">
-                  <button onClick={() => setShowSuspendDialog(null)} className="px-4 py-2 rounded-sm font-mono text-[10px] uppercase tracking-widest text-white/40 hover:bg-white/5 transition-all cursor-pointer">Cancel</button>
-                  <button onClick={handleSuspendAndSwitch} className="px-5 py-2 bg-[#a86f44] rounded-sm font-mono text-[10px] uppercase tracking-widest text-white font-bold hover:brightness-110 transition-all cursor-pointer">Suspend & Switch</button>
+                <div className="flex items-center gap-4 px-3 h-full">
+                  <div className="flex items-center gap-3 text-white/40">
+                    <Search size={14} className="hover:text-white/70 cursor-pointer transition-colors" onClick={() => setIsSpotlightOpen(true)} />
+                    <div className="w-px h-4 bg-white/[0.06] mx-1" />
+                    <Wifi size={14} className="text-white/60" />
+                    <Volume2 size={14} className="text-white/60" />
+                    <BatteryCharging size={14} className="text-white/60" />
+                  </div>
+                  <div className="w-px h-6 bg-white/[0.06] mx-1" />
+                  <div className="flex flex-col items-end min-w-[70px]" suppressHydrationWarning>
+                    <span className="font-mono text-[10px] text-white/80 leading-none">{time ? time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "--:--"}</span>
+                    <span className="font-mono text-[8px] text-white/40 uppercase tracking-tighter mt-1">{time ? time.toLocaleDateString([], { month: "short", day: "numeric" }) : "--- --"}</span>
+                  </div>
                 </div>
               </div>
+
+              {/* ── Notification Overlay (Inside Shell) ── */}
+              <div className="absolute top-12 right-6 z-[10001] flex flex-col gap-3 pointer-events-none">
+                <AnimatePresence>
+                  {notifications.map(notif => (
+                    <Notification
+                      key={notif.id}
+                      {...notif}
+                      onClose={removeNotification}
+                      onClick={handleNotificationClick}
+                    />
+                  ))}
+                </AnimatePresence>
+              </div>
+
             </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+          </motion.div>
 
-      </>
+          {/* ── Portal Elements ── */}
+          <AnimatePresence>
+            {isSpotlightOpen && (
+              <Spotlight searchQuery={searchQuery} activeSearchIndex={activeSearchIndex} searchResults={searchResults} setSearchQuery={setSearchQuery} setActiveSearchIndex={setActiveSearchIndex} onOpenItem={handleTaskbarClick} onClose={() => setIsSpotlightOpen(false)} />
+            )}
+            {showSystemMenu && (
+              <SystemMenu
+                onClose={() => setShowSystemMenu(false)}
+                onOpenProgram={handleTaskbarClick}
+                onLogout={handleLogout}
+              />
+            )}
+            {contextMenu && (
+              <ContextMenu x={contextMenu.x} y={contextMenu.y} items={contextMenu.items} onClose={() => setContextMenu(null)} />
+            )}
+          </AnimatePresence>
+
+          {/* ── Suspend Mission Dialog ── */}
+          <AnimatePresence>
+            {showSuspendDialog && (
+              <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="w-[440px] bg-[#0A0A0A] border border-white/10 rounded-lg shadow-2xl overflow-hidden">
+                  <div className="px-5 py-3 border-b border-white/5 bg-white/[0.02]">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-orange-400">Mission Conflict</span>
+                  </div>
+                  <div className="p-6">
+                    <p className="text-sm text-white/80 mb-2">You have an active mission:</p>
+                    <div className="p-3 bg-white/[0.03] border border-white/5 rounded-sm mb-4">
+                      <p className="font-mono text-[11px] text-white/60">{currentScenario?.ticket?.key} — {currentScenario?.title}</p>
+                    </div>
+                    <p className="text-xs text-white/40 mb-6">Suspending will save your progress. You can resume it later from the Browser.</p>
+                    <div className="flex justify-end gap-3">
+                      <button onClick={() => setShowSuspendDialog(null)} className="px-4 py-2 rounded-sm font-mono text-[10px] uppercase tracking-widest text-white/40 hover:bg-white/5 transition-all cursor-pointer">Cancel</button>
+                      <button onClick={handleSuspendAndSwitch} className="px-5 py-2 bg-[#a86f44] rounded-sm font-mono text-[10px] uppercase tracking-widest text-white font-bold hover:brightness-110 transition-all cursor-pointer">Suspend & Switch</button>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>
+        </>
       )}
     </>
   )

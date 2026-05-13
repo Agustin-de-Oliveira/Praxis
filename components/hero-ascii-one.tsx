@@ -10,21 +10,21 @@ export default function AboutSection() {
         <div className="p-8 md:p-12 flex flex-col justify-center border-r border-border/40">
           <div className="mb-6 inline-flex items-center gap-2 font-serif text-[10px] uppercase tracking-widest text-[#a86f44]">
             <BookOpen className="h-3 w-3" />
-            The Learning Environment
+            The Workstation
           </div>
 
           <h2 className="text-4xl lg:text-5xl font-medium tracking-tighter text-foreground mb-6 leading-tight font-serif">
-            Learn by doing. <br />
+            Work by doing. <br />
             <span className="text-[#a86f44]">Not just watching.</span>
           </h2>
 
           <p className="text-muted-foreground text-sm md:text-base max-w-md mb-10 leading-relaxed font-sans opacity-80">
-            Bridge the gap between theory and the actual job. Practice on realistic scenarios that mimic a real workday, complete with a simulated squad and live infrastructure.
+            Bridge the gap between theory and the actual job. Enter a high-fidelity workstation that mimics a real engineering day, complete with a simulated team and live production incidents.
           </p>
 
           <div className="flex flex-wrap gap-4">
             <button className="group relative inline-flex h-10 items-center justify-center gap-2 overflow-hidden rounded-sm bg-foreground px-6 text-xs font-bold uppercase tracking-widest text-background transition-all hover:bg-foreground/90">
-              Start Learning
+              Initialize Session
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </button>
           </div>

@@ -1,6 +1,6 @@
 # Roadmap
 
-**Last updated:** 2026-05-08 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md)
+**Last updated:** 2026-05-11 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md)
 
 ---
 
@@ -18,7 +18,7 @@ We have successfully built the **Immersive Tour Experience (SCN-008)**, a high-f
 | **Immersive Tour Engine** | ✅ Done | Multi-phase orchestrator (storyline → debrief) |
 | **Vertical Slice (SCN-008)** | ✅ Done | Full interactive endpoint implementation scenario |
 | Scenario library (browse + filter) | ✅ Done | `scenario-library.tsx` implemented |
-| User onboarding flow | 🔄 Pivoting | Replace form-style onboarding with Candidate OS → CV → job application → calibration challenge |
+| User onboarding flow | ✅ Done | Replaced form-style onboarding with Candidate OS → Résumé Studio flow |
 | Scenario board UI | ✅ Done | Ticket detail modal + interaction panels |
 | In-browser IDE (Workstation) | ✅ Done | Ghost text, auto-completion, and synth highlighting |
 | Checkpoint validation (Client-side) | ✅ Done | Simulated CI/CD pipeline with streaming logs |
@@ -36,7 +36,7 @@ We have successfully built the **Immersive Tour Experience (SCN-008)**, a high-f
 | AI team integration (Live) | 🔄 In Progress | Personas (Sarah, Alex) defined; needs API wiring |
 | **Contextual Workspace Transformation** | ⬜ Not Started | Shift from static tools to mission-driven downloads |
 | **Internal App Marketplace (v1)** | ⬜ Not Started | Central hub for unlocking scenario-specific tooling |
-| **Candidate OS & Hiring Flow** | ⬜ Not Started | Browser-based CV builder, fictional jobs, applications, mail response, calibration challenge |
+| **Candidate OS & Hiring Flow** | ✅ Done | Browser-based Résumé Studio, fictional jobs, applications, and calibration triggers |
 | User dashboard | ⬜ Not Started | Scenario list + progress overview |
 | 5 total scenarios across categories | 🔄 In Progress | SCN-008 Done; SCN-003 + SCN-007 in design |
 | 5-interaction free gate + upgrade prompt | ⬜ Not Started | Core monetization hook |
