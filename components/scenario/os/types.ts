@@ -38,4 +38,5 @@ export interface ExplorerFile {
   children?: string[]
   size?: string
   easterEgg?: 'bsod' | 'matrix' | 'glitch' | 'alert' | 'wallpaper' | 'ghost'
+  onOpen?: () => void
 }

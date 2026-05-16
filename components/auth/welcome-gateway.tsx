@@ -47,7 +47,14 @@ export function WelcomeGateway({ variant = 'fullscreen', onContinue }: WelcomeGa
   }
 
   return (
-    <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-[#050505] overflow-hidden px-6">
+    <motion.div 
+      initial={{ opacity: 1 }}
+      exit={{ 
+        y: '-100%',
+        transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+      }}
+      className="fixed inset-0 z-[10001] flex items-center justify-center bg-[#050505] overflow-hidden px-6"
+    >
       {/* Background Ambience */}
       <div className="absolute inset-0 pointer-events-none">
         <Dithering
@@ -64,6 +71,13 @@ export function WelcomeGateway({ variant = 'fullscreen', onContinue }: WelcomeGa
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.95, filter: 'blur(10px)' }}
         animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+        exit={{ 
+          opacity: 0, 
+          scale: 0.9, 
+          y: -40,
+          filter: 'blur(20px)',
+          transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+        }}
         transition={{
           duration: 1.2,
           ease: [0.16, 1, 0.3, 1],
@@ -156,6 +170,6 @@ export function WelcomeGateway({ variant = 'fullscreen', onContinue }: WelcomeGa
           </div>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   )
 }

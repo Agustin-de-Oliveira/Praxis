@@ -7,7 +7,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { motion, type Variants } from 'framer-motion'
-import { Bell, Check, ArrowRight } from 'lucide-react'
+import { Bell, ArrowRight } from 'lucide-react'
 import { SCN008_TICKET, SCN008_TEAM } from '@/lib/first-day-data'
 
 // ── Variants ──────────────────────────────────────────────────────────────────

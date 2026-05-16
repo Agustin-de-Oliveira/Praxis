@@ -1,5 +1,4 @@
 import { useState, useCallback, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
 
 export type BrowserView =
   | 'home'
@@ -10,6 +9,7 @@ export type BrowserView =
   | 'applications'
   | 'docs'
   | 'challenge'
+  | 'offer'
 
 export const VIEW_URL: Record<BrowserView, string> = {
   home: 'praxis://home',
@@ -20,6 +20,7 @@ export const VIEW_URL: Record<BrowserView, string> = {
   applications: 'praxis://applications',
   docs: 'praxis://docs',
   challenge: 'praxis://challenge',
+  offer: 'praxis://offer',
 }
 
 export type HistFrame = { view: BrowserView; companyId?: string }
@@ -50,6 +51,7 @@ export function defaultTitle(view: BrowserView): string {
     case 'applications': return 'Applications'
     case 'docs': return 'Docs'
     case 'challenge': return 'Challenge'
+    case 'offer': return 'Offer'
     default: return 'Tab'
   }
 }

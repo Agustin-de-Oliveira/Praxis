@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
-import { Lightbulb, ArrowRight, CheckCircle, Terminal, Monitor, Code } from 'lucide-react'
+import { Lightbulb, CheckCircle, Terminal, Monitor } from 'lucide-react'
 import { Beaker } from 'lucide-react'
 
 const tourVariants: Variants = {

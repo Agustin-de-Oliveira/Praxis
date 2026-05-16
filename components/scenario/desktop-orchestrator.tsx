@@ -119,7 +119,6 @@ export default function DesktopOrchestrator({ scenario, initialProgress }: Deskt
 
   const handleSave = useCallback(async () => {
     // TODO: Persist state to Supabase
-    console.log("Saving mission progress...", { codeState, checkpointsPassed })
   }, [codeState, checkpointsPassed])
 
   const handleCodeChange = useCallback((path: string, code: string) => {

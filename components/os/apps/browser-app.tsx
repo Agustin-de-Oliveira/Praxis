@@ -15,6 +15,7 @@ import type { UserProfile } from '@/lib/os-types'
 import { useBrowser, VIEW_URL } from '@/hooks/use-browser'
 import { BrowserChrome } from './browser/browser-chrome'
 import { BrowserViews } from './browser/browser-views'
+import { useMissionStore } from '@/lib/store/mission-store'
 
 interface BrowserAppProps {
   scenarios: Scenario[]
@@ -24,6 +25,7 @@ interface BrowserAppProps {
   email: string
   resumeIncomplete: boolean
   onOpenProgram: (id: string) => void
+  onAcceptOffer?: () => void
 }
 
 export default function BrowserApp({
@@ -34,6 +36,7 @@ export default function BrowserApp({
   email,
   resumeIncomplete,
   onOpenProgram,
+  onAcceptOffer,
 }: BrowserAppProps) {
   const router = useRouter()
   const {
@@ -58,9 +61,7 @@ export default function BrowserApp({
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [selectedCompanyId, setSelectedCompanyId] = useState(COMPANIES[0]?.id ?? '')
   const [selectedJobId, setSelectedJobId] = useState(JOB_POSTINGS[0]?.id ?? '')
-  const [candidateStage, setCandidateStage] = useState<CandidateStage>(() =>
-    resumeIncomplete ? 'cv_incomplete' : 'jobs_available'
-  )
+  const { candidateStage, setCandidateStage } = useMissionStore()
   const [candidateProfile] = useState<CandidateProfileDraft>({
     handle: initialHandle,
     targetRole: profile.role ?? '',
@@ -140,6 +141,11 @@ export default function BrowserApp({
     navigateTab('applications')
   }
 
+  const simulateOffer = () => {
+    setCandidateStage('offer_received')
+    navigateTab('applications')
+  }
+
   const completeCvSimulation = () => {
     setCandidateStage('jobs_available')
     navigateTab('jobs')
@@ -195,6 +201,8 @@ export default function BrowserApp({
         onSetSelectedJobId={setSelectedJobId}
         onSetSelectedCompanyId={setSelectedCompanyId}
         onApplyToJob={applyToJob}
+        onAcceptOffer={onAcceptOffer}
+        onSimulateOffer={simulateOffer}
         onGoBack={goBack}
         onCompleteCvSimulation={completeCvSimulation}
       />

@@ -82,7 +82,19 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
   const sarah = getMember('senior_dev')
 
   const [view, setView] = useState<'channel' | 'dm'>('channel')
-  const [visibleMessages, setVisibleMessages] = useState<any[]>([])
+  const [visibleMessages, setVisibleMessages] = useState<
+    {
+      user: {
+        name: string
+        color: string
+        textColor: string
+        handle: string
+      }
+      time: string
+      text: string
+      isLink?: boolean
+    }[]
+  >([])
   const [isTyping, setIsTyping] = useState(false)
   const [showOptions, setShowOptions] = useState(false)
   const [userResponse, setUserResponse] = useState<string | null>(null)

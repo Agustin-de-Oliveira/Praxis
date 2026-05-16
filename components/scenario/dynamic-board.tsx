@@ -96,7 +96,7 @@ function generateAmbientTickets(aiTeam: AITeam, category: string): BoardTicket[]
         status: tmpl.status,
         tags: tmpl.tags,
         time: tmpl.time,
-        comments: Math.floor(Math.random() * 5),
+        comments: tmpl.title.length % 5,
         branch: tmpl.status !== 'backlog',
         priority: i === 0 ? 'medium' : 'low',
         assignee: {

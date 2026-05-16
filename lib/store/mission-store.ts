@@ -1,13 +1,16 @@
 import { create } from 'zustand'
 import { Scenario } from '@/lib/scenario-types'
+import { CandidateStage } from '@/lib/candidate-data'
 
 interface MissionState {
   currentScenario: Scenario | null
   codeState: Record<string, string>
   isRepoCloned: boolean
   checkpointsPassed: string[]
+  candidateStage: CandidateStage
 
   setCurrentScenario: (scenario: Scenario | null) => void
+  setCandidateStage: (stage: CandidateStage) => void
   setCodeState: (
     codeState: Record<string, string> | ((prev: Record<string, string>) => Record<string, string>)
   ) => void
@@ -21,8 +24,10 @@ export const useMissionStore = create<MissionState>((set) => ({
   codeState: {},
   isRepoCloned: false,
   checkpointsPassed: [],
+  candidateStage: 'candidate_boot',
 
   setCurrentScenario: (currentScenario) => set({ currentScenario }),
+  setCandidateStage: (candidateStage) => set({ candidateStage }),
   setCodeState: (codeState) =>
     set((state) => ({
       codeState: typeof codeState === 'function' ? codeState(state.codeState) : codeState,

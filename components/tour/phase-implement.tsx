@@ -8,7 +8,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
-import { Lightbulb, ArrowRight, CheckCircle, Terminal, Monitor, Code } from 'lucide-react'
+import { Lightbulb, CheckCircle, Terminal, Monitor, Code } from 'lucide-react'
 
 const tourVariants: Variants = {
   hidden: { opacity: 0, filter: 'blur(8px)', scale: 0.98 },
@@ -114,7 +114,7 @@ const highlight = (line: string) => {
 }
 
 interface PhaseImplementProps {
-  onContinue: (target: any) => void
+  onContinue: (target: string) => void
 }
 
 export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
@@ -123,6 +123,19 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
   const [isCorrect, setIsCorrect] = useState(false)
   const [showHint, setShowHint] = useState(false)
   const [completedLines, setCompletedLines] = useState<string[]>([])
+  const [visibleMessages, setVisibleMessages] = useState<
+    {
+      user: {
+        name: string
+        color: string
+        textColor: string
+        handle: string
+      }
+      time: string
+      text: string
+      isLink?: boolean
+    }[]
+  >([])
   const [logs, setLogs] = useState<string[]>([
     '[praxis-lint] No issues found.',
     '[praxis-server] Ready for hot-reload.',

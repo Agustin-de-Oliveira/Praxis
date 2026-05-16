@@ -18,25 +18,29 @@ import { BrowserView, VIEW_URL } from '@/hooks/use-browser'
 import { ResumeStudio } from '@/components/resume/resume-studio'
 import ProfileApp from '../profile-app'
 import { UserProfile } from '@/lib/os-types'
+import { CandidateProfileDraft, CandidateApplication } from '@/lib/candidate-data'
+import { Scenario } from '@/lib/scenario-types'
 
 interface BrowserViewsProps {
   view: BrowserView
   companyId?: string
   candidateStage: string
-  candidateProfile: any
-  applications: any[]
+  candidateProfile: CandidateProfileDraft
+  applications: CandidateApplication[]
   selectedJobId: string
   selectedCompanyId: string
   activeScenarioTitle: string | null
   profile: UserProfile
   email: string
-  scenarios: any[]
-  onNavigate: (view: BrowserView, opts?: any) => void
+  scenarios: Scenario[]
+  onNavigate: (view: BrowserView, opts?: { companyId?: string; url?: string; title?: string }) => void
   onOpenProgram: (id: string) => void
-  onAcceptMission: (scenario: any) => void
+  onAcceptMission: (scenario: Scenario) => void
   onSetSelectedJobId: (id: string) => void
   onSetSelectedCompanyId: (id: string) => void
   onApplyToJob: (id: string) => void
+  onAcceptOffer?: () => void
+  onSimulateOffer?: () => void
   onGoBack: () => void
   onCompleteCvSimulation: () => void
 }
@@ -59,6 +63,8 @@ export function BrowserViews({
   onSetSelectedJobId,
   onSetSelectedCompanyId,
   onApplyToJob,
+  onAcceptOffer,
+  onSimulateOffer,
   onGoBack,
   onCompleteCvSimulation,
 }: BrowserViewsProps) {
@@ -408,14 +414,33 @@ export function BrowserViews({
                       <p className="text-xs text-white/40">
                         Technical evaluation stage active.
                       </p>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => {
+                            onSetSelectedJobId(application.jobId)
+                            onNavigate('challenge')
+                          }}
+                          className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-mono text-[9px] uppercase tracking-widest rounded-sm transition-all"
+                        >
+                          Review Challenge
+                        </button>
+                        <button
+                          onClick={onSimulateOffer}
+                          className="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-mono text-[9px] uppercase tracking-widest rounded-sm transition-all border border-emerald-500/20"
+                        >
+                          Simulate Offer
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  {application.status === 'offer' && (
+                    <div className="mt-6 pt-6 border-t border-white/5 flex items-center justify-between">
+                      <p className="text-xs text-white/40">Congratulations! An offer has been extended.</p>
                       <button
-                        onClick={() => {
-                          onSetSelectedJobId(application.jobId)
-                          onNavigate('challenge')
-                        }}
-                        className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-mono text-[9px] uppercase tracking-widest rounded-sm transition-all"
+                        onClick={() => onNavigate('offer')}
+                        className="px-4 py-2 bg-[#a86f44] text-[#111] font-mono text-[9px] uppercase tracking-widest rounded-sm transition-all font-bold"
                       >
-                        Review Challenge
+                        Review Offer
                       </button>
                     </div>
                   )}
@@ -424,6 +449,51 @@ export function BrowserViews({
             })}
           </div>
         )}
+      </div>
+    </div>
+  )
+
+  const renderOffer = () => (
+    <div className="flex-1 overflow-y-auto bg-[#090909] p-12">
+      <div className="max-w-3xl mx-auto">
+        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-emerald-400 mb-4">
+          Offer Extended
+        </p>
+        <h1 className="text-4xl font-serif text-white mb-8">
+          Welcome to {selectedCompany?.name}
+        </h1>
+        
+        <div className="space-y-8 mb-12">
+          <div className="border border-white/10 bg-white/[0.02] p-8 rounded-sm">
+            <h3 className="font-mono text-[11px] uppercase tracking-widest text-white/40 mb-6">Terms of Engagement</h3>
+            <div className="space-y-4">
+              <div className="flex justify-between border-b border-white/5 pb-2">
+                <span className="text-sm text-white/30">Position</span>
+                <span className="text-sm text-white/80">{selectedJob?.title}</span>
+              </div>
+              <div className="flex justify-between border-b border-white/5 pb-2">
+                <span className="text-sm text-white/30">Department</span>
+                <span className="text-sm text-white/80">Engineering - {selectedJob?.track}</span>
+              </div>
+              <div className="flex justify-between border-b border-white/5 pb-2">
+                <span className="text-sm text-white/30">Start Date</span>
+                <span className="text-sm text-white/80 font-mono text-[#a86f44]">IMMEDIATE</span>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-sm text-white/50 leading-relaxed font-serif">
+            We are impressed with your performance during the calibration challenge. 
+            The team believes your approach to {selectedJob?.track} aligns perfectly with our engineering culture.
+          </p>
+        </div>
+
+        <button
+          onClick={onAcceptOffer}
+          className="w-full py-4 bg-white text-black font-mono text-[12px] uppercase tracking-[0.2em] font-bold hover:bg-[#a86f44] hover:text-white transition-all rounded-sm shadow-xl"
+        >
+          Accept and Initialize First Day
+        </button>
       </div>
     </div>
   )
@@ -453,7 +523,10 @@ export function BrowserViews({
             "{challengeScenario?.description}"
           </p>
           <button
-            onClick={() => onAcceptMission(challengeScenario)}
+            onClick={() => {
+              onAcceptMission(challengeScenario)
+              onSimulateOffer?.()
+            }}
             className="w-full py-3 bg-[#a86f44] text-[#111] font-mono text-[11px] uppercase tracking-widest font-bold hover:brightness-105 transition-all rounded-sm"
           >
             Initialize Workspace
@@ -487,6 +560,7 @@ export function BrowserViews({
     case 'company': return renderCompany()
     case 'applications': return renderApplications()
     case 'challenge': return renderChallenge()
+    case 'offer': return renderOffer()
     default: return renderHome()
   }
 }

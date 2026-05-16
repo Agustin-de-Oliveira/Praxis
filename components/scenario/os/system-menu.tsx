@@ -28,9 +28,10 @@ interface SystemMenuProps {
   onClose: () => void
   onOpenProgram: (id: string) => void
   onLogout?: () => void
+  onReplayOnboarding?: () => void
 }
 
-export function SystemMenu({ onClose, onOpenProgram, onLogout }: SystemMenuProps) {
+export function SystemMenu({ onClose, onOpenProgram, onLogout, onReplayOnboarding }: SystemMenuProps) {
   const [currentPath, setCurrentPath] = useState<string>('disk_c')
   const [history, setHistory] = useState<string[]>(['disk_c'])
   const [historyIndex, setHistoryIndex] = useState(0)
@@ -70,8 +71,9 @@ export function SystemMenu({ onClose, onOpenProgram, onLogout }: SystemMenuProps
     if (file.easterEgg) {
       setEasterEgg(file.easterEgg)
       setTimeout(() => setEasterEgg(null), 3000)
-    } else {
-      console.log('Opening file:', file.name)
+    }
+    if (file.onOpen) {
+      file.onOpen()
     }
   }
 
@@ -229,6 +231,17 @@ export function SystemMenu({ onClose, onOpenProgram, onLogout }: SystemMenuProps
             </div>
 
             <div className="mt-auto pt-4 border-t border-white/5 space-y-1">
+              <button
+                onClick={() => {
+                  onReplayOnboarding?.()
+                  onClose()
+                }}
+                className="w-full flex items-center gap-3 px-2 py-1.5 rounded-sm hover:bg-[#a86f44]/10 text-[#a86f44]/60 group transition-all text-left mb-1"
+              >
+                <FileText size={12} className="text-[#a86f44]/40 group-hover:text-[#a86f44]" />
+                <span className="font-mono text-[9px] uppercase tracking-wider">System Briefing</span>
+              </button>
+
               <button
                 onClick={() => {
                   onOpenProgram('settings')

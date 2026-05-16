@@ -107,7 +107,7 @@ Sarah`,
   return (
     <div className="flex-1 flex overflow-hidden bg-[#0A0A0A]">
       {/* Sidebar */}
-      <div className="w-[200px] border-r border-white/5 bg-white/[0.01] flex flex-col p-2 gap-1">
+      <div className="w-[180px] border-r border-white/5 bg-white/[0.01] flex flex-col p-2 gap-1">
         <button className="flex items-center gap-3 px-3 py-2 bg-[#a86f44] text-white rounded-sm mb-4 hover:brightness-110 transition-all shadow-lg shadow-[#a86f44]/10">
           <Send size={14} className="-rotate-45" />
           <span className="font-mono text-[10px] uppercase tracking-widest font-bold">Compose</span>
@@ -136,7 +136,7 @@ Sarah`,
       </div>
 
       {/* Mail List */}
-      <div className="w-[350px] border-r border-white/5 flex flex-col bg-black/20">
+      <div className="w-[300px] border-r border-white/5 flex flex-col bg-black/20">
         <div className="p-3 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
           <span className="font-mono text-[9px] uppercase tracking-widest text-white/20">
             Inbox
@@ -217,34 +217,40 @@ Sarah`,
                   {emails[selectedMail].subject}
                 </h2>
 
-                <div className="flex items-center justify-between mb-8 pb-8 border-b border-white/5">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-sm bg-[#a86f44]/20 border border-[#a86f44]/30 flex items-center justify-center text-[#a86f44] font-bold">
+                <div className="flex items-start justify-between mb-8 pb-8 border-b border-white/5">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-sm bg-[#a86f44]/10 border border-[#a86f44]/20 flex items-center justify-center text-[#a86f44] font-bold text-sm shrink-0">
                       {emails[selectedMail].from
                         .split(' ')
                         .map((n: string) => n[0])
-                        .join('')}
+                        .filter((char: string) => /[a-zA-Z]/.test(char))
+                        .join('')
+                        .slice(0, 2)
+                        .toUpperCase()}
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-white">
+                    <div className="flex flex-col gap-1.5 min-w-0">
+                      <div className="flex flex-col">
+                        <span className="text-base font-medium text-white leading-tight">
                           {emails[selectedMail].from}
                         </span>
-                        <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">
-                          &lt;{emails[selectedMail].from.toLowerCase().replace(' ', '.')}
+                        <span className="font-mono text-[10px] text-[#a86f44] uppercase tracking-[0.2em] mt-1">
+                          {emails[selectedMail].role}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-white/30">
+                        <span className="font-mono text-[9px] uppercase tracking-widest">To:</span>
+                        <span className="font-mono text-[9px] lowercase tracking-wider truncate">
+                          &lt;{emails[selectedMail].from.toLowerCase().replace(/[\s()]/g, '.')}
                           @praxis.internal&gt;
                         </span>
                       </div>
-                      <p className="font-mono text-[9px] text-[#a86f44] uppercase tracking-[0.2em] mt-0.5">
-                        {emails[selectedMail].role}
-                      </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="font-mono text-[10px] text-white/20">
+                  <div className="flex flex-col items-end gap-3 shrink-0">
+                    <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">
                       {emails[selectedMail].time}
                     </span>
-                    <button className="px-3 py-1 border border-white/10 rounded-sm text-[10px] text-white/40 hover:bg-white/5 font-mono uppercase">
+                    <button className="px-4 py-1.5 border border-white/10 rounded-sm text-[10px] text-white/50 hover:bg-white/5 hover:text-white font-mono uppercase tracking-widest transition-colors">
                       Reply
                     </button>
                   </div>

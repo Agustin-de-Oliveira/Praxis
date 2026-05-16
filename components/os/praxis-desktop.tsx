@@ -19,13 +19,13 @@ import {
   Mail,
   Globe,
   Terminal,
-  Layout,
   Code,
   Users,
   ShoppingBag,
   HardDrive,
-  Trash,
   MessageSquare,
+  Layout,
+  Power,
 } from 'lucide-react'
 import { Dithering } from '@paper-design/shaders-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -35,22 +35,12 @@ import WindowFrame from '@/components/scenario/window-frame'
 import { ContextMenu } from '@/components/scenario/os/context-menu'
 import { SystemMenu } from '@/components/scenario/os/system-menu'
 import { Spotlight } from '@/components/scenario/os/spotlight'
-import { PreferencesModal } from '@/components/scenario/os/preferences-modal'
-import { WindowState, ContextMenuItem } from '@/components/scenario/os/types'
+import { ContextMenuItem, WindowState } from '@/components/scenario/os/types'
 
-import MailApp from '@/components/scenario/os/mail-app'
-import TerminalApp from '@/components/scenario/os/terminal-app'
-import BrowserApp from '@/components/os/apps/browser-app'
-import ProfileApp from '@/components/os/apps/profile-app'
-import DynamicBoard from '@/components/scenario/dynamic-board'
-import DynamicIDE from '@/components/scenario/dynamic-ide'
-import TeamView from '@/components/scenario/team-view'
-import MarketplaceApp from './apps/marketplace-app'
+import { WindowRouter } from './apps/window-router'
 import { WelcomeGateway } from '@/components/auth/welcome-gateway'
 import { OsBootScreen } from '@/components/os/os-boot-screen'
-import { ResumeStudio } from '@/components/resume/resume-studio'
 import { Notification } from '@/components/os/notification'
-import TourChat from '@/components/os/apps/tour-chat'
 
 import type { OSProps } from '@/lib/os-types'
 import type { Scenario } from '@/lib/scenario-types'
@@ -74,8 +64,8 @@ const OS_PROGRAMS = [
     id: 'mail',
     title: 'Mail.exe',
     icon: Mail,
-    defaultSize: { w: 1400, h: 600 },
-    defaultPos: { x: 60, y: 60 },
+    defaultSize: { w: 1000, h: 700 },
+    defaultPos: { x: 460, y: 150 },
   },
   {
     id: 'browser',
@@ -170,6 +160,7 @@ export default function PraxisDesktop({
   scenarios,
   activeScenario,
   activeProgress,
+  firstBoot,
   resumeIncomplete,
   welcomeFromAuth,
 }: OSProps) {
@@ -225,6 +216,8 @@ export default function PraxisDesktop({
     checkpointsPassed,
     setCheckpointsPassed,
     updateCodeFile,
+    candidateStage,
+    setCandidateStage,
   } = useMissionStore()
 
   const { notifications, addNotification, removeNotification } = useNotificationStore()
@@ -251,32 +244,35 @@ export default function PraxisDesktop({
     'marketplace',
     'settings',
   ])
-  const [pinnedApps, setPinnedApps] = useState<string[]>([
-    'mail',
-    'browser',
-    'terminal',
-    'marketplace',
-  ])
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null)
   const [time, setTime] = useState<Date | null>(null)
 
   const onboardingSent = useRef(false)
   const initialized = useRef(false)
 
+  const firstBootMailSent = useRef(false)
+
   useEffect(() => {
     if (initialized.current) return
+    initialized.current = true
+
     setWindows(createInitialWindows())
     if (activeScenario) setCurrentScenario(activeScenario)
     if (activeProgress) {
       setCodeState(activeProgress.current_code_state ?? {})
       setCheckpointsPassed(activeProgress.checkpoints_passed ?? [])
     }
-    initialized.current = true
+
+    // Initialize recruitment stage
+    if (resumeIncomplete) {
+      setCandidateStage('cv_incomplete')
+    } else {
+      setCandidateStage('jobs_available')
+    }
   }, [])
 
-  useEffect(() => {
-    if (!welcomeFromAuth && phase === 'welcome') setPhase('boot')
-  }, [welcomeFromAuth, phase])
+  // Removed the restrictive guard that forced phase back to 'boot' if welcomeFromAuth was false.
+  // This allows manual phase transitions (like re-triggering the onboarding briefing).
 
   const playSound = useCallback(
     (type: 'click' | 'notify' | 'boot') => {
@@ -293,27 +289,30 @@ export default function PraxisDesktop({
       }
       const audio = new Audio(sounds[type])
       audio.volume = 0.2
-      audio.play().catch(() => {})
+      audio.play().catch(() => { })
     },
     [enableSounds, bootSoundVariant]
   )
 
   const dismissWelcome = useCallback(() => {
     setPhase('boot')
-    setTimeout(() => playSound('boot'), 500)
-    router.replace('/os')
-    router.refresh()
-  }, [router, playSound])
+  }, [])
 
   const handleBootComplete = useCallback(() => {
     setPhase('runtime')
-    setTimeout(() => playSound('boot'), 800)
+    // Align with the cinematic zoom-out peak (0.4s transition + buffer)
+    setTimeout(() => playSound('boot'), 500)
   }, [playSound])
 
   const handleLogout = useCallback(async () => {
-    await supabase.auth.signOut()
-    router.push('/login')
-  }, [supabase, router])
+    try {
+      await supabase.auth.signOut()
+    } catch (e) {
+      console.error('Logout error:', e)
+    } finally {
+      window.location.href = '/login'
+    }
+  }, [supabase])
 
   const [contextMenu, setContextMenu] = useState<{
     x: number
@@ -368,24 +367,54 @@ export default function PraxisDesktop({
     [notifications, handleOpenWindow, removeNotification]
   )
 
+  // First-boot guided experience: auto-open Mail after a delay
   useEffect(() => {
     if (phase !== 'runtime') return
-    let onboardingTimer: ReturnType<typeof setTimeout>
-    if (!onboardingSent.current) {
-      onboardingTimer = setTimeout(() => {
+    if (!firstBoot || firstBootMailSent.current) return
+    firstBootMailSent.current = true
+
+    // Give the user a moment to settle into the desktop before auto-opening
+    const mailTimer = setTimeout(() => {
+      handleOpenWindow('mail')
+      
+      // Ensure it's centered for this first-time experience
+      updateWindow('mail', { 
+        position: { x: (window.innerWidth - 1000) / 2, y: (window.innerHeight - 700) / 2 },
+        isOpen: true 
+      })
+    }, 4000)
+
+    return () => {
+      clearTimeout(mailTimer)
+    }
+  }, [phase, firstBoot, handleOpenWindow, updateWindow])
+
+  // React to recruitment milestones
+  useEffect(() => {
+    if (candidateStage === 'challenge_received') {
+      const timer = setTimeout(() => {
         addNotification({
-          title: 'Inbound Message',
-          message: "Welcome to the Praxis candidate gateway. I've sent you a briefing mail.",
-          sender: 'Elena (Eng Ops)',
+          title: 'Challenge Invitation',
+          message: 'We liked your profile and would like to move forward with a technical challenge.',
+          sender: 'Hiring Team',
           action: 'open_mail',
         })
-        onboardingSent.current = true
-      }, 4000)
+      }, 2000)
+      return () => clearTimeout(timer)
     }
-    return () => {
-      if (onboardingTimer) clearTimeout(onboardingTimer)
+
+    if (candidateStage === 'offer_received') {
+      const timer = setTimeout(() => {
+        addNotification({
+          title: 'Decision Received',
+          message: 'A decision has been made regarding your application. Please review your portal.',
+          sender: 'Recruitment Ops',
+          action: 'open_mail',
+        })
+      }, 2000)
+      return () => clearTimeout(timer)
     }
-  }, [phase, addNotification])
+  }, [candidateStage, addNotification])
 
   const handleTaskbarClick = useCallback(
     (id: string) => {
@@ -436,100 +465,42 @@ export default function PraxisDesktop({
     searchQuery.trim() === ''
       ? []
       : OS_PROGRAMS.filter(
-          (p) =>
-            p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            p.id.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+        (p) =>
+          p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.id.toLowerCase().includes(searchQuery.toLowerCase())
+      )
 
   const openWindowIds = windows.filter((w) => w.isOpen).map((w) => w.id)
 
   function renderWindowContent(id: string) {
-    switch (id) {
-      case 'mail':
-        return <MailApp scenario={currentScenario ?? undefined} onDownload={() => {}} />
-      case 'browser':
-        return (
-          <BrowserApp
-            scenarios={scenarios}
-            activeScenarioId={currentScenario?.id ?? null}
-            onAcceptMission={handleAcceptMission}
-            profile={profile}
-            email={email}
-            resumeIncomplete={resumeIncomplete}
-            onOpenProgram={handleOpenWindow}
-          />
-        )
-      case 'resume':
-        return (
-          <ResumeStudio
-            isStandalone={false}
-            onComplete={() => {
-              closeWindow('resume')
-              router.refresh()
-            }}
-          />
-        )
-      case 'profile':
-        return (
-          <ProfileApp
-            profile={profile}
-            email={email}
-            activeScenarioTitle={currentScenario?.title ?? null}
-          />
-        )
-      case 'terminal':
-        return (
-          <TerminalApp
-            onRepoCloned={() => {
-              setIsRepoCloned(true)
-              if (Object.keys(codeState).length === 0 && currentScenario)
-                setCodeState(currentScenario.repo_initial.files)
-            }}
-            onCloningStart={() => {}}
-            isRepoCloned={isRepoCloned}
-            ticketKey={currentScenario?.ticket?.key ?? 'PRX-000'}
-          />
-        )
-      case 'settings':
-        return <PreferencesModal />
-      case 'board':
-        return currentScenario ? (
-          <DynamicBoard
-            ticket={currentScenario.ticket}
-            aiTeam={currentScenario.ai_team}
-            checkpoints={currentScenario.checkpoints}
-            checkpointsPassed={checkpointsPassed}
-          />
-        ) : null
-      case 'ide':
-        return currentScenario ? (
-          <DynamicIDE
-            files={codeState}
-            ticket={currentScenario.ticket}
-            checkpoints={currentScenario.checkpoints}
-            checkpointsPassed={checkpointsPassed}
-            aiTeam={currentScenario.ai_team}
-            onCodeChange={handleCodeChange}
-            isRepoCloned={isRepoCloned}
-            isCloning={false}
-          />
-        ) : null
-      case 'team':
-        return currentScenario ? <TeamView aiTeam={currentScenario.ai_team} /> : null
-      case 'marketplace':
-        return <MarketplaceApp installedApps={installedApps} setInstalledApps={setInstalledApps} />
-      case 'tour':
-        return <TourChat />
-      case 'trash':
-        return (
-          <div className="flex-1 flex flex-col items-center justify-center text-white/20 gap-4">
-            <Trash2 size={48} strokeWidth={1} />
-            <p className="font-mono text-[10px] uppercase tracking-widest">Bin is empty</p>
-          </div>
-        )
-      default:
-        return null
-    }
+    return (
+      <WindowRouter
+        id={id}
+        currentScenario={currentScenario}
+        scenarios={scenarios}
+        profile={profile}
+        email={email}
+        resumeIncomplete={resumeIncomplete}
+        isRepoCloned={isRepoCloned}
+        codeState={codeState}
+        checkpointsPassed={checkpointsPassed}
+        installedApps={installedApps}
+        onAcceptMission={handleAcceptMission}
+        onOpenProgram={handleOpenWindow}
+        onCloseWindow={closeWindow}
+        onRepoCloned={() => {
+          setIsRepoCloned(true)
+          if (Object.keys(codeState).length === 0 && currentScenario)
+            setCodeState(currentScenario.repo_initial.files)
+        }}
+        onCodeChange={handleCodeChange}
+        setInstalledApps={setInstalledApps}
+        onAcceptOffer={() => {
+          // TODO: Mark onboarding complete in DB, unlock full workspace
+          closeWindow('browser')
+        }}
+      />
+    )
   }
 
   return (
@@ -550,7 +521,7 @@ export default function PraxisDesktop({
 
       <AnimatePresence mode="wait">
         {phase === 'welcome' && (
-          <WelcomeGateway key="welcome" variant="fullscreen" onContinue={dismissWelcome} />
+          <WelcomeGateway variant="fullscreen" onContinue={dismissWelcome} />
         )}
         {phase === 'boot' && <OsBootScreen key="boot" onComplete={handleBootComplete} />}
       </AnimatePresence>
@@ -665,35 +636,32 @@ export default function PraxisDesktop({
                           setSelectedIcon(prog.id)
                         }}
                         onDoubleClick={() => !isDisabled && handleOpenWindow(prog.id)}
-                        className={`group flex flex-col items-center gap-1.5 p-2 rounded-md cursor-pointer select-none transition-all w-20 border ${
-                          isDisabled
-                            ? 'opacity-20 cursor-not-allowed'
-                            : isSelected
-                              ? 'bg-white/10 shadow-lg shadow-black/20 border-white/10'
-                              : 'hover:bg-white/5 border-transparent'
-                        }`}
+                        className={`group flex flex-col items-center gap-1.5 p-2 rounded-md cursor-pointer select-none transition-all w-20 border ${isDisabled
+                          ? 'opacity-20 cursor-not-allowed'
+                          : isSelected
+                            ? 'bg-white/10 shadow-lg shadow-black/20 border-white/10'
+                            : 'hover:bg-white/5 border-transparent'
+                          }`}
                       >
                         <div
-                          className={`w-10 h-10 flex items-center justify-center transition-all duration-300 ${
-                            isOpen
-                              ? 'text-[var(--accent)]'
-                              : isSelected
-                                ? 'text-white'
-                                : 'text-white/80 group-hover:text-white'
-                          }`}
+                          className={`w-10 h-10 flex items-center justify-center transition-all duration-300 ${isOpen
+                            ? 'text-[var(--accent)]'
+                            : isSelected
+                              ? 'text-white'
+                              : 'text-white/80 group-hover:text-white'
+                            }`}
                         >
                           <prog.icon size={20} />
                         </div>
                         <span
-                          className={`font-mono text-[8px] text-center uppercase tracking-widest leading-tight transition-colors ${
-                            isDisabled
-                              ? 'text-white/20'
-                              : isOpen
-                                ? 'text-[var(--accent)]'
-                                : isSelected
-                                  ? 'text-white'
-                                  : 'text-white/70 group-hover:text-white/95'
-                          }`}
+                          className={`font-mono text-[8px] text-center uppercase tracking-widest leading-tight transition-colors ${isDisabled
+                            ? 'text-white/20'
+                            : isOpen
+                              ? 'text-[var(--accent)]'
+                              : isSelected
+                                ? 'text-white'
+                                : 'text-white/70 group-hover:text-white/95'
+                            }`}
                         >
                           {hideExtensions
                             ? prog.title.replace(/\.(exe|txt|studio)$/i, '')
@@ -749,11 +717,11 @@ export default function PraxisDesktop({
                         isOpen &&
                         !isMinimized &&
                         win?.zIndex ===
-                          Math.max(
-                            ...windows
-                              .filter((w) => w.isOpen && !w.isMinimized)
-                              .map((w) => w.zIndex)
-                          )
+                        Math.max(
+                          ...windows
+                            .filter((w) => w.isOpen && !w.isMinimized)
+                            .map((w) => w.zIndex)
+                        )
                       const isMissionOnly = 'missionOnly' in prog && prog.missionOnly
                       const isDisabled = isMissionOnly && !currentScenario
 
@@ -761,15 +729,14 @@ export default function PraxisDesktop({
                         <button
                           key={prog.id}
                           onClick={() => !isDisabled && handleTaskbarClick(prog.id)}
-                          className={`relative flex items-center justify-center w-10 h-10 rounded-md transition-all ${
-                            isDisabled
-                              ? 'opacity-15 cursor-not-allowed'
-                              : isFocused
-                                ? 'bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] border border-white/10 cursor-pointer'
-                                : isOpen
-                                  ? 'bg-white/[0.03] hover:bg-white/[0.07] cursor-pointer'
-                                  : 'hover:bg-white/[0.02] grayscale opacity-40 cursor-pointer'
-                          }`}
+                          className={`relative flex items-center justify-center w-10 h-10 rounded-md transition-all ${isDisabled
+                            ? 'opacity-15 cursor-not-allowed'
+                            : isFocused
+                              ? 'bg-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] border border-white/10 cursor-pointer'
+                              : isOpen
+                                ? 'bg-white/[0.03] hover:bg-white/[0.07] cursor-pointer'
+                                : 'hover:bg-white/[0.02] grayscale opacity-40 cursor-pointer'
+                            }`}
                         >
                           <prog.icon
                             size={18}
@@ -796,6 +763,13 @@ export default function PraxisDesktop({
                     <Wifi size={14} className="text-white/60" />
                     <Volume2 size={14} className="text-white/60" />
                     <BatteryCharging size={14} className="text-white/60" />
+                    <div className="w-px h-4 bg-white/[0.06] mx-1" />
+                    <Power
+                      size={14}
+                      className="text-red-500/40 hover:text-red-500 cursor-pointer transition-colors"
+                      onClick={handleLogout}
+                    />
+                    
                   </div>
                   <div className="w-px h-6 bg-white/[0.06] mx-1" />
                   <div className="flex flex-col items-end min-w-[70px]" suppressHydrationWarning>
@@ -845,6 +819,7 @@ export default function PraxisDesktop({
                 onClose={() => setSystemMenuOpen(false)}
                 onOpenProgram={handleTaskbarClick}
                 onLogout={handleLogout}
+                onReplayOnboarding={() => setPhase('welcome')}
               />
             )}
             {contextMenu && (

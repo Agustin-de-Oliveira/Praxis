@@ -4,9 +4,11 @@ import { useBrowser, VIEW_URL } from '../use-browser'
 
 // Mock crypto for randomUUID
 if (typeof global.crypto === 'undefined') {
-  (global as any).crypto = {
-    randomUUID: () => 'test-uuid-' + Math.random().toString(36).substring(2),
-  }
+  Object.defineProperty(global, 'crypto', {
+    value: {
+      randomUUID: () => 'test-uuid-' + Math.random().toString(36).substring(2),
+    },
+  })
 }
 
 describe('useBrowser', () => {

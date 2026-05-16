@@ -144,6 +144,13 @@ export const EXPLORER_FILES: ExplorerFile[] = [
     size: '1.2 MB',
     easterEgg: 'wallpaper',
   },
+  {
+    id: 'programs',
+    name: 'Programs',
+    type: 'folder',
+    parent: 'disk_c',
+    children: [],
+  },
 
   { id: 'users', name: 'Users', type: 'folder', parent: 'disk_c', children: ['admin'] },
   {

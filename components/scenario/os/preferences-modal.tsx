@@ -25,9 +25,8 @@ import {
   Headphones,
   Zap,
 } from 'lucide-react'
-import { Scenario } from '@/lib/scenario-types'
 
-import { useOsStore, BgShape } from '@/lib/store/os-store'
+import { useOsStore, type BgShape } from '@/lib/store/os-store'
 import { useMissionStore } from '@/lib/store/mission-store'
 
 const BG_SHAPES = ['dots', 'ripple', 'simplex', 'sphere', 'swirl', 'warp', 'wave']
@@ -407,7 +406,7 @@ export function PreferencesModal() {
                           }
                           const audio = new Audio(bootSounds[v.id as keyof typeof bootSounds])
                           audio.volume = 0.2
-                          audio.play().catch(() => {})
+                          audio.play().catch(() => { })
                         }, 50)
                       }}
                       className={`flex-1 py-2 rounded-sm border font-mono text-[8px] uppercase tracking-widest transition-all ${bootSoundVariant === v.id ? 'bg-white/20 text-white border-white/20' : 'bg-white/5 text-white/20 border-white/10 hover:bg-white/10'}`}

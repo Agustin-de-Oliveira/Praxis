@@ -143,8 +143,10 @@ export default function ScenarioBriefing({ scenario, onComplete }: BriefingProps
 
           setVisibleMessages((prev) => [...prev, item])
 
-          if (Math.random() > 0.6) {
-            const reaction = ['👍', '❤️', '🚀', '👀', '💯'][Math.floor(Math.random() * 5)]
+          // Reaction logic: use a stable check based on message length and index
+          const reactionSeed = (currentIdx * 7 + (item.content?.length || 0)) % 10
+          if (reactionSeed > 6) {
+            const reaction = ['👍', '❤️', '🚀', '👀', '💯'][reactionSeed % 5]
             setUserReactions((prev) => ({
               ...prev,
               [currentIdx]: [...(prev[currentIdx] || []), reaction],

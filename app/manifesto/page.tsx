@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react'
 import { Dithering } from '@paper-design/shaders-react'
 
 export default function ManifestoPage() {
+  // Cinematic manifesto view
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-[#a86f44] selection:text-white overflow-x-hidden relative font-sans">
       {/* Background shader */}
@@ -123,10 +124,10 @@ export default function ManifestoPage() {
                 </span>
               </div>
               <Link
-                href="/os"
+                href="/first-day"
                 className="text-[10px] font-mono uppercase tracking-[0.2em] hover:text-[#a86f44] transition-colors"
               >
-                // Initialize Connection
+                // Initialize Protocol
               </Link>
             </footer>
           </article>

@@ -22,7 +22,6 @@ import {
 } from 'lucide-react'
 import { Dithering } from '@paper-design/shaders-react'
 import ThermodynamicGrid from '@/components/interactive-thermodynamic-grid'
-import { WelcomeGateway } from '@/components/auth/welcome-gateway'
 import { createClient } from '@/utils/supabase/client'
 
 function LoginPageInner() {
@@ -35,7 +34,6 @@ function LoginPageInner() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const [showPostSignInGate, setShowPostSignInGate] = useState(false)
 
   // Read error from OAuth callback redirect (e.g. ?error=auth_callback_error)
   useEffect(() => {
@@ -62,7 +60,8 @@ function LoginPageInner() {
         return
       }
       setLoading(false)
-      setShowPostSignInGate(true)
+      router.push('/os?welcome=1')
+      router.refresh()
     } else {
       const { error } = await supabase.auth.signUp({
         email,
@@ -103,19 +102,11 @@ function LoginPageInner() {
     setSuccess(null)
   }
 
-  const continueToOs = () => {
-    setShowPostSignInGate(false)
-    router.push('/os')
-    router.refresh()
-  }
+
 
   return (
     <div className="min-h-screen relative flex items-center justify-center px-6 py-12">
-      <AnimatePresence>
-        {showPostSignInGate && (
-          <WelcomeGateway key="post-signin-gate" variant="fullscreen" onContinue={continueToOs} />
-        )}
-      </AnimatePresence>
+
 
       {/* Dithering background */}
       <div className="absolute inset-0 h-full w-full">
