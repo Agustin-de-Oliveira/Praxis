@@ -4,9 +4,17 @@
 
 ---
 
+## Status
+
+**Transitional.** This document describes the current implementation, but it is no longer the creative north star for Praxis.
+
+The current "Obsidian & Steel" system overuses patterns that now read as generic AI-product design: serif editorial headings, excessive monospace labels, copper accents, dark cards, very low-opacity text, and uppercase tracking as decoration. Future work should follow [REALIGNMENT_PLAN.md](./REALIGNMENT_PLAN.md) and treat this file as a compatibility reference until the visual system is replaced.
+
+---
+
 ## Overview
 
-Praxis uses an **Obsidian & Steel** design language — dark, sharp, and technical. The aesthetic signals quality and seriousness without looking like a gaming platform. Everything is engineered to feel precise and grounded.
+Praxis currently uses an **Obsidian & Steel** design language — dark, sharp, and technical. This is legacy context, not a mandate for new work.
 
 All design tokens are defined in `app/globals.css` using Tailwind CSS v4's `@theme` directive.
 
@@ -81,6 +89,8 @@ Users can select from the following palette in **Settings.exe**:
 ## Typography
 
 ### Fonts
+
+New work should prefer restrained sans-serif UI typography. Monospace is reserved for code, terminal output, logs, file paths, ids, timestamps, and machine text. Serif should not be used as the default marker of importance or premium tone.
 
 | Role      | Font           | Variable       | Usage                                          |
 | --------- | -------------- | -------------- | ---------------------------------------------- |

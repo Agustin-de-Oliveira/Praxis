@@ -22,7 +22,16 @@ import {
 type ResumeStudioProps = {
   afterCompletePath?: string
   isStandalone?: boolean
-  onComplete?: () => void
+  onComplete?: (profile?: CompletedResumeProfile) => void
+}
+
+export type CompletedResumeProfile = {
+  handle: string
+  role: string
+  background: string | null
+  experienceLevel: string | null
+  primaryLanguage: string | null
+  goals: string[]
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -268,6 +277,15 @@ export function ResumeStudio({
   const supabase = createClient()
 
   const handleFinalize = async () => {
+    const completedProfile: CompletedResumeProfile = {
+      handle,
+      role: selectedRole ?? 'backend',
+      background: selectedBg,
+      experienceLevel: selectedExp,
+      primaryLanguage: selectedLang,
+      goals: selectedGoals,
+    }
+
     try {
       setLoading(true)
       const {
@@ -284,7 +302,7 @@ export function ResumeStudio({
           setTimeout(() => {
             setLoading(false)
             if (isStandalone) router.push(afterCompletePath)
-            else window.location.reload()
+            else onComplete?.(completedProfile)
           }, 1000)
           return
         }
@@ -308,7 +326,7 @@ export function ResumeStudio({
       if (isStandalone) {
         router.push(afterCompletePath)
       } else {
-        onComplete?.()
+        onComplete?.(completedProfile)
       }
     } catch (err: any) {
       setLoading(false)

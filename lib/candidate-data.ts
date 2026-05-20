@@ -5,6 +5,7 @@ export type CandidateStage =
   | 'applied'
   | 'challenge_received'
   | 'challenge_active'
+  | 'challenge_completed'
   | 'offer_received'
   | 'first_week_unlocked'
 
@@ -42,7 +43,7 @@ export interface CandidateApplication {
   id: string
   jobId: string
   companyId: string
-  status: 'draft' | 'submitted' | 'challenge' | 'offer'
+  status: 'draft' | 'submitted' | 'challenge' | 'challenge_completed' | 'offer'
   submittedAt: string
 }
 

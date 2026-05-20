@@ -39,6 +39,7 @@ The core insight: there's a documented 3–6 month "reality shock" when junior d
 | ---------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | [PRODUCT_VISION.md](./PRODUCT_VISION.md) | Problem, personas, core concept, competitive differentiation, skill framework, brand                     |
 | [OS_EXPERIENCE.md](./OS_EXPERIENCE.md)   | Praxis OS as the central interactive workplace sim, Candidate OS, hiring flow, and calibration challenge |
+| [REALIGNMENT_PLAN.md](./REALIGNMENT_PLAN.md) | Product and design correction plan for restoring the original Praxis direction                         |
 | [SCENARIOS.md](./SCENARIOS.md)           | Scenario types, structure spec, authoring guide, full examples (SCN-003, SCN-007, SCN-008)               |
 | [ROADMAP.md](./ROADMAP.md)               | Development phases, current status, prioritized backlog, risks                                           |
 

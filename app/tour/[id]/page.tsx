@@ -155,7 +155,7 @@ export default function TourPage() {
               exit="exit"
               className="w-full"
             >
-              <PhaseImplement onContinue={(target) => advance(target)} />
+              <PhaseImplement onContinue={(target) => advance(target as TourPhase)} />
             </motion.div>
           )}
 

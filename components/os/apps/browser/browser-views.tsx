@@ -5,26 +5,24 @@ import {
   Send,
   ArrowLeft,
   ChevronRight,
-  Search,
 } from 'lucide-react'
 import {
-  COMPANIES,
   getCompany,
   getJob,
   getRecommendedJobs,
   JOB_POSTINGS,
 } from '@/lib/candidate-data'
 import { BrowserView, VIEW_URL } from '@/hooks/use-browser'
-import { ResumeStudio } from '@/components/resume/resume-studio'
+import { ResumeStudio, type CompletedResumeProfile } from '@/components/resume/resume-studio'
 import ProfileApp from '../profile-app'
 import { UserProfile } from '@/lib/os-types'
-import { CandidateProfileDraft, CandidateApplication } from '@/lib/candidate-data'
+import { CandidateProfileDraft, CandidateApplication, CandidateStage } from '@/lib/candidate-data'
 import { Scenario } from '@/lib/scenario-types'
 
 interface BrowserViewsProps {
   view: BrowserView
   companyId?: string
-  candidateStage: string
+  candidateStage: CandidateStage
   candidateProfile: CandidateProfileDraft
   applications: CandidateApplication[]
   selectedJobId: string
@@ -34,15 +32,14 @@ interface BrowserViewsProps {
   email: string
   scenarios: Scenario[]
   onNavigate: (view: BrowserView, opts?: { companyId?: string; url?: string; title?: string }) => void
-  onOpenProgram: (id: string) => void
-  onAcceptMission: (scenario: Scenario) => void
+  onStartChallenge: (scenario: Scenario | null) => void
+  onCompleteChallenge: () => void
   onSetSelectedJobId: (id: string) => void
   onSetSelectedCompanyId: (id: string) => void
   onApplyToJob: (id: string) => void
   onAcceptOffer?: () => void
-  onSimulateOffer?: () => void
   onGoBack: () => void
-  onCompleteCvSimulation: () => void
+  onCompleteCvSimulation: (profile?: CompletedResumeProfile) => void
 }
 
 export function BrowserViews({
@@ -58,13 +55,12 @@ export function BrowserViews({
   email,
   scenarios,
   onNavigate,
-  onOpenProgram,
-  onAcceptMission,
+  onStartChallenge,
+  onCompleteChallenge,
   onSetSelectedJobId,
   onSetSelectedCompanyId,
   onApplyToJob,
   onAcceptOffer,
-  onSimulateOffer,
   onGoBack,
   onCompleteCvSimulation,
 }: BrowserViewsProps) {
@@ -169,7 +165,7 @@ export function BrowserViews({
       {
         title: 'Résumé Studio',
         hint: `Engineered dossier wizard — privileged`,
-        run: () => onOpenProgram('resume'),
+        run: () => onNavigate('profile'),
       },
       { title: 'Jobs board', hint: VIEW_URL.jobs, run: () => onNavigate('jobs') },
       {
@@ -293,26 +289,30 @@ export function BrowserViews({
               ))}
             </div>
 
-            <button
-              type="button"
-              onClick={() => onApplyToJob(selectedJob.id)}
-              className="inline-flex items-center gap-2 bg-[#a86f44] text-[#111] px-6 py-2 font-mono text-[10px] uppercase tracking-widest cursor-pointer hover:brightness-105 rounded-sm font-semibold"
-            >
-              Apply with dossier
-              <Send size={13} />
-            </button>
-
             {candidateStage === 'cv_incomplete' && (
-              <p className="mt-6 text-xs text-amber-200/35 font-mono">
-                Simulation shortcut: marking CV ready jumps the board.
+              <div className="mt-6 border border-amber-300/20 bg-amber-300/[0.04] p-4 rounded-sm">
+                <p className="text-xs text-white/45 mb-3">
+                  Applications open after your engineering dossier is filed.
+                </p>
                 <button
                   type="button"
-                  onClick={onCompleteCvSimulation}
-                  className="text-[#a86f44] underline cursor-pointer ml-1"
+                  onClick={() => onNavigate('profile')}
+                  className="px-4 py-2 border border-[#a86f44]/40 text-[#a86f44] hover:bg-[#a86f44]/10 font-mono text-[9px] uppercase tracking-widest rounded-sm transition-all cursor-pointer"
                 >
-                  Mark dossier simulation ready
+                  Finish dossier
                 </button>
-              </p>
+              </div>
+            )}
+
+            {candidateStage !== 'cv_incomplete' && (
+              <button
+                type="button"
+                onClick={() => onApplyToJob(selectedJob.id)}
+                className="inline-flex items-center gap-2 bg-[#a86f44] text-[#111] px-6 py-2 font-mono text-[10px] uppercase tracking-widest cursor-pointer hover:brightness-105 rounded-sm font-semibold"
+              >
+                Apply with dossier
+                <Send size={13} />
+              </button>
             )}
           </div>
         ) : null}
@@ -409,10 +409,13 @@ export function BrowserViews({
                       {application.status === 'challenge' ? 'Challenge pending' : application.status}
                     </span>
                   </div>
-                  {application.status === 'challenge' && (
+                  {(application.status === 'challenge' ||
+                    application.status === 'challenge_completed') && (
                     <div className="mt-6 pt-6 border-t border-white/5 flex items-center justify-between">
                       <p className="text-xs text-white/40">
-                        Technical evaluation stage active.
+                        {application.status === 'challenge_completed'
+                          ? 'Challenge submitted. Hiring team review is in progress.'
+                          : 'Technical evaluation stage active.'}
                       </p>
                       <div className="flex gap-3">
                         <button
@@ -423,12 +426,6 @@ export function BrowserViews({
                           className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-mono text-[9px] uppercase tracking-widest rounded-sm transition-all"
                         >
                           Review Challenge
-                        </button>
-                        <button
-                          onClick={onSimulateOffer}
-                          className="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-mono text-[9px] uppercase tracking-widest rounded-sm transition-all border border-emerald-500/20"
-                        >
-                          Simulate Offer
                         </button>
                       </div>
                     </div>
@@ -522,15 +519,28 @@ export function BrowserViews({
           <p className="text-sm text-white/80 mb-6 font-serif italic">
             "{challengeScenario?.description}"
           </p>
-          <button
-            onClick={() => {
-              onAcceptMission(challengeScenario)
-              onSimulateOffer?.()
-            }}
-            className="w-full py-3 bg-[#a86f44] text-[#111] font-mono text-[11px] uppercase tracking-widest font-bold hover:brightness-105 transition-all rounded-sm"
-          >
-            Initialize Workspace
-          </button>
+          {candidateStage === 'challenge_active' ? (
+            <button
+              onClick={onCompleteChallenge}
+              className="w-full py-3 bg-white text-black font-mono text-[11px] uppercase tracking-widest font-bold hover:bg-emerald-300 transition-all rounded-sm"
+            >
+              Submit completed challenge
+            </button>
+          ) : candidateStage === 'challenge_completed' || candidateStage === 'offer_received' ? (
+            <button
+              onClick={() => onNavigate('applications')}
+              className="w-full py-3 bg-white/10 text-white font-mono text-[11px] uppercase tracking-widest font-bold hover:bg-white/15 transition-all rounded-sm"
+            >
+              Review application status
+            </button>
+          ) : (
+            <button
+              onClick={() => onStartChallenge(challengeScenario)}
+              className="w-full py-3 bg-[#a86f44] text-[#111] font-mono text-[11px] uppercase tracking-widest font-bold hover:brightness-105 transition-all rounded-sm"
+            >
+              Initialize Workspace
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -542,9 +552,7 @@ export function BrowserViews({
         <div className="flex-1 bg-[#121110] overflow-y-auto">
           <ResumeStudio
             isStandalone={false}
-            onComplete={() => {
-              onCompleteCvSimulation()
-            }}
+            onComplete={onCompleteCvSimulation}
           />
         </div>
       )

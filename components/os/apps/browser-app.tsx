@@ -1,21 +1,16 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
 import {
-  COMPANIES,
   getJob,
-  JOB_POSTINGS,
-  type CandidateApplication,
-  type CandidateProfileDraft,
-  type CandidateStage,
 } from '@/lib/candidate-data'
 import type { Scenario } from '@/lib/scenario-types'
 import type { UserProfile } from '@/lib/os-types'
-import { useBrowser, VIEW_URL } from '@/hooks/use-browser'
+import { useBrowser } from '@/hooks/use-browser'
 import { BrowserChrome } from './browser/browser-chrome'
 import { BrowserViews } from './browser/browser-views'
-import { useMissionStore } from '@/lib/store/mission-store'
+import { useCandidateStore } from '@/lib/store/candidate-store'
+import type { CompletedResumeProfile } from '@/components/resume/resume-studio'
 
 interface BrowserAppProps {
   scenarios: Scenario[]
@@ -34,15 +29,14 @@ export default function BrowserApp({
   onAcceptMission,
   profile,
   email,
-  resumeIncomplete,
+  resumeIncomplete: _resumeIncomplete,
   onOpenProgram,
   onAcceptOffer,
 }: BrowserAppProps) {
-  const router = useRouter()
   const {
     tabs,
     activeTabId,
-    activeTab,
+    activeTab: _activeTab,
     omnibox,
     isLoading,
     setOmnibox,
@@ -57,22 +51,52 @@ export default function BrowserApp({
     companyId,
   } = useBrowser('home')
 
-  const initialHandle = profile.username ?? email.split('@')[0] ?? 'engineer'
   const [showSuggestions, setShowSuggestions] = useState(false)
-  const [selectedCompanyId, setSelectedCompanyId] = useState(COMPANIES[0]?.id ?? '')
-  const [selectedJobId, setSelectedJobId] = useState(JOB_POSTINGS[0]?.id ?? '')
-  const { candidateStage, setCandidateStage } = useMissionStore()
-  const [candidateProfile] = useState<CandidateProfileDraft>({
-    handle: initialHandle,
-    targetRole: profile.role ?? '',
-    experienceLevel: '',
-    preferredStack: '',
-    background: '',
-    goals: [],
-  })
-  const [applications, setApplications] = useState<CandidateApplication[]>([])
+  const {
+    candidateStage,
+    candidateProfile,
+    applications,
+    selectedCompanyId,
+    selectedJobId,
+    initializeCandidate,
+    applyToJob: applyToJobInStore,
+    markChallengeReceived,
+    startChallenge: startChallengeInStore,
+    completeChallenge: completeChallengeInStore,
+    extendOffer,
+    markDossierFiled,
+    updateCandidateProfile,
+    selectJob,
+    selectCompany,
+  } = useCandidateStore()
 
   const activeScenarioTitle = scenarios.find((s) => s.id === activeScenarioId)?.title ?? null
+
+  useEffect(() => {
+    initializeCandidate({ profile, email, resumeIncomplete: _resumeIncomplete })
+  }, [email, initializeCandidate, profile, _resumeIncomplete])
+
+  useEffect(() => {
+    if (candidateStage !== 'applied') return
+
+    const timer = window.setTimeout(() => {
+      markChallengeReceived(selectedJobId)
+      navigateTab('applications')
+    }, 1600)
+
+    return () => window.clearTimeout(timer)
+  }, [candidateStage, markChallengeReceived, navigateTab, selectedJobId])
+
+  useEffect(() => {
+    if (candidateStage !== 'challenge_completed') return
+
+    const timer = window.setTimeout(() => {
+      extendOffer(selectedJobId)
+      navigateTab('applications')
+    }, 1800)
+
+    return () => window.clearTimeout(timer)
+  }, [candidateStage, extendOffer, navigateTab, selectedJobId])
 
   const omniboxSubmit = (raw?: string) => {
     const input = (raw ?? omnibox).trim().toLowerCase()
@@ -123,41 +147,45 @@ export default function BrowserApp({
     const job = getJob(jobId)
     if (!job) return
 
-    const application: CandidateApplication = {
-      id: `app-${job.id}`,
-      jobId: job.id,
-      companyId: job.companyId,
-      status: 'challenge',
-      submittedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    applyToJobInStore(job.id)
+    navigateTab('applications')
+  }
+
+  const startChallenge = (scenario: Scenario | null) => {
+    if (!scenario) return
+
+    startChallengeInStore(selectedJobId)
+    onAcceptMission(scenario)
+    onOpenProgram('board')
+  }
+
+  const completeChallenge = () => {
+    completeChallengeInStore(selectedJobId)
+    navigateTab('applications')
+  }
+
+  const completeCvSimulation = (completedProfile?: CompletedResumeProfile) => {
+    if (completedProfile) {
+      updateCandidateProfile({
+        handle: completedProfile.handle,
+        targetRole: completedProfile.role,
+        experienceLevel: completedProfile.experienceLevel ?? '',
+        preferredStack: completedProfile.primaryLanguage ?? '',
+        background: completedProfile.background ?? '',
+        goals: completedProfile.goals,
+      })
     }
-
-    setSelectedJobId(job.id)
-    setSelectedCompanyId(job.companyId)
-    setApplications((current) => {
-      const exists = current.some((item) => item.jobId === job.id)
-      return exists ? current : [application, ...current]
-    })
-    setCandidateStage('challenge_received')
-    navigateTab('applications')
-  }
-
-  const simulateOffer = () => {
-    setCandidateStage('offer_received')
-    navigateTab('applications')
-  }
-
-  const completeCvSimulation = () => {
-    setCandidateStage('jobs_available')
+    markDossierFiled()
     navigateTab('jobs')
   }
 
   const filteredSuggestions = useMemo(() => {
     const q = omnibox.trim().toLowerCase()
     const SITES = [
-      { label: 'Engineering Dossier', keywords: ['profile', 'resume'], kind: 'view', view: 'profile' },
-      { label: 'Job board', keywords: ['jobs', 'careers'], kind: 'view', view: 'jobs' },
-      { label: 'Applications', keywords: ['applied', 'status'], kind: 'view', view: 'applications' },
-      { label: 'Protocol Docs', keywords: ['docs', 'manual'], kind: 'view', view: 'docs' },
+      { label: 'Engineering Dossier', keywords: ['profile', 'resume'], kind: 'view' as const, view: 'profile' as const },
+      { label: 'Job board', keywords: ['jobs', 'careers'], kind: 'view' as const, view: 'jobs' as const },
+      { label: 'Applications', keywords: ['applied', 'status'], kind: 'view' as const, view: 'applications' as const },
+      { label: 'Protocol Docs', keywords: ['docs', 'manual'], kind: 'view' as const, view: 'docs' as const },
     ]
     if (!q) return SITES
     return SITES.filter(s => s.label.toLowerCase().includes(q) || s.keywords.some(k => k.includes(q)))
@@ -196,13 +224,12 @@ export default function BrowserApp({
         email={email}
         scenarios={scenarios}
         onNavigate={navigateTab}
-        onOpenProgram={onOpenProgram}
-        onAcceptMission={onAcceptMission}
-        onSetSelectedJobId={setSelectedJobId}
-        onSetSelectedCompanyId={setSelectedCompanyId}
+        onStartChallenge={startChallenge}
+        onCompleteChallenge={completeChallenge}
+        onSetSelectedJobId={selectJob}
+        onSetSelectedCompanyId={selectCompany}
         onApplyToJob={applyToJob}
         onAcceptOffer={onAcceptOffer}
-        onSimulateOffer={simulateOffer}
         onGoBack={goBack}
         onCompleteCvSimulation={completeCvSimulation}
       />

@@ -11,7 +11,21 @@ import {
   Search,
   X,
 } from 'lucide-react'
-import { BrowserTab } from '@/hooks/use-browser'
+import { BrowserTab, BrowserView, VIEW_URL } from '@/hooks/use-browser'
+
+type BrowserSuggestion =
+  | {
+      label: string
+      keywords: string[]
+      kind: 'view'
+      view: BrowserView
+    }
+  | {
+      label: string
+      keywords: string[]
+      kind: 'external'
+      href: string
+    }
 
 interface BrowserChromeProps {
   tabs: BrowserTab[]
@@ -19,7 +33,7 @@ interface BrowserChromeProps {
   omnibox: string
   isLoading: boolean
   showSuggestions: boolean
-  filteredSuggestions: any[]
+  filteredSuggestions: BrowserSuggestion[]
   onSelectTab: (id: string, t: BrowserTab) => void
   onCloseTab: (id: string, e: React.MouseEvent) => void
   onNewTab: () => void
@@ -134,7 +148,7 @@ export function BrowserChrome({
                   <button
                     key={idx}
                     onClick={() => {
-                      if (s.kind === 'view') onOmniboxSubmit(s.label)
+                      if (s.kind === 'view') onOmniboxSubmit(VIEW_URL[s.view])
                       else if (s.kind === 'external') window.open(s.href, '_blank')
                     }}
                     className="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-white/5 text-left group transition-all"

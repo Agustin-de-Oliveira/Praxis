@@ -8,6 +8,7 @@ Runtime TypeScript contracts live in:
 
 - `lib/scenario-types.ts`
 - `lib/os-types.ts`
+- `lib/candidate-data.ts`
 
 Schema changes should be made with Supabase SQL migrations or the Supabase CLI, then reflected in the TypeScript contracts.
 
@@ -101,6 +102,28 @@ Tracks each user's state within a scenario.
 
 ## Planned Tables
 
+### `candidate_applications`
+
+Needed to persist the Candidate OS hiring arc once the current in-memory candidate store is promoted to Supabase.
+
+Suggested columns:
+
+| Column                 | Type        | Notes                                                                 |
+| ---------------------- | ----------- | --------------------------------------------------------------------- |
+| `id`                   | `uuid`      | Primary key                                                           |
+| `user_id`              | `uuid`      | Matches `auth.users.id`                                               |
+| `job_id`               | `text`      | Fictional job posting id from the candidate catalog                   |
+| `company_id`           | `text`      | Fictional company id                                                  |
+| `status`               | `text`      | `submitted` \| `challenge` \| `challenge_completed` \| `offer`        |
+| `candidate_stage`      | `text`      | Snapshot of the canonical candidate state machine                     |
+| `challenge_scenario_id`| `text`      | Scenario used for calibration                                         |
+| `submitted_at`         | `timestamp` | Set when the user applies                                             |
+| `challenge_started_at` | `timestamp` | Set when the workspace is initialized                                 |
+| `challenge_completed_at` | `timestamp` | Set when the user submits the calibration challenge                 |
+| `offer_received_at`    | `timestamp` | Set when the offer is extended                                        |
+| `accepted_at`          | `timestamp` | Set when the user accepts and unlocks First Week                      |
+| `calibration_data`     | `jsonb`     | Future score, level estimate, role fit, strengths, and gaps           |
+
 ### `messages`
 
 Needed once Live AI is wired. Should store both user and AI persona messages scoped to a scenario session.
@@ -127,8 +150,9 @@ Suggested columns: `id`, `user_id`, `skill_category`, `skill_name`, `level`, `xp
 2. Add or confirm RLS policies for every exposed table.
 3. Decide whether `scenarios.id` is a text content ID (`SCN-008`) or a UUID, then make app code and FK types consistent.
 4. Add a unique constraint for `scenario_progress(user_id, scenario_id)` to prevent duplicate active sessions.
-5. Add `messages`, `ai_usage`, and `skills` before Live AI and persistent progression ship.
-6. Decide whether `current_code_state` should remain in Postgres JSONB or move to Supabase Storage for larger repos.
+5. Add `candidate_applications` before the Candidate OS hiring arc needs cross-session persistence.
+6. Add `messages`, `ai_usage`, and `skills` before Live AI and persistent progression ship.
+7. Decide whether `current_code_state` should remain in Postgres JSONB or move to Supabase Storage for larger repos.
 
 ---
 

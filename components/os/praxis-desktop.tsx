@@ -51,6 +51,7 @@ import { useWindowStore } from '@/lib/store/window-store'
 import { useMissionStore } from '@/lib/store/mission-store'
 import { useNotificationStore } from '@/lib/store/notification-store'
 import { useShellStore } from '@/lib/store/shell-store'
+import { useCandidateStore } from '@/lib/store/candidate-store'
 
 const OS_PROGRAMS = [
   {
@@ -216,9 +217,15 @@ export default function PraxisDesktop({
     checkpointsPassed,
     setCheckpointsPassed,
     updateCodeFile,
-    candidateStage,
-    setCandidateStage,
   } = useMissionStore()
+
+  const {
+    candidateStage,
+    initializeCandidate,
+    unlockFirstWeek,
+    selectedJobId,
+    candidateProfile,
+  } = useCandidateStore()
 
   const { notifications, addNotification, removeNotification } = useNotificationStore()
 
@@ -263,12 +270,7 @@ export default function PraxisDesktop({
       setCheckpointsPassed(activeProgress.checkpoints_passed ?? [])
     }
 
-    // Initialize recruitment stage
-    if (resumeIncomplete) {
-      setCandidateStage('cv_incomplete')
-    } else {
-      setCandidateStage('jobs_available')
-    }
+    initializeCandidate({ profile, email, resumeIncomplete })
   }, [])
 
   // Removed the restrictive guard that forced phase back to 'boot' if welcomeFromAuth was false.
@@ -466,8 +468,10 @@ export default function PraxisDesktop({
       ? []
       : OS_PROGRAMS.filter(
         (p) =>
-          p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.id.toLowerCase().includes(searchQuery.toLowerCase())
+          installedApps.includes(p.id) &&
+          !('hidden' in p && p.hidden) &&
+          (p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            p.id.toLowerCase().includes(searchQuery.toLowerCase()))
       )
 
   const openWindowIds = windows.filter((w) => w.isOpen).map((w) => w.id)
@@ -495,9 +499,20 @@ export default function PraxisDesktop({
         }}
         onCodeChange={handleCodeChange}
         setInstalledApps={setInstalledApps}
-        onAcceptOffer={() => {
-          // TODO: Mark onboarding complete in DB, unlock full workspace
+        onAcceptOffer={async () => {
+          await supabase
+            .from('profiles')
+            .update({
+              onboarding_completed: true,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', profile.id)
+
+          unlockFirstWeek()
           closeWindow('browser')
+          router.push(
+            `/first-day?role=${encodeURIComponent(candidateProfile.targetRole || profile.role || 'backend')}&handle=${encodeURIComponent(candidateProfile.handle || profile.username || email.split('@')[0] || 'engineer')}&application=${encodeURIComponent(selectedJobId)}`
+          )
         }}
       />
     )
