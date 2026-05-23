@@ -1,45 +1,62 @@
 'use client'
 
-import Link from 'next/link'
-import { motion, type Variants } from 'framer-motion'
-import { ArrowRight, Terminal, Play } from 'lucide-react'
-import { HeroCard } from '@/components/hero-card'
-import AboutSection from '@/components/hero-ascii-one'
+import { motion } from 'framer-motion'
+import { Mail, Globe, Cpu, Shield, ArrowRight } from 'lucide-react'
 import { Dithering } from '@paper-design/shaders-react'
-import { Navbar } from '@/components/navbar'
-import { AboutBento } from '@/components/about-bento'
-import { HighlightsSection } from '@/components/highlights-section'
-import { ScenarioLibrary } from '@/components/scenario-library'
-import { TestimonialsSection } from '@/components/testimonials-section'
+import { useEffect, useState } from 'react'
 
-const containerVariants: Variants = {
+const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.15,
       delayChildren: 0.2,
     },
   },
 }
 
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5,
+      duration: 0.8,
       ease: [0.21, 0.47, 0.32, 0.98],
     },
   },
 }
 
-export default function LandingPage() {
+export default function StealthLandingPage() {
+  const [logs, setLogs] = useState<string[]>([])
+
+  useEffect(() => {
+    const mockLogs = [
+      'PRX_GATEWAY initialized (saopaulo_node)',
+      'Protocol handshake active',
+      'Direct verification pipe: online',
+      'Target: Latin American technical validation core',
+      'Status: STEALTH_MODE',
+    ]
+
+    let current = 0
+    const interval = setInterval(() => {
+      if (current < mockLogs.length) {
+        setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${mockLogs[current]}`])
+        current++
+      } else {
+        clearInterval(interval)
+      }
+    }, 800)
+
+    return () => clearInterval(interval)
+  }, [])
+
   return (
-    <div className="min-h-screen overflow-x-hidden relative">
-      <Navbar />
-      <div className="absolute inset-0 h-full w-full">
+    <div className="min-h-screen overflow-x-hidden relative flex flex-col justify-between bg-[#080808] text-white">
+      {/* Background shader */}
+      <div className="absolute inset-0 h-full w-full pointer-events-none opacity-40">
         <Dithering
           style={{ height: '100%', width: '100%' }}
           colorBack="hsla(0, 0%, 0%, 1.00)"
@@ -54,139 +71,119 @@ export default function LandingPage() {
           speed={0.1}
         />
       </div>
-      <motion.div
-        className="relative z-10 mx-auto max-w-5xl py-16 md:py-24"
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-      >
-        {/* Hero Section */}
-        <motion.header variants={itemVariants} className="mb-16">
-          <HeroCard />
-        </motion.header>
 
-        {/* About Section + Bento Stats */}
+      {/* Top Navbar */}
+      <header className="relative z-10 w-full max-w-5xl mx-auto px-6 py-8 flex justify-between items-center border-b border-white/[0.04]">
+        <div className="flex items-center gap-3">
+          <img src="/logo.png" className="h-6 w-6 brightness-90" alt="Praxis Logo" />
+          <span className="font-sans text-sm font-semibold tracking-widest uppercase text-white/90">
+            praxis
+          </span>
+        </div>
+        <div className="flex items-center gap-2 px-3 py-1 bg-white/[0.02] border border-white/[0.06] rounded-full">
+          <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+          <span className="font-mono text-[9px] uppercase tracking-widest text-white/50">
+            Stealth Active
+          </span>
+        </div>
+      </header>
+
+      {/* Hero Content */}
+      <main className="relative z-10 w-full max-w-5xl mx-auto px-6 py-20 md:py-28 flex flex-col md:grid md:grid-cols-[1.2fr_0.8fr] gap-16 items-center flex-1">
         <motion.div
-          variants={itemVariants}
+          className="flex flex-col text-left"
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="mb-40"
-          id="about"
+          animate="visible"
+          variants={containerVariants}
         >
-          <AboutSection />
-          <AboutBento />
+          <motion.div variants={itemVariants} className="mb-6 flex items-center gap-2">
+            <span className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44] bg-[#a86f44]/5 border border-[#a86f44]/20 px-2.5 py-1 rounded-sm">
+              LATAM Technical Core
+            </span>
+          </motion.div>
+
+          <motion.h1
+            variants={itemVariants}
+            className="text-4xl md:text-5xl font-sans font-semibold tracking-tight text-white/90 leading-[1.1] mb-6"
+          >
+            Redefining technical validation for Latin America's elite engineering teams.
+          </motion.h1>
+
+          <motion.p
+            variants={itemVariants}
+            className="text-sm md:text-base text-white/50 max-w-xl leading-relaxed mb-10 font-sans"
+          >
+            Praxis replaces generic coding tests with high-fidelity, interactive work environment
+            simulations. We are operating in stealth mode, partnering with leading engineering teams to
+            assess, validate, and scale their technical talent pipelines.
+          </motion.p>
+
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 items-start">
+            <a
+              href="mailto:partners@praxis.dev"
+              className="interactive inline-flex items-center gap-3 px-6 py-3.5 bg-white text-black font-sans text-xs uppercase tracking-widest font-semibold hover:bg-neutral-200 transition-all rounded-sm animate-pulse"
+            >
+              <Mail className="h-4 w-4" />
+              Contact Partners
+            </a>
+          </motion.div>
         </motion.div>
 
-        {/* Highlights Section */}
-        <motion.section
-          variants={itemVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-          className="mb-40"
-          id="features"
+        {/* System Terminal Status Card */}
+        <motion.div
+          className="w-full relative bg-[#0a0a0a]/80 border border-white/[0.06] rounded-sm p-6 overflow-hidden flex flex-col h-[280px] shadow-2xl backdrop-blur-md"
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
         >
-          <HighlightsSection />
-        </motion.section>
-
-        {/* Scenario Library */}
-        <motion.section
-          variants={itemVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-          className="mb-40"
-          id="missions"
-        >
-          <ScenarioLibrary />
-        </motion.section>
-
-        {/* Testimonials */}
-        <motion.section
-          variants={itemVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-          className="mb-40"
-        >
-          <TestimonialsSection />
-        </motion.section>
-
-        {/* CTA Section */}
-        <motion.section
-          variants={itemVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-100px' }}
-          className="py-20 text-center"
-        >
-          <h2 className="mb-6 text-3xl font-medium tracking-tight text-foreground md:text-4xl font-serif">
-            Enter the workstation.
-          </h2>
-          <p className="mb-10 text-muted-foreground">
-            Join thousands of developers navigating real engineering days, incidents, and team
-            dynamics.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/os"
-              className="interactive inline-flex items-center gap-2 rounded-sm bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-            >
-              <Play className="h-4 w-4" />
-              Boot System
-            </Link>
-            <Link
-              href="/scenario"
-              className="interactive inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
-            >
-              Review logs
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        </motion.section>
-
-        {/* Footer */}
-        <motion.footer
-          variants={itemVariants}
-          className="flex items-center justify-between border-t border-border pt-6"
-        >
-          <div className="flex flex-col gap-1">
+          <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-4">
             <div className="flex items-center gap-2">
-              <img src="/logo.png" className="h-4 w-4" alt="Praxis Logo" />
-              <span className="font-sans text-sm font-medium tracking-tight">praxis</span>
+              <Cpu className="h-3.5 w-3.5 text-white/30" />
+              <span className="font-mono text-[9px] uppercase tracking-widest text-white/40">
+                System Diagnostics
+              </span>
             </div>
-            <a
-              href="https://twitter.com/thebtjackson"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-mono text-[7px] uppercase tracking-widest text-muted-foreground/30 hover:text-foreground transition-colors"
-            >
-              Imagery by @thebtjackson
-            </a>
+            <div className="flex gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-white/10" />
+              <span className="h-1.5 w-1.5 rounded-full bg-white/10" />
+              <span className="h-1.5 w-1.5 rounded-full bg-white/10" />
+            </div>
           </div>
-          <nav className="flex items-center gap-5">
-            <Link
-              href="/manifesto"
-              className="interactive text-xs text-muted-foreground hover:text-foreground"
-            >
-              Manifesto
-            </Link>
-            <Link
-              href="/os"
-              className="interactive text-xs text-muted-foreground hover:text-foreground"
-            >
-              Workstation
-            </Link>
-            <Link
-              href="/scenario"
-              className="interactive text-xs text-muted-foreground hover:text-foreground"
-            >
-              Logs
-            </Link>
-          </nav>
-        </motion.footer>
-      </motion.div>
+
+          <div className="flex-1 font-mono text-[10px] text-white/30 space-y-2 overflow-y-auto select-none">
+            {logs.map((log, index) => (
+              <div key={index} className="flex gap-2">
+                <span className="text-[#a86f44]/60">&gt;</span>
+                <span className="text-white/60">{log}</span>
+              </div>
+            ))}
+            {logs.length < 5 && (
+              <div className="flex gap-2 items-center">
+                <span className="text-[#a86f44]/60">&gt;</span>
+                <span className="h-3 w-1 bg-white/40 animate-pulse" />
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-white/[0.04] pt-3 mt-4 flex justify-between text-[8px] font-mono text-white/20">
+            <span>SECURE PIPE // ACTIVE</span>
+            <span>LATAM REGION</span>
+          </div>
+        </motion.div>
+      </main>
+
+      {/* Minimal Footer */}
+      <footer className="relative z-10 w-full max-w-5xl mx-auto px-6 py-8 border-t border-white/[0.04] flex flex-col sm:flex-row justify-between items-center gap-4 text-white/30 font-sans text-xs">
+        <div className="flex items-center gap-2">
+          <span>&copy; {new Date().getFullYear()} Praxis. All rights reserved.</span>
+        </div>
+        <div className="flex items-center gap-6">
+          <span className="flex items-center gap-1.5">
+            <Globe className="h-3.5 w-3.5" />
+            Buenos Aires &middot; S&atilde;o Paulo &middot; Mexico City
+          </span>
+        </div>
+      </footer>
     </div>
   )
 }

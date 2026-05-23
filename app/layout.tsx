@@ -21,9 +21,9 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Praxis - The Workplace Simulation Game',
+  title: 'Praxis | Next-Generation Technical Validation in Latin America',
   description:
-    'Experience the reality of engineering before your first day. Survive production incidents, technical debt, and team dynamics in an immersive workstation.',
+    'Operating in stealth mode. Praxis builds high-fidelity work environment simulations to assess, validate, and scale elite engineering teams in Latin America.',
   generator: 'praxis',
   icons: {
     icon: [
