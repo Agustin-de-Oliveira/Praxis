@@ -263,7 +263,7 @@ export default function StealthLandingPage() {
 
           {/* Headline */}
           <motion.h1
-            className={`text-[clamp(2.2rem,6vw,3.6rem)] ${fontClass} font-semibold tracking-tight text-white/95 leading-[1.12] mb-6 text-balance`}
+            className={`text-[clamp(2.2rem,6vw,3.6rem)] ${fontClass} font-semibold ${isEasterEgg ? 'tracking-[0.03em]' : 'tracking-tight'} text-white/95 leading-[1.12] mb-6 text-balance`}
             custom={1}
             variants={fadeUp}
             initial="hidden"
@@ -303,7 +303,7 @@ export default function StealthLandingPage() {
               <div className="px-8 pt-9 pb-8 sm:px-10 sm:pt-10 sm:pb-9">
                 {/* Heading */}
                 <div className="mb-8">
-                  <h2 className={`${fontClass} text-[15px] sm:text-base font-semibold text-white/90 mb-2 tracking-tight`}>
+                  <h2 className={`${fontClass} text-[15px] sm:text-base font-semibold text-white/90 mb-2 ${isEasterEgg ? 'tracking-[0.12em]' : 'tracking-tight'}`}>
                     <ScrambleText text="Acceso anticipado" trigger={isEasterEgg} />
                   </h2>
                   <p className={`${fontClass} text-[13px] text-white/35 leading-relaxed`}>
