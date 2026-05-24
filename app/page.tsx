@@ -285,7 +285,7 @@ export default function StealthLandingPage() {
 
           {/* ── Enhanced Waitlist CTA ── */}
           <motion.div
-            className="w-full max-w-xl mb-24"
+            className="w-full max-w-2xl mb-24"
             custom={3}
             variants={fadeUp}
             initial="hidden"
