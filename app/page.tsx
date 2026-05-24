@@ -105,7 +105,17 @@ export default function StealthLandingPage() {
   const [isVibrating, setIsVibrating] = useState(false)
   const [email, setEmail] = useState('')
   const [formState, setFormState] = useState<FormState>('idle')
+  const [emailError, setEmailError] = useState<string | null>(null)
   const [isFocused, setIsFocused] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false)
+    }, 1100)
+
+    return () => clearTimeout(timer)
+  }, [])
 
   const triggerEasterEgg = () => {
     const audio = new Audio('/sounds/shock boom.m4a')
@@ -118,9 +128,26 @@ export default function StealthLandingPage() {
     }, 300)
   }
 
+  const validateEmail = (emailStr: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return regex.test(emailStr)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email || formState === 'loading' || formState === 'success') return
+    setEmailError(null)
+
+    if (!email) {
+      setEmailError('Ingresá tu correo electrónico.')
+      return
+    }
+
+    if (!validateEmail(email)) {
+      setEmailError('Por favor, ingresá una dirección de correo válida.')
+      return
+    }
+
+    if (formState === 'loading' || formState === 'success') return
     setFormState('loading')
 
     try {
@@ -145,6 +172,41 @@ export default function StealthLandingPage() {
 
   return (
     <div className={`min-h-screen relative flex flex-col bg-[#060606] text-white selection:bg-[#a86f44]/20 selection:text-[#a86f44] overflow-hidden ${isEasterEgg ? 'font-tiny5' : ''}`}>
+      {/* Entrance Loader */}
+      <AnimatePresence mode="wait">
+        {loading && (
+          <motion.div
+            key="loader"
+            exit={{ 
+              y: '-100%',
+              transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } 
+            }}
+            className="fixed inset-0 z-50 bg-[#060606] flex flex-col items-center justify-center pointer-events-auto"
+          >
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              className="flex flex-col items-center gap-4"
+            >
+              {/* Logo */}
+              <div className="relative w-14 h-14">
+                <img
+                  src="/logo.png"
+                  className="w-full h-full opacity-90 object-contain"
+                  alt="Logo"
+                />
+              </div>
+              
+              {/* Name */}
+              <span className={`${fontClass} text-[12px] font-semibold tracking-[0.45em] uppercase text-white/90`}>
+                Praxis
+              </span>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Spotlight Effect */}
       <Spotlight
         className="-top-40 left-1/2 -translate-x-1/2 md:-top-80 h-[150%] opacity-100"
@@ -169,8 +231,14 @@ export default function StealthLandingPage() {
       <div className="relative z-10 h-[1px] w-full bg-gradient-to-r from-transparent via-[#a86f44]/40 to-transparent" />
 
       {/* Content wrapper — vertically and horizontally centered */}
-      <div className="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-24 md:py-36">
-        <div className={`w-full max-w-2xl flex flex-col items-center text-center transition-all duration-300 ${isVibrating ? 'animate-vibrate' : ''}`}>
+      {!loading && (
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.21, 0.47, 0.32, 0.98], delay: 0.05 }}
+          className="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-24 md:py-36"
+        >
+          <div className={`w-full max-w-2xl flex flex-col items-center text-center transition-all duration-300 ${isVibrating ? 'animate-vibrate' : ''}`}>
           {/* Logo + wordmark */}
           <motion.div
             className="flex flex-col items-center gap-4 mb-12"
@@ -217,7 +285,7 @@ export default function StealthLandingPage() {
 
           {/* ── Enhanced Waitlist CTA ── */}
           <motion.div
-            className="w-full max-w-lg mb-20"
+            className="w-full max-w-xl mb-24"
             custom={3}
             variants={fadeUp}
             initial="hidden"
@@ -232,10 +300,10 @@ export default function StealthLandingPage() {
               {/* Shimmer edge — top */}
               <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#a86f44]/40 to-transparent opacity-0 transition-opacity duration-500" style={{ opacity: isFocused ? 1 : 0 }} />
 
-              <div className="px-6 pt-7 pb-6 sm:px-8 sm:pt-8 sm:pb-7">
+              <div className="px-8 pt-9 pb-8 sm:px-10 sm:pt-10 sm:pb-9">
                 {/* Heading */}
-                <div className="mb-5">
-                  <h2 className={`${fontClass} text-[15px] sm:text-base font-semibold text-white/90 mb-1.5 tracking-tight`}>
+                <div className="mb-8">
+                  <h2 className={`${fontClass} text-[15px] sm:text-base font-semibold text-white/90 mb-2 tracking-tight`}>
                     <ScrambleText text="Acceso anticipado" trigger={isEasterEgg} />
                   </h2>
                   <p className={`${fontClass} text-[13px] text-white/35 leading-relaxed`}>
@@ -270,24 +338,27 @@ export default function StealthLandingPage() {
                       <motion.form
                         key="form"
                         onSubmit={handleSubmit}
-                        className="flex flex-col sm:flex-row gap-2.5 w-full"
+                        noValidate
+                        className="flex flex-col sm:flex-row gap-3 w-full"
                       >
-                        <div className="relative flex-1">
+                        <div className="relative flex-[1.4] w-full">
                           <input
                             type="email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => {
+                              setEmail(e.target.value)
+                              if (emailError) setEmailError(null)
+                            }}
                             onFocus={() => setIsFocused(true)}
                             onBlur={() => setIsFocused(false)}
                             placeholder="tu@empresa.com"
-                            required
                             className={`w-full px-4 py-3 text-sm ${fontClass} bg-white/[0.03] border border-white/[0.08] rounded-sm focus:outline-none focus:border-[#a86f44]/40 focus:bg-white/[0.05] text-white/90 placeholder:text-white/20 transition-all duration-300`}
                           />
                         </div>
                         <button
                           type="submit"
                           disabled={formState === 'loading'}
-                          className={`group relative px-6 py-3 text-xs uppercase tracking-[0.18em] ${fontClass} font-semibold text-white bg-[#a86f44]/15 border border-[#a86f44]/30 hover:bg-[#a86f44]/25 hover:border-[#a86f44]/50 active:scale-[0.98] transition-all duration-300 cursor-pointer overflow-hidden rounded-sm disabled:cursor-wait`}
+                          className={`group relative flex-1 px-6 py-3 text-xs uppercase tracking-[0.06em] ${fontClass} font-semibold text-white bg-[#a86f44]/15 border border-[#a86f44]/30 hover:bg-[#a86f44]/25 hover:border-[#a86f44]/50 active:scale-[0.98] transition-all duration-300 cursor-pointer overflow-hidden rounded-sm disabled:cursor-wait w-full sm:w-auto`}
                         >
                           {/* Shimmer sweep */}
                           <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/[0.06] to-transparent pointer-events-none" />
@@ -306,9 +377,24 @@ export default function StealthLandingPage() {
                           </span>
                         </button>
                       </motion.form>
+                      
+                      <AnimatePresence>
+                        {emailError && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -6 }}
+                            className={`text-left mt-2 px-3.5 py-2.5 border border-red-500/10 bg-red-500/[0.03] text-red-400 text-[11px] rounded-sm flex items-center gap-2 ${fontClass}`}
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                            {emailError}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
                       {formState === 'error' && (
-                        <p className={`text-xs text-red-400/90 text-left mt-1 ${fontClass}`}>
-                          Hubo un problema. Por favor intentá de nuevo.
+                        <p className={`text-[11px] text-red-400/90 text-left mt-1 ${fontClass}`}>
+                          Hubo un problema de conexión. Por favor intentá de nuevo.
                         </p>
                       )}
                     </div>
@@ -317,9 +403,9 @@ export default function StealthLandingPage() {
 
                 {/* Social proof + Trust row */}
                 {formState !== 'success' && (
-                  <div className="flex flex-col sm:flex-row items-center justify-between mt-5 gap-3">
+                  <div className="flex flex-col sm:flex-row items-center justify-between mt-8 gap-4">
                     {/* Social proof */}
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-3">
                       {/* Stacked avatars */}
                       <div className="flex -space-x-1.5">
                         {['#6366f1', '#a86f44', '#10b981', '#f59e0b'].map((color, i) => (
@@ -332,9 +418,9 @@ export default function StealthLandingPage() {
                       </div>
                       <p className={`${fontClass} text-[11px] text-white/30`}>
                         <span className="text-white/50 font-medium tabular-nums">
-                          <AnimatedCounter target={48} />+
+                          +<AnimatedCounter target={10} />
                         </span>{' '}
-                        equipos en espera
+                        desarrolladores en espera
                       </p>
                     </div>
 
@@ -395,7 +481,8 @@ export default function StealthLandingPage() {
             </a>
           </motion.nav>
         </div>
-      </div>
+      </motion.div>
+      )}
 
       {/* Footer — barely there */}
       <footer className="relative z-10 px-6 py-6 text-center">
