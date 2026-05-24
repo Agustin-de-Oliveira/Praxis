@@ -1,29 +1,29 @@
-'use client'
-
 import { Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
 import { FirstDayOrchestrator } from '@/components/first-day/first-day-orchestrator'
 import type { RoleId } from '@/lib/first-day-data'
 
-function FirstDayPageContent() {
-  const params = useSearchParams()
-  const roleId = (params.get('role') ?? 'backend') as RoleId
-  const lang = params.get('lang') ?? 'JavaScript / TypeScript'
-  const handle = params.get('handle') ?? 'engineer'
-
-  return <FirstDayOrchestrator roleId={roleId} lang={lang} handle={handle} />
+interface FirstDayPageProps {
+  searchParams: {
+    role?: string
+    lang?: string
+    handle?: string
+  }
 }
 
-export default function FirstDayPage() {
+export default function FirstDayPage({ searchParams }: FirstDayPageProps) {
+  const roleId = (searchParams.role ?? 'backend') as RoleId
+  const lang = searchParams.lang ?? 'JavaScript / TypeScript'
+  const handle = searchParams.handle ?? 'engineer'
+
   return (
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-          <div className="w-2 h-2 rounded-full bg-[#a86f44] animate-ping" />
+          <div className="w-2 h-2 rounded-full bg-copper animate-ping" />
         </div>
       }
     >
-      <FirstDayPageContent />
+      <FirstDayOrchestrator roleId={roleId} lang={lang} handle={handle} />
     </Suspense>
   )
 }

@@ -27,6 +27,7 @@ import PhaseImplement from '@/components/tour/phase-implement'
 import PhaseTesting from '@/components/tour/phase-testing'
 import PhaseCheckpoints from '@/components/tour/phase-checkpoints'
 import PhasePRReview from '@/components/tour/phase-pr-review'
+import PhaseBoard from '@/components/tour/phase-board'
 import PhaseDebrief from '@/components/tour/phase-debrief'
 import type { TourPhase } from '@/lib/first-day-data'
 import { SCN008_CHECKPOINTS } from '@/lib/first-day-data'
@@ -89,7 +90,7 @@ export default function TourPage() {
         <Link href="/first-day">
           <div className="flex items-center gap-2 px-3 py-2 rounded-sm border border-white/8 bg-[#0A0A0A]/80 backdrop-blur-sm text-white/30 hover:text-white/60 hover:border-white/20 transition-all cursor-pointer">
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span className="font-mono text-[10px] uppercase tracking-widest">Exit</span>
+            <span className="font-mono text-[10px] uppercase tracking-widest">Salir</span>
           </div>
         </Link>
       </div>
@@ -99,7 +100,7 @@ export default function TourPage() {
         <div className="flex items-center gap-2 px-3 py-2 rounded-sm border border-[#a86f44]/20 bg-[#a86f44]/5">
           <Compass className="w-3.5 h-3.5 text-[#a86f44]" />
           <span className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44]/60">
-            Tour Mode · SCN-008
+            Modo Tour · SCN-008
           </span>
         </div>
       </div>
@@ -194,7 +195,20 @@ export default function TourPage() {
               exit="exit"
               className="w-full"
             >
-              <PhasePRReview onContinue={() => advance('debrief')} />
+              <PhasePRReview onContinue={() => advance('board')} />
+            </motion.div>
+          )}
+
+          {phase === 'board' && (
+            <motion.div
+              key="board"
+              variants={phaseVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="w-full"
+            >
+              <PhaseBoard onContinue={() => advance('debrief')} />
             </motion.div>
           )}
 

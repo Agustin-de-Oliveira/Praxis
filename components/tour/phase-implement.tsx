@@ -29,35 +29,35 @@ const tourVariants: Variants = {
 const STEPS = [
   {
     id: 'fetch',
-    title: '1. Data Fetching',
-    instruction: 'Fetch the user from the database using the ID provided by the auth middleware.',
+    title: '1. Obtención de Datos',
+    instruction: 'Obtené el usuario de la base de datos usando el ID provisto por el middleware de autenticación.',
     target: 'const user = await getUserById(req.user.id)',
-    hint: 'Use the `getUserById` helper we explored in the DB layer.',
-    feedback: 'Database query initiated.',
+    hint: 'Usa el helper `getUserById` que exploramos en la capa de base de datos.',
+    feedback: 'Consulta de base de datos iniciada.',
   },
   {
     id: 'check',
-    title: '2. Existential Check',
-    instruction: 'Handle the case where the user might not exist in the database.',
+    title: '2. Verificación de Existencia',
+    instruction: 'Manejá el caso en el que el usuario no exista en la base de datos.',
     target: "if (!user) return res.status(404).json({ error: 'User not found' })",
-    hint: 'If `user` is null, return a 404 status with an error message.',
-    feedback: 'Edge case handled.',
+    hint: 'Si el `user` es null, retorna un estado 404 con un mensaje de error.',
+    feedback: 'Caso límite manejado.',
   },
   {
     id: 'sanitize',
-    title: '3. Sanitization',
-    instruction: 'Remove sensitive fields like `passwordHash` before sending the response.',
+    title: '3. Sanitización',
+    instruction: 'Eliminá campos sensibles como `passwordHash` antes de enviar la respuesta.',
     target: 'const { passwordHash, ...safeUser } = user',
-    hint: 'Use object destructuring to separate the hash from the rest of the data.',
-    feedback: 'Security best practice applied.',
+    hint: 'Usa la desestructuración de objetos para separar el hash del resto de los datos.',
+    feedback: 'Buena práctica de seguridad aplicada.',
   },
   {
     id: 'respond',
-    title: '4. Response',
-    instruction: 'Send the sanitized user object back to the client.',
+    title: '4. Respuesta',
+    instruction: 'Enviá el objeto de usuario sanitizado de vuelta al cliente.',
     target: 'return res.json(safeUser)',
-    hint: 'Use `res.json()` to send the final object.',
-    feedback: 'Endpoint complete!',
+    hint: 'Usa `res.json()` para enviar el objeto final.',
+    feedback: '¡Endpoint completado!',
   },
 ]
 
@@ -137,13 +137,16 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
     }[]
   >([])
   const [logs, setLogs] = useState<string[]>([
-    '[praxis-lint] No issues found.',
-    '[praxis-server] Ready for hot-reload.',
+    '[praxis-lint] No se encontraron problemas.',
+    '[praxis-server] Listo para recarga en caliente (hot-reload).',
   ])
 
   // Suggestions state
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [activeSuggestion, setActiveSuggestion] = useState(0)
+  const [suggestionPrefix, setSuggestionPrefix] = useState('')
+  const [suggestionOffset, setSuggestionOffset] = useState(0)
+  const prefixRef = useRef<HTMLSpanElement>(null)
 
   const inputRef = useRef<HTMLInputElement>(null)
   const step = STEPS[currentStep]
@@ -161,13 +164,17 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
     if (trigger) {
       setSuggestions(SUGGESTIONS_MAP[trigger])
       setActiveSuggestion(0)
+      const anchor = val.substring(0, val.lastIndexOf(trigger) + trigger.length)
+      setSuggestionPrefix(anchor)
     } else if (suggestions.length > 0) {
       // Check if user is typing one of the suggestions
       const lastWord = val.split(/[.(]/).pop() || ''
       const filtered = suggestions.filter((s) => s.startsWith(lastWord))
       if (filtered.length === 0) setSuggestions([])
+      setSuggestionPrefix('')
     } else {
       setSuggestions([])
+      setSuggestionPrefix('')
     }
 
     // Success check
@@ -175,6 +182,100 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
       handleStepSuccess()
     }
   }
+
+  useEffect(() => {
+    if (!prefixRef.current) {
+      setSuggestionOffset(0)
+      return
+    }
+    setSuggestionOffset(prefixRef.current.offsetWidth)
+  }, [suggestionPrefix, suggestions.length])
+
+  // Keyboard navigation for suggestions + quick-accept
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Arrow navigation when suggestions present
+    if (e.key === 'ArrowDown' && suggestions.length > 0) {
+      e.preventDefault()
+      setActiveSuggestion((s) => Math.min(s + 1, suggestions.length - 1))
+      return
+    }
+    if (e.key === 'ArrowUp' && suggestions.length > 0) {
+      e.preventDefault()
+      setActiveSuggestion((s) => Math.max(s - 1, 0))
+      return
+    }
+
+    // Accept suggestion or autocomplete line on Tab
+    if (e.key === 'Tab') {
+      e.preventDefault()
+      if (suggestions.length > 0) {
+        const chosen = suggestions[activeSuggestion]
+        if (chosen) insertSuggestion(chosen)
+        return
+      }
+
+      // No suggestions: autocomplete the full target line
+      setInputValue(step.target)
+      setTimeout(() => handleStepSuccess(), 60)
+      return
+    }
+
+    if (e.key === 'Enter') {
+      if (suggestions.length > 0) {
+        e.preventDefault()
+        const chosen = suggestions[activeSuggestion]
+        if (chosen) insertSuggestion(chosen)
+        return
+      }
+
+      // If exact match, submit; otherwise ignore (user may press Enter intentionally)
+      if (inputValue.trim().toLowerCase() === step.target.trim().toLowerCase()) {
+        e.preventDefault()
+        handleStepSuccess()
+      }
+    }
+
+    if (e.key === 'Escape') {
+      setSuggestions([])
+    }
+  }
+
+  // Map some suggestions to richer snippets
+  const SUGGESTION_SNIPPETS: Record<string, string> = {
+    getUserById: 'getUserById(req.user.id)',
+    'req.user.id': 'req.user.id',
+    id: 'req.user.id',
+    json: 'res.json(safeUser)',
+  }
+
+  const insertSuggestion = (s: string) => {
+    // Build the new value by replacing the last token after a dot or paren
+    const lastDotIndex = inputValue.lastIndexOf('.')
+    const lastParen = inputValue.lastIndexOf('(')
+    let base = inputValue
+    if (lastDotIndex > -1 && lastDotIndex > lastParen) {
+      base = inputValue.substring(0, lastDotIndex + 1)
+    } else if (lastParen > -1 && lastParen > lastDotIndex) {
+      base = inputValue.substring(0, lastParen + 1)
+    } else if (/[\s\(]$/.test(inputValue)) {
+      base = inputValue
+    } else {
+      // remove trailing partial token
+      base = inputValue.replace(/[^\s.()]*$/g, '')
+    }
+
+    const insertion = SUGGESTION_SNIPPETS[s] ?? s
+    const newVal = base + insertion
+    setInputValue(newVal)
+    setSuggestions([])
+    inputRef.current?.focus()
+
+    if (newVal.trim().toLowerCase() === step.target.trim().toLowerCase()) {
+      handleStepSuccess()
+    }
+  }
+
+  // Note: ghost text rendering handled in overlay to avoid jumps
 
   const handleSuggestionClick = (s: string) => {
     const lastDotIndex = inputValue.lastIndexOf('.')
@@ -190,20 +291,25 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
     }
   }
 
+  const isCorrectRef = useRef(false)
+
   const handleStepSuccess = () => {
+    if (isCorrectRef.current) return
+    isCorrectRef.current = true
     setIsCorrect(true)
-    setLogs((prev) => [...prev, `[praxis-test] Step ${currentStep + 1} passed: ${step.feedback}`])
+    setLogs((prev) => [...prev, `[praxis-test] Paso ${currentStep + 1} aprobado: ${step.feedback}`])
 
     setTimeout(() => {
       setCompletedLines((prev) => [...prev, step.target])
       setInputValue('')
       setIsCorrect(false)
+      isCorrectRef.current = false
       setShowHint(false)
       setSuggestions([])
       if (currentStep < STEPS.length - 1) {
         setCurrentStep((prev) => prev + 1)
       } else {
-        setLogs((prev) => [...prev, '[praxis-success] All checks verified. Ready to PR.'])
+        setLogs((prev) => [...prev, '[praxis-success] Verificaciones aprobadas. Listo para PR.'])
       }
     }, 800)
   }
@@ -222,13 +328,13 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
       {/* Centered Header */}
       <div className="text-center mb-10">
         <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
-          Phase 2 · Implementation
+          Fase 2 · Implementación
         </p>
         <h2 className="font-serif text-3xl font-medium text-white mb-3">
-          Build the Profile Endpoint
+          Construí el Endpoint de Perfil
         </h2>
         <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
-          The environment is ready. Use the integrated intellisense to speed up your coding.
+          El entorno está listo. Usa el autocompletado (intellisense) integrado para acelerar tu desarrollo.
         </p>
       </div>
 
@@ -247,33 +353,14 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
               >
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44]">
-                    Goal {currentStep + 1} / {STEPS.length}
+                    Meta {currentStep + 1} / {STEPS.length}
                   </span>
                   {isCorrect && <CheckCircle size={18} className="text-emerald-500" />}
                 </div>
                 <h3 className="text-base font-bold text-white mb-3">{step.title}</h3>
                 <p className="text-xs text-white/50 leading-relaxed mb-6">{step.instruction}</p>
 
-                <div className="pt-4 border-t border-white/5">
-                  <button
-                    onClick={() => setShowHint(!showHint)}
-                    className="text-[10px] font-mono text-[#a86f44] hover:text-[#c88f64] transition-colors flex items-center gap-2"
-                  >
-                    <Lightbulb size={14} />
-                    {showHint ? 'Hide Ghost Text' : 'Reveal Ghost Text'}
-                  </button>
-                  <AnimatePresence>
-                    {showHint && (
-                      <motion.p
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-3 text-[10px] text-white/30 italic leading-relaxed"
-                      >
-                        {step.hint}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                </div>
+
               </motion.div>
             ) : (
               <motion.div
@@ -284,30 +371,31 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
                 <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500/50" />
 
                 {/* Sarah's Avatar */}
-                <div className="w-12 h-12 rounded-sm bg-[#a86f44] border border-[#a86f44]/40 flex items-center justify-center font-mono text-lg font-bold text-white mx-auto mb-4">
+                <div className="w-12 h-12 rounded-sm bg-[#a86f44]/15 border border-[#a86f44]/25 flex items-center justify-center font-mono text-lg font-bold text-[#a86f44] mx-auto mb-4">
                   SC
                 </div>
 
-                <h3 className="text-lg font-bold text-white mb-2">Sarah Chen (Senior Dev)</h3>
+                <h3 className="text-sm font-bold text-white mb-2">Sarah Chen (Senior Dev)</h3>
                 <p className="text-xs text-white/50 leading-relaxed mb-6 italic">
-                  "Nice work! The implementation looks solid and the logic is clean. Before we push
-                  this to production, do you want to implement the unit tests now, or should I leave
-                  it to the QA team?"
+                  "¡Buen trabajo! La implementación se ve sólida y la lógica está limpia. Antes de pasar esto a producción, ¿querés implementar las pruebas unitarias ahora o se lo dejamos al equipo de QA?"
                 </p>
 
-                <div className="space-y-3">
+                <div className="flex flex-col gap-4 items-center pt-2">
                   <button
                     onClick={() => onContinue('testing')}
-                    className="w-full h-11 bg-[#a86f44] text-white text-xs font-mono uppercase tracking-widest hover:bg-[#b87f54] transition-all cursor-pointer rounded-sm shadow-lg shadow-[#a86f44]/10 flex items-center justify-center gap-2"
+                    className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white transition-colors relative py-1 cursor-pointer"
                   >
-                    <Code size={16} />
-                    Implement Tests
+                    <span>Implementar Pruebas</span>
+                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+                    <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
                   </button>
                   <button
                     onClick={() => onContinue('checkpoint')}
-                    className="w-full h-11 border border-white/5 bg-white/[0.02] text-white/30 text-[10px] font-mono uppercase tracking-widest hover:text-white/60 transition-colors cursor-pointer rounded-sm"
+                    className="group inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-sans font-medium text-white/40 hover:text-white/70 transition-colors relative py-1 cursor-pointer"
                   >
-                    Nah, leave it to QA
+                    <span>No, dejarlo al equipo de QA</span>
+                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+                    <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/10 group-hover:bg-white/30 transition-transform duration-300 origin-left scale-x-100" />
                   </button>
                 </div>
               </motion.div>
@@ -319,7 +407,7 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
             <div className="px-4 py-2 border-b border-[#171717] bg-[#0A0A0A] flex items-center gap-2">
               <Terminal size={14} className="text-white/20" />
               <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">
-                Console
+                Consola
               </span>
             </div>
             <div className="p-4 font-mono text-[10px] space-y-1.5 h-[140px] overflow-y-auto scrollbar-hide">
@@ -366,7 +454,7 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
 
             <div className="ml-6 space-y-1.5">
               <div className="text-white/10 italic text-[11px] mb-2">
-                // TODO: Complete the logic below
+                // TODO: Completá la lógica debajo
               </div>
 
               {completedLines.map((line, i) => (
@@ -390,26 +478,50 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
                     </span>
                     <div className="flex-1 flex items-center gap-2 relative">
                       <div className="w-1.5 h-4 bg-[#a86f44] animate-pulse shrink-0 rounded-full" />
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        spellCheck={false}
-                        autoComplete="off"
-                        className="bg-transparent border-none outline-none text-white w-full p-0 h-5 placeholder:text-white/5 focus:ring-0"
-                        placeholder={showHint ? step.target : 'Type your code here...'}
-                      />
+                      <div className="relative w-full min-h-5">
+                        {/* Presentation overlay: shows typed text + ghost text precisely in-flow */}
+                        <div className="absolute inset-0 pointer-events-none flex items-center">
+                          <div className="font-mono text-[13px] leading-[20px] whitespace-pre text-white w-full">
+                            <span className="opacity-100">{inputValue}</span>
+                            {step.target.startsWith(inputValue) && (
+                              <span className="text-white/20">{step.target.slice(inputValue.length)}</span>
+                            )}
+                          </div>
+                        </div>
 
-                      {/* Contextual Suggestions Menu */}
-                      <AnimatePresence>
-                        {suggestions.length > 0 && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
-                            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                            exit={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
-                            className="absolute left-0 top-6 z-50 min-w-[120px] rounded-sm bg-[#111] border border-white/10 shadow-2xl p-1"
-                          >
+                        {/* Hidden prefix measurement for suggestion menu alignment */}
+                        <span
+                          ref={prefixRef}
+                          className="absolute left-0 top-0 invisible pointer-events-none font-mono text-[13px] leading-5 whitespace-pre"
+                        >
+                          {suggestionPrefix}
+                        </span>
+
+                        {/* Real input sits on top but renders transparent text — caret remains visible */}
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          value={inputValue}
+                          onChange={handleInputChange}
+                          onKeyDown={handleKeyDown}
+                          spellCheck={false}
+                          autoComplete="off"
+                          placeholder=""
+                          className="absolute left-0 top-0 w-full h-5 bg-transparent border-none outline-none text-transparent font-mono text-[13px] leading-5 whitespace-pre p-0 focus:ring-0"
+                          style={{ caretColor: '#a86f44' }}
+                        />
+                      </div>
+
+                        {/* Contextual Suggestions Menu */}
+                        <AnimatePresence>
+                          {suggestions.length > 0 && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
+                              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                              exit={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
+                              className="absolute top-6 z-50 min-w-[120px] rounded-sm bg-[#111] border border-white/10 shadow-2xl p-1"
+                              style={{ left: suggestionOffset }}
+                            >
                             {suggestions.map((s, i) => (
                               <button
                                 key={i}
@@ -431,6 +543,8 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
                   </div>
                 </div>
               )}
+
+              {/* quick/demo buttons removed to avoid accidental double-entry */}
             </div>
 
             <div className="text-white/20 whitespace-pre mt-2">{`})\n\nexport default router`}</div>

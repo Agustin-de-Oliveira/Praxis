@@ -5,6 +5,7 @@
   --font-serif: var(--font-noto-serif), 'Noto Serif', serif;
   --font-mono:
     var(--font-jetbrains-mono), 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace;
+  --font-tiny5: var(--font-tiny5), monospace;
 
   /* Core Palette - Obsidian & Steel */
   --color-background: #050505;
@@ -51,6 +52,33 @@
   --radius-sm: 0.125rem;
   --radius-md: 0.25rem;
   --radius-lg: 0.5rem;
+
+  --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
+  --animate-vibrate: vibrate 0.3s linear;
+
+  @keyframes spotlight {
+    0% {
+      opacity: 0;
+      transform: translate(-72%, -62%) scale(0.5);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -40%) scale(1);
+    }
+  }
+
+  @keyframes vibrate {
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-2px, -1px); }
+    20% { transform: translate(-1px, 2px); }
+    30% { transform: translate(1px, -1px); }
+    40% { transform: translate(-1px, -2px); }
+    50% { transform: translate(2px, 1px); }
+    60% { transform: translate(1px, -1px); }
+    70% { transform: translate(-2px, 2px); }
+    80% { transform: translate(2px, -1px); }
+    90% { transform: translate(-1px, -2px); }
+  }
 }
 
 @layer base {

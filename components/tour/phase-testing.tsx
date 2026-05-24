@@ -30,38 +30,65 @@ const tourVariants: Variants = {
 const TEST_STEPS = [
   {
     id: 'mock',
-    title: '1. Mocking the DB',
-    instruction: 'Setup a mock response for the `getUserById` query.',
+    title: '1. Simulando la BD',
+    instruction: 'Configurá una respuesta simulada (mock) para la consulta `getUserById`.',
     target: "db.getUserById.mockResolvedValue({ id: '123', name: 'Test User' })",
-    hint: 'We use Jest mocks to isolate the endpoint from the real database.',
-    feedback: 'Database mock established.',
+    hint: 'Usamos simulaciones de Jest para aislar el endpoint de la base de datos real.',
+    feedback: 'Simulación de base de datos establecida.',
   },
   {
     id: 'request',
-    title: '2. The Request',
-    instruction: 'Simulate a GET request to the profile endpoint with a valid token.',
+    title: '2. La Petición',
+    instruction: 'Simulá una petición GET al endpoint de perfil con un token válido.',
     target:
       "const res = await request(app).get('/api/profile').set('Authorization', 'Bearer token')",
-    hint: 'Use `supertest` (request) to hit the local app instance.',
-    feedback: 'Request successfully simulated.',
+    hint: 'Usa `supertest` (request) para llamar a la instancia local de la aplicación.',
+    feedback: 'Petición simulada con éxito.',
   },
   {
     id: 'assert',
-    title: '3. Status Assertion',
-    instruction: 'Verify that the endpoint returns a 200 OK status.',
+    title: '3. Aserción de Estado',
+    instruction: 'Verificá que el endpoint retorne un estado 200 OK.',
     target: 'expect(res.status).toBe(200)',
-    hint: 'Every successful GET request should return status 200.',
-    feedback: 'Status code verified.',
+    hint: 'Cada petición GET exitosa debería retornar el estado 200.',
+    feedback: 'Código de estado verificado.',
   },
   {
     id: 'security',
-    title: '4. Security Check',
-    instruction: 'Ensure the sensitive `passwordHash` is NOT present in the response.',
+    title: '4. Verificación de Seguridad',
+    instruction: 'Asegurate de que el campo sensible `passwordHash` NO esté presente en la respuesta.',
     target: "expect(res.body).not.toHaveProperty('passwordHash')",
-    hint: 'This is a critical security assertion for this task.',
-    feedback: 'Security assertion passed!',
+    hint: 'Esta es una aserción de seguridad crítica para esta tarea.',
+    feedback: '¡Aserción de seguridad aprobada!',
   },
 ]
+
+const TEST_SUGGESTIONS_MAP: Record<string, string[]> = {
+  'db.': ['getUserById'],
+  'db.getUserById.': ['mockResolvedValue'],
+  'request(': ['app'],
+  'request(app).': ['get'],
+  "get('/api/profile').": ['set'],
+  'expect(': ['res'],
+  'res.': ['status', 'body'],
+  'status).': ['toBe'],
+  'body).': ['not', 'toHaveProperty'],
+  'not.': ['toHaveProperty'],
+}
+
+const TEST_SUGGESTION_SNIPPETS: Record<string, string> = {
+  getUserById: 'getUserById',
+  mockResolvedValue: "mockResolvedValue({ id: '123', name: 'Test User' })",
+  app: 'app',
+  get: "get('/api/profile')",
+  set: "set('Authorization', 'Bearer token')",
+  res: 'res',
+  status: 'status',
+  body: 'body',
+  toBe: 'toBe(200)',
+  not: 'not',
+  toHaveProperty: "toHaveProperty('passwordHash')",
+}
 
 const highlight = (line: string) => {
   return line
@@ -108,12 +135,19 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
   const [showHint, setShowHint] = useState(false)
   const [completedLines, setCompletedLines] = useState<string[]>([])
   const [logs, setLogs] = useState<string[]>([
-    '[praxis-jest] Found 1 test suite.',
-    '[praxis-jest] Watching for changes...',
+    '[praxis-jest] Se encontró 1 suite de pruebas.',
+    '[praxis-jest] Observando cambios...',
   ])
 
   const inputRef = useRef<HTMLInputElement>(null)
+  const prefixRef = useRef<HTMLSpanElement>(null)
   const step = TEST_STEPS[currentStep]
+
+  // Suggestions state
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [activeSuggestion, setActiveSuggestion] = useState(0)
+  const [suggestionPrefix, setSuggestionPrefix] = useState('')
+  const [suggestionOffset, setSuggestionOffset] = useState(0)
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -122,12 +156,124 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value
     setInputValue(val)
+
+    // Check for suggestions
+    const trigger = Object.keys(TEST_SUGGESTIONS_MAP).find((key) => val.endsWith(key))
+    if (trigger) {
+      setSuggestions(TEST_SUGGESTIONS_MAP[trigger])
+      setActiveSuggestion(0)
+      const anchor = val.substring(0, val.lastIndexOf(trigger) + trigger.length)
+      setSuggestionPrefix(anchor)
+    } else if (suggestions.length > 0) {
+      // Check if user is typing one of the suggestions
+      const lastWord = val.split(/[.(]/).pop() || ''
+      const filtered = suggestions.filter((s) => s.startsWith(lastWord))
+      if (filtered.length === 0) setSuggestions([])
+      setSuggestionPrefix('')
+    } else {
+      setSuggestions([])
+      setSuggestionPrefix('')
+    }
+
     if (val.trim().toLowerCase() === step.target.trim().toLowerCase()) {
       handleStepSuccess()
     }
   }
 
+  useEffect(() => {
+    if (!prefixRef.current) {
+      setSuggestionOffset(0)
+      return
+    }
+    setSuggestionOffset(prefixRef.current.offsetWidth)
+  }, [suggestionPrefix, suggestions.length])
+
+  // Keyboard navigation for suggestions + quick-accept
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Arrow navigation when suggestions present
+    if (e.key === 'ArrowDown' && suggestions.length > 0) {
+      e.preventDefault()
+      setActiveSuggestion((s) => Math.min(s + 1, suggestions.length - 1))
+      return
+    }
+    if (e.key === 'ArrowUp' && suggestions.length > 0) {
+      e.preventDefault()
+      setActiveSuggestion((s) => Math.max(s - 1, 0))
+      return
+    }
+
+    // Accept suggestion or autocomplete line on Tab
+    if (e.key === 'Tab') {
+      e.preventDefault()
+      if (suggestions.length > 0) {
+        const chosen = suggestions[activeSuggestion]
+        if (chosen) insertSuggestion(chosen)
+        return
+      }
+
+      // No suggestions: autocomplete the full target line
+      setInputValue(step.target)
+      setTimeout(() => handleStepSuccess(), 60)
+      return
+    }
+
+    if (e.key === 'Enter') {
+      if (suggestions.length > 0) {
+        e.preventDefault()
+        const chosen = suggestions[activeSuggestion]
+        if (chosen) insertSuggestion(chosen)
+        return
+      }
+
+      // If exact match, submit; otherwise ignore (user may press Enter intentionally)
+      if (inputValue.trim().toLowerCase() === step.target.trim().toLowerCase()) {
+        e.preventDefault()
+        handleStepSuccess()
+      }
+    }
+
+    if (e.key === 'Escape') {
+      setSuggestions([])
+    }
+  }
+
+  const insertSuggestion = (s: string) => {
+    // Build the new value by replacing the last token after a dot or paren
+    const lastDotIndex = inputValue.lastIndexOf('.')
+    const lastParen = inputValue.lastIndexOf('(')
+    let base = inputValue
+    if (lastDotIndex > -1 && lastDotIndex > lastParen) {
+      base = inputValue.substring(0, lastDotIndex + 1)
+    } else if (lastParen > -1 && lastParen > lastDotIndex) {
+      base = inputValue.substring(0, lastParen + 1)
+    } else if (/[\s\(]$/.test(inputValue)) {
+      base = inputValue
+    } else {
+      // remove trailing partial token
+      base = inputValue.replace(/[^\s.()]*$/g, '')
+    }
+
+    const insertion = TEST_SUGGESTION_SNIPPETS[s] ?? s
+    const newVal = base + insertion
+    setInputValue(newVal)
+    setSuggestions([])
+    inputRef.current?.focus()
+
+    if (newVal.trim().toLowerCase() === step.target.trim().toLowerCase()) {
+      handleStepSuccess()
+    }
+  }
+
+  const handleSuggestionClick = (s: string) => {
+    insertSuggestion(s)
+  }
+
+
+  const isCorrectRef = useRef(false)
+
   const handleStepSuccess = () => {
+    if (isCorrectRef.current) return
+    isCorrectRef.current = true
     setIsCorrect(true)
     setLogs((prev) => [...prev, `PASS  tests/profile.test.ts > ${step.feedback}`])
 
@@ -135,7 +281,9 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
       setCompletedLines((prev) => [...prev, step.target])
       setInputValue('')
       setIsCorrect(false)
+      isCorrectRef.current = false
       setShowHint(false)
+      setSuggestions([])
       if (currentStep < TEST_STEPS.length - 1) {
         setCurrentStep((prev) => prev + 1)
       } else {
@@ -164,12 +312,11 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
     >
       <div className="text-center mb-10">
         <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
-          Phase 2.5 · Unit Testing
+          Fase 2.5 · Pruebas Unitarias
         </p>
-        <h2 className="font-serif text-3xl font-medium text-white mb-3">Validate your Logic</h2>
+        <h2 className="font-serif text-3xl font-medium text-white mb-3">Validá tu Lógica</h2>
         <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
-          Sarah recommended adding tests. Use Jest and Supertest to verify the security and behavior
-          of your new endpoint.
+          Sarah recomendó agregar pruebas. Usa Jest y Supertest para verificar la seguridad y comportamiento de tu nuevo endpoint.
         </p>
       </div>
 
@@ -186,7 +333,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
               >
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44]">
-                    Test {currentStep + 1} / {TEST_STEPS.length}
+                    Prueba {currentStep + 1} / {TEST_STEPS.length}
                   </span>
                   {isCorrect && <CheckCircle size={18} className="text-emerald-500" />}
                 </div>
@@ -196,10 +343,10 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
                 <div className="pt-4 border-t border-white/5">
                   <button
                     onClick={() => setShowHint(!showHint)}
-                    className="text-[10px] font-mono text-[#a86f44] hover:text-[#c88f64] transition-colors flex items-center gap-2"
+                    className="text-[10px] font-mono text-[#a86f44] hover:text-[#c88f64] transition-colors flex items-center gap-2 cursor-pointer"
                   >
                     <Lightbulb size={14} />
-                    {showHint ? 'Hide Snippet' : 'Show Snippet'}
+                    {showHint ? 'Ocultar fragmento' : 'Mostrar fragmento'}
                   </button>
                   <AnimatePresence>
                     {showHint && (
@@ -209,7 +356,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
                         className="mt-3 p-3 rounded-sm bg-black/40 border border-white/5"
                       >
                         <p className="text-[9px] text-white/30 uppercase tracking-widest mb-2 font-mono">
-                          Reference Snippet
+                          Fragmento de referencia
                         </p>
                         <code className="text-[10px] text-[#a86f44] font-mono leading-relaxed block break-all">
                           {step.target}
@@ -229,17 +376,20 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
                 className="p-8 rounded-sm border border-emerald-500/20 bg-emerald-500/5 text-center shadow-2xl"
               >
                 <CheckCircle size={40} className="text-emerald-500 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-white mb-2">Tests Passing</h3>
+                <h3 className="text-sm font-bold text-white mb-2">Pruebas Exitosas</h3>
                 <p className="text-xs text-white/50 leading-relaxed mb-6">
-                  Your endpoint is now officially bulletproof. The team will appreciate the
-                  coverage.
+                  Tu endpoint ahora es oficialmente a prueba de balas. El equipo va a apreciar la cobertura.
                 </p>
-                <button
-                  onClick={onContinue}
-                  className="w-full h-11 bg-[#a86f44] text-white text-xs font-mono uppercase tracking-widest hover:bg-[#b87f54] transition-colors cursor-pointer rounded-sm shadow-lg shadow-[#a86f44]/10"
-                >
-                  Procede to Checkpoints
-                </button>
+                <div className="w-full flex justify-center pt-2">
+                  <button
+                    onClick={onContinue}
+                    className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white transition-colors relative py-1 cursor-pointer"
+                  >
+                    <span>Proceder a Puntos de Control</span>
+                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+                    <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
+                  </button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -248,7 +398,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
             <div className="px-4 py-2 border-b border-[#171717] bg-[#0A0A0A] flex items-center gap-2">
               <Terminal size={14} className="text-white/20" />
               <span className="font-mono text-[9px] text-white/20 uppercase tracking-widest">
-                Jest Runner
+                Ejecutor Jest
               </span>
             </div>
             <div className="p-4 font-mono text-[10px] space-y-1.5 h-[140px] overflow-y-auto scrollbar-hide">
@@ -304,22 +454,75 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
               ))}
 
               {!isAllDone && (
-                <div className="flex items-center gap-6 group">
-                  <span className="w-4 text-white/10 text-right select-none">
-                    {7 + completedLines.length}
-                  </span>
-                  <div className="flex-1 flex items-center gap-2">
-                    <div className="w-1.5 h-4 bg-[#a86f44] animate-pulse shrink-0 rounded-full" />
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={inputValue}
-                      onChange={handleInputChange}
-                      spellCheck={false}
-                      autoComplete="off"
-                      className="bg-transparent border-none outline-none text-white w-full p-0 h-5 placeholder:text-white/5 focus:ring-0"
-                      placeholder={showHint ? step.target : 'Type your test logic...'}
-                    />
+                <div className="flex flex-col relative">
+                  <div className="flex items-center gap-6 group">
+                    <span className="w-4 text-white/10 text-right select-none">
+                      {7 + completedLines.length}
+                    </span>
+                    <div className="flex-1 flex items-center gap-2 relative">
+                      <div className="w-1.5 h-4 bg-[#a86f44] animate-pulse shrink-0 rounded-full" />
+                      <div className="relative w-full min-h-5">
+                        {/* Presentation overlay: shows typed text + ghost text precisely in-flow */}
+                        <div className="absolute inset-0 pointer-events-none flex items-center">
+                          <div className="font-mono text-[13px] leading-[20px] whitespace-pre text-white w-full">
+                            <span className="opacity-100">{inputValue}</span>
+                            {showHint && step.target.startsWith(inputValue) && (
+                              <span className="text-white/20">{step.target.slice(inputValue.length)}</span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Hidden prefix measurement for suggestion menu alignment */}
+                        <span
+                          ref={prefixRef}
+                          className="absolute left-0 top-0 invisible pointer-events-none font-mono text-[13px] leading-5 whitespace-pre"
+                        >
+                          {suggestionPrefix}
+                        </span>
+
+                        {/* Real input sits on top but renders transparent text — caret remains visible */}
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          value={inputValue}
+                          onChange={handleInputChange}
+                          onKeyDown={handleKeyDown}
+                          spellCheck={false}
+                          autoComplete="off"
+                          placeholder={showHint ? '' : 'Escribí tu lógica de prueba...'}
+                          className="absolute left-0 top-0 w-full h-5 bg-transparent border-none outline-none text-transparent font-mono text-[13px] leading-5 whitespace-pre p-0 focus:ring-0"
+                          style={{ caretColor: '#a86f44' }}
+                        />
+                      </div>
+
+                      {/* Contextual Suggestions Menu */}
+                      <AnimatePresence>
+                        {suggestions.length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
+                            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                            exit={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
+                            className="absolute top-6 z-50 min-w-[120px] rounded-sm bg-[#111] border border-white/10 shadow-2xl p-1"
+                            style={{ left: suggestionOffset }}
+                          >
+                            {suggestions.map((s, i) => (
+                              <button
+                                key={i}
+                                onClick={() => handleSuggestionClick(s)}
+                                className={`w-full text-left px-2 py-1.5 rounded-sm font-mono text-[11px] transition-colors flex items-center justify-between ${
+                                  i === activeSuggestion
+                                    ? 'bg-[#a86f44]/20 text-[#a86f44]'
+                                    : 'text-white/40 hover:bg-white/5'
+                                }`}
+                              >
+                                {s}
+                                <span className="text-[8px] opacity-30">Prop</span>
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
                 </div>
               )}
@@ -331,10 +534,10 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
           <div className="px-5 py-2 border-t border-[#171717] bg-[#0A0A0A] flex items-center justify-between font-mono text-[9px] uppercase tracking-tighter text-white/20">
             <div className="flex gap-4">
               <span className="text-[#a86f44]">JEST</span>
-              <span>coverage: 94%</span>
+              <span>cobertura: 94%</span>
             </div>
             <div className="flex gap-4">
-              <span className="text-emerald-500/40">Watch Mode Active</span>
+              <span className="text-emerald-500/40">Modo Observación Activo</span>
             </div>
           </div>
         </div>

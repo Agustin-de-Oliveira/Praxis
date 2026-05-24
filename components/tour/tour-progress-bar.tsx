@@ -10,14 +10,15 @@ import { motion } from 'framer-motion'
 import type { TourPhase } from '@/lib/first-day-data'
 
 const PHASES: { id: TourPhase; label: string }[] = [
-  { id: 'storyline', label: 'Context' },
+  { id: 'storyline', label: 'Contexto' },
   { id: 'ticket', label: 'Ticket' },
-  { id: 'orientation', label: 'Codebase' },
-  { id: 'implement', label: 'Implement' },
-  { id: 'testing', label: 'Tests' },
-  { id: 'checkpoint', label: 'Checkpoints' },
-  { id: 'pr', label: 'PR Review' },
-  { id: 'debrief', label: 'Debrief' },
+  { id: 'orientation', label: 'Repositorio' },
+  { id: 'implement', label: 'Implementación' },
+  { id: 'testing', label: 'Pruebas' },
+  { id: 'checkpoint', label: 'Verificación' },
+  { id: 'pr', label: 'Revisión PR' },
+  { id: 'board', label: 'Tablero' },
+  { id: 'debrief', label: 'Resumen' },
 ]
 
 const PHASE_INDEX: Record<TourPhase, number> = {
@@ -28,7 +29,8 @@ const PHASE_INDEX: Record<TourPhase, number> = {
   testing: 4,
   checkpoint: 5,
   pr: 6,
-  debrief: 7,
+  board: 7,
+  debrief: 8,
 }
 
 interface TourProgressBarProps {

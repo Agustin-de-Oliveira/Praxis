@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Noto_Serif, JetBrains_Mono } from 'next/font/google'
+import { Inter, Noto_Serif, JetBrains_Mono, Tiny5 } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
@@ -20,10 +20,16 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
 })
 
+const tiny5 = Tiny5({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-tiny5',
+})
+
 export const metadata: Metadata = {
-  title: 'Praxis | Next-Generation Technical Validation in Latin America',
+  title: 'Praxis | Evaluaciones de Ingeniería de Alta Fidelidad',
   description:
-    'Operating in stealth mode. Praxis builds high-fidelity work environment simulations to assess, validate, and scale elite engineering teams in Latin America.',
+    'Operando en modo sigiloso. Praxis reemplaza las pruebas de código tradicionales con simulaciones inmersivas de entornos de trabajo reales para evaluar talento técnico.',
   generator: 'praxis',
   icons: {
     icon: [
@@ -58,7 +64,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark bg-background">
       <body
-        className={`${inter.variable} ${notoSerif.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        className={`${inter.variable} ${notoSerif.variable} ${jetbrainsMono.variable} ${tiny5.variable} font-sans antialiased`}
       >
         <SmoothScroll />
         {children}

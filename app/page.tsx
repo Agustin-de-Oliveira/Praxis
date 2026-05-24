@@ -1,188 +1,407 @@
 'use client'
 
-import { motion, type Variants } from 'framer-motion'
-import { Mail, Globe, Cpu, Shield, ArrowRight } from 'lucide-react'
+import { motion, type Variants, AnimatePresence } from 'framer-motion'
+import { Github, Linkedin, Mail, ArrowRight, Check, Loader2, Shield } from 'lucide-react'
 import { Dithering } from '@paper-design/shaders-react'
-import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { Spotlight } from '@/components/ui/spotlight'
+import { useState, useEffect, useRef } from 'react'
+import { createClient } from '@/utils/supabase/client'
 
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.2,
-    },
-  },
-}
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: (i: number) => ({
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.8,
+      duration: 0.7,
       ease: [0.21, 0.47, 0.32, 0.98],
+      delay: 0.1 + i * 0.08,
     },
-  },
+  }),
 }
 
-export default function StealthLandingPage() {
-  const [logs, setLogs] = useState<string[]>([])
+function ScrambleText({ text, trigger }: { text: string; trigger: any }) {
+  const [displayedText, setDisplayedText] = useState(text)
+  const [scrambleProgress, setScrambleProgress] = useState(0)
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
   useEffect(() => {
-    const mockLogs = [
-      'PRX_GATEWAY initialized (saopaulo_node)',
-      'Protocol handshake active',
-      'Direct verification pipe: online',
-      'Target: Latin American technical validation core',
-      'Status: STEALTH_MODE',
-    ]
+    let iteration = 0
+    const totalSteps = text.length
+    const increment = Math.max(1.5, totalSteps / 12)
 
-    let current = 0
     const interval = setInterval(() => {
-      if (current < mockLogs.length) {
-        setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${mockLogs[current]}`])
-        current++
-      } else {
+      setScrambleProgress(iteration)
+      setDisplayedText(
+        text
+          .split('')
+          .map((char, index) => {
+            if (char === ' ') return ' '
+            if (index < iteration) {
+              return text[index]
+            }
+            return chars[Math.floor(Math.random() * chars.length)]
+          })
+          .join('')
+      )
+
+      if (iteration >= totalSteps) {
         clearInterval(interval)
       }
-    }, 800)
+      iteration += increment
+    }, 15)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [trigger, text])
 
   return (
-    <div className="min-h-screen overflow-x-hidden relative flex flex-col justify-between bg-[#080808] text-white">
-      {/* Background shader */}
-      <div className="absolute inset-0 h-full w-full pointer-events-none opacity-40">
+    <>
+      {displayedText.split('').map((char, index) => {
+        const isScrambled = index >= scrambleProgress && char !== ' '
+        return (
+          <span
+            key={index}
+            className={isScrambled ? 'font-mono opacity-65 inline-block min-w-[1ch]' : ''}
+          >
+            {char}
+          </span>
+        )
+      })}
+    </>
+  )
+}
+
+/* ── Animated counter that rolls up from 0 ── */
+function AnimatedCounter({ target, duration = 1.8 }: { target: number; duration?: number }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  const started = useRef(false)
+
+  useEffect(() => {
+    if (started.current) return
+    started.current = true
+    const startTime = performance.now()
+
+    function tick(now: number) {
+      const elapsed = now - startTime
+      const progress = Math.min(elapsed / (duration * 1000), 1)
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setCount(Math.round(eased * target))
+      if (progress < 1) requestAnimationFrame(tick)
+    }
+
+    requestAnimationFrame(tick)
+  }, [target, duration])
+
+  return <span ref={ref}>{count}</span>
+}
+
+type FormState = 'idle' | 'loading' | 'success' | 'error'
+
+export default function StealthLandingPage() {
+  const [isEasterEgg, setIsEasterEgg] = useState(false)
+  const [isVibrating, setIsVibrating] = useState(false)
+  const [email, setEmail] = useState('')
+  const [formState, setFormState] = useState<FormState>('idle')
+  const [isFocused, setIsFocused] = useState(false)
+
+  const triggerEasterEgg = () => {
+    const audio = new Audio('/sounds/shock boom.m4a')
+    audio.volume = 0.06
+    audio.play().catch((err) => console.log('Audio playback failed', err))
+    setIsEasterEgg((prev) => !prev)
+    setIsVibrating(true)
+    setTimeout(() => {
+      setIsVibrating(false)
+    }, 300)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email || formState === 'loading' || formState === 'success') return
+    setFormState('loading')
+
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('waitlist')
+        .insert([{ email, source: 'landing' }])
+
+      if (error) {
+        console.error('Waitlist error:', error)
+        setFormState('error')
+      } else {
+        setFormState('success')
+      }
+    } catch (err) {
+      console.error('Waitlist catch:', err)
+      setFormState('error')
+    }
+  }
+
+  const fontClass = isEasterEgg ? 'font-tiny5' : 'font-sans'
+
+  return (
+    <div className={`min-h-screen relative flex flex-col bg-[#060606] text-white selection:bg-[#a86f44]/20 selection:text-[#a86f44] overflow-hidden ${isEasterEgg ? 'font-tiny5' : ''}`}>
+      {/* Spotlight Effect */}
+      <Spotlight
+        className="-top-40 left-1/2 -translate-x-1/2 md:-top-80 h-[150%] opacity-100"
+        fill="white"
+      />
+
+      {/* Background */}
+      <div className="fixed inset-0 pointer-events-none opacity-20">
         <Dithering
           style={{ height: '100%', width: '100%' }}
-          colorBack="hsla(0, 0%, 0%, 1.00)"
-          colorFront="hsl(0, 0%, 5%)"
+          colorBack="hsla(0,0%,0%,1)"
+          colorFront="hsl(0,0%,4%)"
           shape="warp"
           type="4x4"
           pxSize={2}
-          offsetX={0}
-          offsetY={0}
           scale={0.8}
-          rotation={0}
-          speed={0.1}
+          speed={0.06}
         />
       </div>
 
-      {/* Top Navbar */}
-      <header className="relative z-10 w-full max-w-5xl mx-auto px-6 py-8 flex justify-between items-center border-b border-white/[0.04]">
-        <div className="flex items-center gap-3">
-          <img src="/logo.png" className="h-6 w-6 brightness-90" alt="Praxis Logo" />
-          <span className="font-sans text-sm font-semibold tracking-widest uppercase text-white/90">
-            praxis
-          </span>
-        </div>
-        <div className="flex items-center gap-2 px-3 py-1 bg-white/[0.02] border border-white/[0.06] rounded-full">
-          <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-          <span className="font-mono text-[9px] uppercase tracking-widest text-white/50">
-            Stealth Active
-          </span>
-        </div>
-      </header>
+      {/* Thin accent line at very top */}
+      <div className="relative z-10 h-[1px] w-full bg-gradient-to-r from-transparent via-[#a86f44]/40 to-transparent" />
 
-      {/* Hero Content */}
-      <main className="relative z-10 w-full max-w-5xl mx-auto px-6 py-20 md:py-28 flex flex-col md:grid md:grid-cols-[1.2fr_0.8fr] gap-16 items-center flex-1">
-        <motion.div
-          className="flex flex-col text-left"
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-        >
-          <motion.div variants={itemVariants} className="mb-6 flex items-center gap-2">
-            <span className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44] bg-[#a86f44]/5 border border-[#a86f44]/20 px-2.5 py-1 rounded-sm">
-              LATAM Technical Core
+      {/* Content wrapper — vertically and horizontally centered */}
+      <div className="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-24 md:py-36">
+        <div className={`w-full max-w-2xl flex flex-col items-center text-center transition-all duration-300 ${isVibrating ? 'animate-vibrate' : ''}`}>
+          {/* Logo + wordmark */}
+          <motion.div
+            className="flex flex-col items-center gap-4 mb-12"
+            custom={0}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          >
+            <div className="relative group cursor-pointer" onClick={triggerEasterEgg}>
+              {/* Glow effect behind logo */}
+              <div className="absolute inset-0 bg-[#a86f44]/25 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              <img
+                src="/logo.png"
+                className="h-16 w-16 opacity-95 relative z-10 transition-transform duration-500 ease-out group-hover:scale-110 object-contain"
+                alt="Praxis Logo"
+              />
+            </div>
+            <span className={`${fontClass} text-[12px] font-semibold tracking-[0.45em] uppercase text-white/80`}>
+              <ScrambleText text="Praxis" trigger={isEasterEgg} />
             </span>
           </motion.div>
 
+          {/* Headline */}
           <motion.h1
-            variants={itemVariants}
-            className="text-4xl md:text-5xl font-sans font-semibold tracking-tight text-white/90 leading-[1.1] mb-6"
+            className={`text-[clamp(2.2rem,6vw,3.6rem)] ${fontClass} font-semibold tracking-tight text-white/95 leading-[1.12] mb-6 text-balance`}
+            custom={1}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
           >
-            Redefining technical validation for Latin America's elite engineering teams.
+            <ScrambleText text="Simulaciones reales de ingeniería." trigger={isEasterEgg} />
           </motion.h1>
 
+          {/* Subtext */}
           <motion.p
-            variants={itemVariants}
-            className="text-sm md:text-base text-white/50 max-w-xl leading-relaxed mb-10 font-sans"
+            className={`text-sm md:text-[15px] text-white/45 max-w-md leading-[1.8] mb-16 ${fontClass} text-pretty`}
+            custom={2}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
           >
-            Praxis replaces generic coding tests with high-fidelity, interactive work environment
-            simulations. We are operating in stealth mode, partnering with leading engineering teams to
-            assess, validate, and scale their technical talent pipelines.
+            <ScrambleText text="Medí el criterio técnico de tus candidatos con entornos reales de trabajo, no acertijos de código." trigger={isEasterEgg} />
           </motion.p>
 
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 items-start">
-            <a
-              href="mailto:partners@praxis.dev"
-              className="interactive inline-flex items-center gap-3 px-6 py-3.5 bg-white text-black font-sans text-xs uppercase tracking-widest font-semibold hover:bg-neutral-200 transition-all rounded-sm animate-pulse"
-            >
-              <Mail className="h-4 w-4" />
-              Contact Partners
-            </a>
+          {/* ── Enhanced Waitlist CTA ── */}
+          <motion.div
+            className="w-full max-w-lg mb-20"
+            custom={3}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          >
+            {/* CTA Card */}
+            <div className={`relative rounded-sm border transition-all duration-500 ${
+              isFocused
+                ? 'border-[#a86f44]/30 shadow-[0_0_40px_-12px_rgba(168,111,68,0.15)]'
+                : 'border-white/[0.06]'
+            }`}>
+              {/* Shimmer edge — top */}
+              <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#a86f44]/40 to-transparent opacity-0 transition-opacity duration-500" style={{ opacity: isFocused ? 1 : 0 }} />
+
+              <div className="px-6 pt-7 pb-6 sm:px-8 sm:pt-8 sm:pb-7">
+                {/* Heading */}
+                <div className="mb-5">
+                  <h2 className={`${fontClass} text-[15px] sm:text-base font-semibold text-white/90 mb-1.5 tracking-tight`}>
+                    <ScrambleText text="Acceso anticipado" trigger={isEasterEgg} />
+                  </h2>
+                  <p className={`${fontClass} text-[13px] text-white/35 leading-relaxed`}>
+                    <ScrambleText text="Sé de los primeros en evaluar talento con simulaciones reales." trigger={isEasterEgg} />
+                  </p>
+                </div>
+
+                {/* Form */}
+                <AnimatePresence mode="wait">
+                  {formState === 'success' ? (
+                    <motion.div
+                      key="success"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, ease: [0.21, 0.47, 0.32, 0.98] }}
+                      className="flex items-center gap-3 py-3"
+                    >
+                      <div className="h-8 w-8 rounded-full bg-[#a86f44]/15 border border-[#a86f44]/30 flex items-center justify-center flex-shrink-0">
+                        <Check className="h-4 w-4 text-[#a86f44]" />
+                      </div>
+                      <div className="text-left">
+                        <p className={`${fontClass} text-[13px] font-medium text-white/80`}>
+                          Estás en la lista
+                        </p>
+                        <p className={`${fontClass} text-[11px] text-white/30 mt-0.5`}>
+                          Te contactamos pronto con tu acceso.
+                        </p>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <div className="flex flex-col gap-2 w-full">
+                      <motion.form
+                        key="form"
+                        onSubmit={handleSubmit}
+                        className="flex flex-col sm:flex-row gap-2.5 w-full"
+                      >
+                        <div className="relative flex-1">
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={() => setIsFocused(false)}
+                            placeholder="tu@empresa.com"
+                            required
+                            className={`w-full px-4 py-3 text-sm ${fontClass} bg-white/[0.03] border border-white/[0.08] rounded-sm focus:outline-none focus:border-[#a86f44]/40 focus:bg-white/[0.05] text-white/90 placeholder:text-white/20 transition-all duration-300`}
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={formState === 'loading'}
+                          className={`group relative px-6 py-3 text-xs uppercase tracking-[0.18em] ${fontClass} font-semibold text-white bg-[#a86f44]/15 border border-[#a86f44]/30 hover:bg-[#a86f44]/25 hover:border-[#a86f44]/50 active:scale-[0.98] transition-all duration-300 cursor-pointer overflow-hidden rounded-sm disabled:cursor-wait`}
+                        >
+                          {/* Shimmer sweep */}
+                          <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/[0.06] to-transparent pointer-events-none" />
+                          {/* Glow on hover */}
+                          <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[#a86f44]/5 pointer-events-none" />
+                          
+                          <span className="relative z-10 flex items-center justify-center gap-2">
+                            {formState === 'loading' ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <>
+                                <ScrambleText text="Quiero acceso" trigger={isEasterEgg} />
+                                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+                              </>
+                            )}
+                          </span>
+                        </button>
+                      </motion.form>
+                      {formState === 'error' && (
+                        <p className={`text-xs text-red-400/90 text-left mt-1 ${fontClass}`}>
+                          Hubo un problema. Por favor intentá de nuevo.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </AnimatePresence>
+
+                {/* Social proof + Trust row */}
+                {formState !== 'success' && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between mt-5 gap-3">
+                    {/* Social proof */}
+                    <div className="flex items-center gap-2.5">
+                      {/* Stacked avatars */}
+                      <div className="flex -space-x-1.5">
+                        {['#6366f1', '#a86f44', '#10b981', '#f59e0b'].map((color, i) => (
+                          <div
+                            key={i}
+                            className="h-5 w-5 rounded-full border border-[#060606]"
+                            style={{ backgroundColor: color, opacity: 0.7 - i * 0.1 }}
+                          />
+                        ))}
+                      </div>
+                      <p className={`${fontClass} text-[11px] text-white/30`}>
+                        <span className="text-white/50 font-medium tabular-nums">
+                          <AnimatedCounter target={48} />+
+                        </span>{' '}
+                        equipos en espera
+                      </p>
+                    </div>
+
+                    {/* Trust signal */}
+                    <div className="flex items-center gap-1.5 text-white/20">
+                      <Shield className="h-3 w-3" />
+                      <span className={`${fontClass} text-[10px] uppercase tracking-[0.15em]`}>
+                        Sin spam · cancelá cuando quieras
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </motion.div>
-        </motion.div>
 
-        {/* System Terminal Status Card */}
-        <motion.div
-          className="w-full relative bg-[#0a0a0a]/80 border border-white/[0.06] rounded-sm p-6 overflow-hidden flex flex-col h-[280px] shadow-2xl backdrop-blur-md"
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
-        >
-          <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-4">
-            <div className="flex items-center gap-2">
-              <Cpu className="h-3.5 w-3.5 text-white/30" />
-              <span className="font-mono text-[9px] uppercase tracking-widest text-white/40">
-                System Diagnostics
-              </span>
-            </div>
-            <div className="flex gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-white/10" />
-              <span className="h-1.5 w-1.5 rounded-full bg-white/10" />
-              <span className="h-1.5 w-1.5 rounded-full bg-white/10" />
-            </div>
-          </div>
+          {/* Divider */}
+          <motion.div
+            className="h-[1px] w-12 bg-white/[0.08] mb-8"
+            custom={5}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          />
 
-          <div className="flex-1 font-mono text-[10px] text-white/30 space-y-2 overflow-y-auto select-none">
-            {logs.map((log, index) => (
-              <div key={index} className="flex gap-2">
-                <span className="text-[#a86f44]/60">&gt;</span>
-                <span className="text-white/60">{log}</span>
-              </div>
-            ))}
-            {logs.length < 5 && (
-              <div className="flex gap-2 items-center">
-                <span className="text-[#a86f44]/60">&gt;</span>
-                <span className="h-3 w-1 bg-white/40 animate-pulse" />
-              </div>
-            )}
-          </div>
-
-          <div className="border-t border-white/[0.04] pt-3 mt-4 flex justify-between text-[8px] font-mono text-white/20">
-            <span>SECURE PIPE // ACTIVE</span>
-            <span>LATAM REGION</span>
-          </div>
-        </motion.div>
-      </main>
-
-      {/* Minimal Footer */}
-      <footer className="relative z-10 w-full max-w-5xl mx-auto px-6 py-8 border-t border-white/[0.04] flex flex-col sm:flex-row justify-between items-center gap-4 text-white/30 font-sans text-xs">
-        <div className="flex items-center gap-2">
-          <span>&copy; {new Date().getFullYear()} Praxis. All rights reserved.</span>
+          {/* Links row */}
+          <motion.nav
+            className={`flex flex-wrap justify-center items-center gap-x-8 gap-y-3 text-white/25 text-[11px] ${fontClass}`}
+            custom={6}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          >
+            <a
+              href="https://github.com/Agus-dot1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white/60 transition-colors flex items-center gap-1.5"
+            >
+              <Github className="h-3.5 w-3.5" />
+              GitHub
+            </a>
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white/60 transition-colors flex items-center gap-1.5"
+            >
+              <Linkedin className="h-3.5 w-3.5" />
+              LinkedIn
+            </a>
+            <a
+              href="mailto:agustin@praxis.dev"
+              className="hover:text-white/60 transition-colors flex items-center gap-1.5"
+            >
+              <Mail className="h-3.5 w-3.5" />
+              agustin@praxis.dev
+            </a>
+          </motion.nav>
         </div>
-        <div className="flex items-center gap-6">
-          <span className="flex items-center gap-1.5">
-            <Globe className="h-3.5 w-3.5" />
-            Buenos Aires &middot; S&atilde;o Paulo &middot; Mexico City
-          </span>
-        </div>
+      </div>
+
+      {/* Footer — barely there */}
+      <footer className="relative z-10 px-6 py-6 text-center">
+        <p className={`text-white/15 tracking-wider uppercase ${isEasterEgg ? 'font-tiny5 text-[11px]' : 'font-mono text-[9px]'}`}>
+          &copy; {new Date().getFullYear()} Praxis
+        </p>
       </footer>
     </div>
   )

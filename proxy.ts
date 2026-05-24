@@ -33,6 +33,18 @@ function isProtectedPath(pathname: string): boolean {
 }
 
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // Restrict all routes other than landing page (/) and API routes (/api/*) for the public launch.
+  // Static assets with extensions are bypassed to ensure they load correctly.
+  const hasFileExtension = /\.[a-zA-Z0-9]+$/.test(pathname)
+  if (pathname !== '/' && !pathname.startsWith('/api/') && !hasFileExtension) {
+    const landingUrl = request.nextUrl.clone()
+    landingUrl.pathname = '/'
+    landingUrl.search = ''
+    return NextResponse.redirect(landingUrl)
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -59,8 +71,6 @@ export async function proxy(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  const { pathname } = request.nextUrl
 
   if (isProtectedPath(pathname) && !user) {
     const loginUrl = request.nextUrl.clone()

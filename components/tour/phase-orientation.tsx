@@ -80,43 +80,43 @@ CREATE TABLE users (
 }
 
 const PURPOSES: Record<string, string> = {
-  'src/': 'Main application source directory',
-  'src/index.ts': 'Express app entry point & route registration',
-  'src/middleware/': 'Custom Express middlewares',
-  'src/middleware/auth.ts': 'JWT validation & user context injection',
-  'src/routes/': 'API route handlers',
-  'src/routes/auth.ts': 'User registration & authentication endpoints',
-  'src/routes/profile.ts': 'User profile data retrieval (current task)',
-  'src/db/': 'Database schema & query helpers',
-  'src/db/schema.ts': 'PostgreSQL table definitions',
-  'src/db/queries.ts': 'Data access layer (DAL) functions',
-  '.env.example': 'Template for environment variables',
-  'package.json': 'Project dependencies & scripts',
+  'src/': 'Directorio principal del código fuente',
+  'src/index.ts': 'Punto de entrada de Express y registro de rutas',
+  'src/middleware/': 'Middlewares personalizados de Express',
+  'src/middleware/auth.ts': 'Validación de JWT e inyección de contexto de usuario',
+  'src/routes/': 'Manejadores de rutas de la API',
+  'src/routes/auth.ts': 'Endpoints de registro y autenticación de usuarios',
+  'src/routes/profile.ts': 'Obtención de datos del perfil de usuario (tarea actual)',
+  'src/db/': 'Esquema de base de datos y helpers de consulta',
+  'src/db/schema.ts': 'Definición de tablas de PostgreSQL',
+  'src/db/queries.ts': 'Funciones de la capa de acceso a datos (DAL)',
+  '.env.example': 'Plantilla de variables de entorno',
+  'package.json': 'Dependencias y scripts del proyecto',
 }
 
 const TOOLTIPS = [
   {
     id: 0,
-    title: 'Project Architecture',
-    body: 'This is a clean Express + PostgreSQL setup. Everything is wired: routes for endpoints, middleware for auth, and a dedicated database layer.',
+    title: 'Arquitectura del Proyecto',
+    body: 'Esta es una configuración limpia de Express + PostgreSQL. Todo está conectado: las rutas para los endpoints, el middleware de autenticación y una capa de base de datos dedicada.',
     target: 'src/',
   },
   {
     id: 1,
-    title: 'The Auth Gate',
-    body: "The `auth.ts` middleware verifies the JWT and attaches the payload to `req.user`. You'll use this to identify the user.",
+    title: 'La Barrera de Auth',
+    body: 'El middleware `auth.ts` verifica el JWT y adjunta la información a `req.user`. Lo usarás para identificar al usuario.',
     target: 'src/middleware/auth.ts',
   },
   {
     id: 2,
-    title: 'The Profile Stub',
-    body: "This is your task. It's registered in the router but currently returns a 501. You'll replace this with real logic.",
+    title: 'El Stub de Perfil',
+    body: 'Esta es tu tarea. Está registrado en el enrutador pero actualmente retorna un 501. Lo vas a reemplazar con lógica real.',
     target: 'src/routes/profile.ts',
   },
   {
     id: 3,
-    title: 'Database Access',
-    body: 'Queries are pre-written in `src/db/queries.ts`. `getUserById` handles the connection and returns a clean user object.',
+    title: 'Acceso a la Base de Datos',
+    body: 'Las consultas ya están escritas en `src/db/queries.ts`. `getUserById` maneja la conexión y retorna un objeto de usuario limpio.',
     target: 'src/db/queries.ts',
   },
 ]
@@ -146,11 +146,11 @@ export default function PhaseOrientation({ onContinue }: PhaseOrientationProps) 
       {/* Centered Header */}
       <div className="text-center mb-10">
         <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
-          Phase 1 · Codebase Orientation
+          Fase 1 · Orientación del Repositorio
         </p>
-        <h2 className="font-serif text-3xl font-medium text-white mb-3">Explore the Repository</h2>
+        <h2 className="font-serif text-3xl font-medium text-white mb-3">Explorá el Repositorio</h2>
         <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
-          Get familiar with the project structure. Click any file to inspect its source code.
+          Familiarizate con la estructura del proyecto. Hacé clic en cualquier archivo para inspeccionar su código fuente.
         </p>
       </div>
 
@@ -160,7 +160,7 @@ export default function PhaseOrientation({ onContinue }: PhaseOrientationProps) 
         <div className="col-span-3 border-r border-[#171717] bg-[#0F0F0F]/50">
           <div className="px-4 py-3 border-b border-[#171717] flex items-center justify-between">
             <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">
-              Explorer
+              Explorador
             </span>
             <Folder size={14} className="text-white/10" />
           </div>
@@ -173,10 +173,10 @@ export default function PhaseOrientation({ onContinue }: PhaseOrientationProps) 
 
               // Simple folder labeling logic
               const getLabel = () => {
-                if (entry.path === 'src/') return 'Core'
-                if (entry.path === 'src/middleware/') return 'Auth'
-                if (entry.path === 'src/routes/') return 'Endpoints'
-                if (entry.path === 'src/db/') return 'Persistence'
+                if (entry.path === 'src/') return 'Núcleo'
+                if (entry.path === 'src/middleware/') return 'Autenticación'
+                if (entry.path === 'src/routes/') return 'Rutas'
+                if (entry.path === 'src/db/') return 'Persistencia'
                 return null
               }
               const label = getLabel()
@@ -255,7 +255,7 @@ export default function PhaseOrientation({ onContinue }: PhaseOrientationProps) 
                 {activeFile}
                 {PREVIEW_CODE[activeFile] && (
                   <span className="px-1.5 py-0.5 rounded-sm bg-white/5 text-white/40 text-[8px] border border-white/10">
-                    READ-ONLY
+                    SÓLO LECTURA
                   </span>
                 )}
               </span>
@@ -280,7 +280,7 @@ export default function PhaseOrientation({ onContinue }: PhaseOrientationProps) 
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-mono text-[8px] uppercase tracking-widest text-[#a86f44] mb-1">
-                        Step {tooltipStep + 1} of {TOOLTIPS.length}
+                        Paso {tooltipStep + 1} de {TOOLTIPS.length}
                       </p>
                       <p className="text-xs font-bold text-white mb-1 leading-tight">{tip.title}</p>
                       <p className="text-[10px] text-white/50 leading-relaxed">{tip.body}</p>
@@ -350,7 +350,7 @@ export default function PhaseOrientation({ onContinue }: PhaseOrientationProps) 
                 >
                   <Code size={40} className="mb-4" />
                   <p className="font-mono text-[9px] uppercase tracking-widest">
-                    Select a file to preview its contents
+                    Seleccioná un archivo para previsualizar su contenido
                   </p>
                 </motion.div>
               )}
@@ -360,50 +360,54 @@ export default function PhaseOrientation({ onContinue }: PhaseOrientationProps) 
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center gap-6 mt-12 w-full max-w-md">
-        <div className="flex-1 h-px bg-white/10" />
-        <div className="flex gap-2">
-          {tooltipStep > 0 && (
-            <button
-              onClick={() => setTooltipStep((s) => s - 1)}
-              className="h-12 w-12 flex items-center justify-center rounded-sm border border-white/10 bg-white/[0.02] text-white/40 hover:text-white transition-all cursor-pointer"
-            >
-              <ArrowLeft size={18} />
-            </button>
-          )}
+      <div className="flex flex-col items-center gap-6 mt-12 w-full max-w-lg">
+        <div className="flex items-center gap-4 w-full">
+          <div className="flex-1 h-[1px] bg-white/10" />
+          <div className="flex items-center gap-6">
+            {tooltipStep > 0 && (
+              <button
+                onClick={() => setTooltipStep((s) => s - 1)}
+                className="group flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/40 hover:text-white/80 transition-colors relative py-1 cursor-pointer"
+              >
+                <span className="inline-block transition-transform duration-300 group-hover:-translate-x-1.5">←</span>
+                <span>Anterior</span>
+              </button>
+            )}
 
-          {tooltipStep < TOOLTIPS.length - 1 ? (
-            <>
+            {tooltipStep < TOOLTIPS.length - 1 ? (
               <button
                 onClick={() => {
                   setTooltipStep((s) => s + 1)
-                  setSelectedFile(null) // Reset manual selection when advancing
+                  setSelectedFile(null)
                 }}
-                className="h-12 px-8 flex items-center gap-3 rounded-sm bg-[#a86f44] text-sm font-medium text-white hover:bg-[#b87f54] transition-all cursor-pointer shadow-xl shadow-[#a86f44]/10"
+                className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white transition-colors relative py-1 cursor-pointer"
               >
-                Next Step
-                <ArrowRight className="w-4 h-4" />
+                <span>Siguiente paso</span>
+                <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
               </button>
-            </>
-          ) : (
-            <button
-              onClick={onContinue}
-              className="h-12 px-10 flex items-center gap-3 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer hover:bg-[#b87f54] transition-all shadow-xl shadow-[#a86f44]/10"
-            >
-              Start Implementation
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          )}
+            ) : (
+              <button
+                onClick={onContinue}
+                className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white transition-colors relative py-1 cursor-pointer"
+              >
+                <span>Comenzar implementación</span>
+                <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
+              </button>
+            )}
+          </div>
+          <div className="flex-1 h-[1px] bg-white/10" />
         </div>
-        <div className="flex-1 h-px bg-white/10" />
-      </div>
 
-      <button
-        onClick={onContinue}
-        className="mt-6 font-mono text-[9px] uppercase tracking-widest text-white/20 hover:text-white/40 transition-colors"
-      >
-        Skip Orientation
-      </button>
+        <button
+          onClick={onContinue}
+          className="group inline-flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] font-mono text-white/20 hover:text-white/50 transition-colors cursor-pointer relative py-0.5"
+        >
+          <span>Omitir Orientación</span>
+          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+        </button>
+      </div>
     </motion.div>
   )
 }

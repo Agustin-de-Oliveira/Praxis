@@ -76,7 +76,7 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
           <Bell className="text-[#a86f44] w-4 h-4" />
         </motion.div>
         <span className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44]">
-          New ticket assigned · {SCN008_TICKET.id}
+          Nuevo ticket asignado · {SCN008_TICKET.id}
         </span>
       </motion.div>
 
@@ -127,7 +127,7 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
           {/* Acceptance criteria */}
           <div className="mb-6">
             <p className="font-mono text-[9px] uppercase tracking-widest text-white/25 mb-3">
-              Acceptance criteria
+              Criterios de aceptación
             </p>
             <motion.ul
               className="space-y-2.5"
@@ -160,13 +160,16 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
         transition={{ delay: 1.2, duration: 0.4 }}
         className="mt-6"
       >
-        <button
-          onClick={onContinue}
-          className="w-full h-12 flex items-center justify-center gap-3 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer transition-colors hover:bg-[#b87f54]"
-        >
-          <span>Explore the codebase</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
+        <div className="w-full flex justify-center py-2">
+          <button
+            onClick={onContinue}
+            className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white transition-colors relative py-1 cursor-pointer"
+          >
+            <span>Explorar el repositorio</span>
+            <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+            <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
+          </button>
+        </div>
       </motion.div>
     </motion.div>
   )

@@ -68,6 +68,14 @@ const DIFF_LINES = [
   { type: 'new', content: '  }', line: 16 },
 ]
 
+const PR_SUGGESTIONS = [
+  'feat: agregar endpoint de perfil de usuario',
+  'feat: implementar GET /api/profile',
+  'feat: endpoint de perfil con auth JWT',
+  'fix: middleware de autenticación jwt',
+  'chore: configurar endpoint de perfil de usuario',
+]
+
 interface PhasePRReviewProps {
   onContinue: () => void
 }
@@ -81,8 +89,49 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
   // Interactive Form State
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState(
-    '## Changes\n- Implemented GET /api/profile\n- Added auth middleware validation\n- Sanitized sensitive fields'
+    '## Cambios\n- GET /api/profile implementado\n- Agregada validación del middleware de autenticación\n- Sanitizados los campos sensibles'
   )
+
+  // Autocomplete State
+  const [prSuggestions, setPrSuggestions] = useState<string[]>([])
+  const [activePrSuggestion, setActivePrSuggestion] = useState(0)
+  const [showPrSuggestions, setShowPrSuggestions] = useState(false)
+
+  const handleTitleChange = (val: string) => {
+    setTitle(val)
+    if (val.trim() === '') {
+      setPrSuggestions(PR_SUGGESTIONS)
+    } else {
+      const filtered = PR_SUGGESTIONS.filter((s) =>
+        s.toLowerCase().includes(val.toLowerCase())
+      )
+      setPrSuggestions(filtered)
+    }
+    setActivePrSuggestion(0)
+  }
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown' && showPrSuggestions && prSuggestions.length > 0) {
+      e.preventDefault()
+      setActivePrSuggestion((s) => Math.min(s + 1, prSuggestions.length - 1))
+      return
+    }
+    if (e.key === 'ArrowUp' && showPrSuggestions && prSuggestions.length > 0) {
+      e.preventDefault()
+      setActivePrSuggestion((s) => Math.max(s - 1, 0))
+      return
+    }
+    if (e.key === 'Tab' || e.key === 'Enter') {
+      if (showPrSuggestions && prSuggestions.length > 0) {
+        e.preventDefault()
+        setTitle(prSuggestions[activePrSuggestion])
+        setShowPrSuggestions(false)
+      }
+    }
+    if (e.key === 'Escape') {
+      setShowPrSuggestions(false)
+    }
+  }
 
   const isValidTitle =
     /^(feat|fix|chore|docs|refactor|test|style|ci|perf|build)(\(.*\))?: .+/i.test(title)
@@ -115,12 +164,11 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
       {/* Header */}
       <div className="text-center mb-10">
         <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
-          Phase 4 · PR Review
+          Fase 4 · Revisión de PR
         </p>
-        <h2 className="font-serif text-3xl font-medium text-white mb-3">Propose your Changes</h2>
+        <h2 className="font-serif text-3xl font-medium text-white mb-3">Proponé tus Cambios</h2>
         <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
-          Submit your implementation for review. The senior engineering team will audit your code
-          for patterns and security.
+          Enviá tu implementación para revisión. El equipo sénior de ingeniería auditará tu código en busca de patrones y seguridad.
         </p>
       </div>
 
@@ -133,26 +181,32 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
               <div className="flex items-center gap-2 mb-2">
                 <Lightbulb size={16} className="text-[#a86f44]" />
                 <span className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44]">
-                  Sarah's Tip: Conventional Commits
+                  Consejo de Sarah: Conventional Commits
                 </span>
               </div>
               <p className="text-[11px] text-white/40 leading-relaxed italic">
-                "At Praxis, we follow Conventional Commits. Start your title with{' '}
+                "En Praxis seguimos Conventional Commits. Comenzá tu título con{' '}
                 <span className="text-white/60">feat:</span>,{' '}
-                <span className="text-white/60">fix:</span>, or{' '}
-                <span className="text-white/60">chore:</span> so our changelog remains clean."
+                <span className="text-white/60">fix:</span> o{' '}
+                <span className="text-white/60">chore:</span> para mantener limpio nuestro historial de cambios."
               </p>
 
               <div className="space-y-4 pt-4 border-t border-white/5">
-                <div>
+                <div className="relative">
                   <label className="block font-mono text-[9px] uppercase tracking-widest text-white/20 mb-2">
-                    PR Title
+                    Título del PR
                   </label>
                   <input
                     type="text"
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g. feat: add profile endpoint"
+                    onChange={(e) => handleTitleChange(e.target.value)}
+                    onKeyDown={handleTitleKeyDown}
+                    onFocus={() => {
+                      setPrSuggestions(title ? PR_SUGGESTIONS.filter(s => s.toLowerCase().includes(title.toLowerCase())) : PR_SUGGESTIONS)
+                      setShowPrSuggestions(true)
+                    }}
+                    onBlur={() => setShowPrSuggestions(false)}
+                    placeholder="ej. feat: agregar endpoint de perfil"
                     className={`w-full h-10 px-4 rounded-sm border bg-[#050505] font-mono text-xs text-white outline-none transition-all ${
                       title && !isValidTitle
                         ? 'border-red-500/30'
@@ -161,16 +215,51 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                           : 'border-white/5 focus:border-[#a86f44]/40'
                     }`}
                   />
+
+                  {/* Suggestions Dropdown */}
+                  <AnimatePresence>
+                    {showPrSuggestions && prSuggestions.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
+                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                        exit={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
+                        className="absolute left-0 right-0 z-50 mt-1 max-h-48 overflow-y-auto rounded-sm bg-[#111] border border-white/10 shadow-2xl p-1 scrollbar-hide"
+                      >
+                        {prSuggestions.map((s, i) => (
+                          <button
+                            key={i}
+                            onMouseDown={(e) => {
+                              // prevent blur before click registers
+                              e.preventDefault()
+                            }}
+                            onClick={() => {
+                              setTitle(s)
+                              setShowPrSuggestions(false)
+                            }}
+                            className={`w-full text-left px-3 py-2 rounded-sm font-mono text-xs transition-colors flex items-center justify-between cursor-pointer ${
+                              i === activePrSuggestion
+                                ? 'bg-[#a86f44]/20 text-[#a86f44]'
+                                : 'text-white/40 hover:bg-white/5'
+                            }`}
+                          >
+                            <span>{s}</span>
+                            <span className="text-[8px] opacity-30 font-mono">Tab/Enter</span>
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   {title && !isValidTitle && (
                     <p className="mt-2 text-[9px] text-red-400/60 font-mono italic">
-                      Invalid convention. Try starting with 'feat: ' or 'fix: '
+                      Convención inválida. Intentá empezar con 'feat: ' o 'fix: '
                     </p>
                   )}
                 </div>
 
                 <div>
                   <label className="block font-mono text-[9px] uppercase tracking-widest text-white/20 mb-2">
-                    Description
+                    Descripción
                   </label>
                   <textarea
                     value={description}
@@ -179,17 +268,25 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                   />
                 </div>
 
-                <button
-                  onClick={handleSubmit}
-                  disabled={!isValidTitle}
-                  className={`w-full h-12 rounded-sm text-sm font-medium transition-all shadow-xl cursor-pointer ${
-                    isValidTitle
-                      ? 'bg-[#a86f44] text-white hover:bg-[#b87f54] shadow-[#a86f44]/10'
-                      : 'bg-white/5 text-white/20 border border-white/5 cursor-not-allowed'
-                  }`}
-                >
-                  Create Pull Request
-                </button>
+                <div className="w-full flex justify-center pt-2">
+                  <button
+                    onClick={handleSubmit}
+                    disabled={!isValidTitle}
+                    className={`group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold transition-colors relative py-1 cursor-pointer ${
+                      isValidTitle
+                        ? 'text-white/90 hover:text-white'
+                        : 'text-white/20 cursor-not-allowed opacity-50'
+                    }`}
+                  >
+                    <span>Crear Pull Request</span>
+                    {isValidTitle && (
+                      <>
+                        <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+                        <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
@@ -209,23 +306,23 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                       : 'border-[#a86f44]/30 text-[#a86f44] bg-[#a86f44]/5'
                   }`}
                 >
-                  {prState === 'approved' ? 'Merged' : 'Open'}
+                  {prState === 'approved' ? 'Integrado' : 'Abierto'}
                 </div>
               </div>
 
               {/* Title */}
               <div>
                 <h3 className="text-base font-bold text-white mb-1 truncate">
-                  {title || 'feat: Profile data endpoint'}
+                  {title || 'feat: Endpoint de datos de perfil'}
                 </h3>
-                <p className="text-[10px] text-white/30 font-mono">Created by You · 2m ago</p>
+                <p className="text-[10px] text-white/30 font-mono">Creado por ti · hace 2 min</p>
               </div>
 
               {/* Checklist */}
               <div className="space-y-3 py-4 border-y border-white/5">
                 <div className="flex items-center gap-3 opacity-60">
                   <CheckCircle size={14} className="text-emerald-500" />
-                  <span className="text-[11px] text-white/80">Implementation verified by CI</span>
+                  <span className="text-[11px] text-white/80">Implementación verificada por CI</span>
                 </div>
                 <div className="flex items-center gap-3">
                   {prState === 'approved' ? (
@@ -234,7 +331,7 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                     <Clock size={14} className="text-[#a86f44]" />
                   )}
                   <span className="text-[11px] text-white/80">
-                    Pending Senior Approval (@sarah)
+                    Aprobación Senior Pendiente (@sarah)
                   </span>
                 </div>
               </div>
@@ -242,7 +339,7 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
               {/* Reviewers */}
               <div>
                 <p className="font-mono text-[9px] uppercase tracking-widest text-white/20 mb-3">
-                  Reviewers
+                  Revisores
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-sm bg-[#a86f44] flex items-center justify-center font-mono text-[10px] font-bold text-white">
@@ -250,7 +347,7 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                   </div>
                   <div className="flex-1">
                     <p className="text-xs font-bold text-white">Sarah Chen</p>
-                    <p className="text-[10px] text-white/30">Senior Lead · Engineering</p>
+                    <p className="text-[10px] text-white/30">Líder Senior · Ingeniería</p>
                   </div>
                   {prState === 'approved' && <ShieldCheck size={18} className="text-emerald-500" />}
                 </div>
@@ -263,21 +360,26 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
             {prState === 'submitting' && (
               <div className="w-full h-12 flex items-center justify-center gap-3 font-mono text-[10px] text-white/20 uppercase tracking-widest">
                 <div className="w-4 h-4 border-2 border-[#a86f44] border-t-transparent rounded-full animate-spin" />
-                Pushing changes...
+                Subiendo cambios...
               </div>
             )}
 
             {prState === 'approved' && (
-              <motion.button
+              <motion.div
                 key="continue-btn"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                onClick={onContinue}
-                className="w-full h-12 flex items-center justify-center gap-3 rounded-sm bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-900/20 cursor-pointer"
+                className="w-full flex justify-center pt-4"
               >
-                View Scenario Debrief
-                <ArrowRight size={16} />
-              </motion.button>
+                <button
+                  onClick={onContinue}
+                  className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-emerald-400 hover:text-emerald-300 transition-colors relative py-1 cursor-pointer"
+                >
+                  <span>Ver Tablero de Tareas</span>
+                  <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-emerald-500/30 group-hover:bg-emerald-400 transition-transform duration-300 origin-left scale-x-100" />
+                </button>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
@@ -346,13 +448,11 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                             <div className="flex items-center gap-2 mb-1">
                               <span className="text-xs font-bold text-white">Sarah Chen</span>
                               <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-mono text-[8px] uppercase tracking-tighter">
-                                Senior Review
+                                Revisión Senior
                               </span>
                             </div>
                             <p className="text-[11px] text-white/50 leading-relaxed italic">
-                              "Great catch on the destructuring here. Keeping sensitive fields like
-                              passwordHash out of the response is a critical part of our API
-                              security standards. Nice work."
+                              "Excelente detalle en la desestructuración. Mantener campos sensibles como passwordHash fuera de la respuesta es una parte crítica de nuestros estándares de seguridad de API. Buen trabajo."
                             </p>
                           </div>
                         </div>

@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type RoleId = 'frontend' | 'backend' | 'fullstack' | 'devops' | 'security'
-export type DifficultyLevel = 'Beginner' | 'Beginner / Intermediate' | 'Intermediate' | 'Advanced'
+export type DifficultyLevel = 'Principiante' | 'Principiante / Intermedio' | 'Intermedio' | 'Avanzado'
 
 // ── Scenario Card (for the recommendation grid) ──────────────────────────────
 
@@ -28,80 +28,80 @@ export interface SimpleScenario {
 export const SIMPLE_SCENARIOS: SimpleScenario[] = [
   {
     id: 'SCN-008',
-    title: 'Add User Profile Endpoint',
+    title: 'Crear Endpoint de Perfil de Usuario',
     description:
-      "Implement a GET /api/profile endpoint that returns the current user's basic info using the existing JWT auth middleware. The route is stubbed — you just have to make it work.",
+      'Implementá un endpoint GET /api/profile que retorne la información básica del usuario actual utilizando el middleware de autenticación JWT. La ruta está pre-estructurada — tu tarea es hacerla funcionar.',
     category: 'Backend',
-    difficulty: 'Beginner / Intermediate',
+    difficulty: 'Principiante / Intermedio',
     estimatedDuration: '1–1.25 h',
-    matchReason: 'Perfect for Backend devs working with Express + PostgreSQL',
+    matchReason: 'Ideal para desarrolladores Backend trabajando con Express + PostgreSQL',
     targetRoles: ['backend', 'fullstack'],
     tags: ['Express', 'PostgreSQL', 'JWT', 'REST'],
     isFeatured: true,
   },
   {
     id: 'SCN-002',
-    title: 'Fix a Broken React Form',
+    title: 'Corregir Formulario de React Roto',
     description:
-      'A multi-step checkout form has an uncontrolled → controlled input bug and broken validation. Debug, fix, and write a test to prevent regression.',
+      'Un formulario de pago multi-paso tiene un bug de inputs no controlados y validación rota. Depurá, corregí y escribí una prueba para prevenir regresiones.',
     category: 'Frontend',
-    difficulty: 'Beginner',
+    difficulty: 'Principiante',
     estimatedDuration: '45–60 min',
-    matchReason: 'Great starter for Frontend engineers and Full-Stack devs',
+    matchReason: 'Excelente ejercicio inicial para desarrolladores Frontend y Full-Stack',
     targetRoles: ['frontend', 'fullstack'],
     tags: ['React', 'Forms', 'Testing', 'Debugging'],
     isFeatured: false,
   },
   {
     id: 'SCN-011',
-    title: 'Write Your First Dockerfile',
+    title: 'Escribir tu Primer Dockerfile',
     description:
-      'Containerise a Node.js app: write a production-ready multi-stage Dockerfile, add a .dockerignore, and make it run on a local Docker daemon.',
+      'Contenerizá una aplicación de Node.js: escribí un Dockerfile de múltiples etapas listo para producción, añadí un .dockerignore y ejecutalo localmente.',
     category: 'DevOps',
-    difficulty: 'Beginner',
+    difficulty: 'Principiante',
     estimatedDuration: '30–45 min',
-    matchReason: 'Entry-level DevOps / SRE warm-up with immediate payoff',
+    matchReason: 'Prueba inicial de DevOps / SRE con impacto inmediato en el proyecto',
     targetRoles: ['devops', 'fullstack'],
-    tags: ['Docker', 'Node.js', 'CI/CD', 'Infrastructure'],
+    tags: ['Docker', 'Node.js', 'CI/CD', 'Infraestructura'],
     isFeatured: false,
   },
   {
     id: 'SCN-015',
-    title: 'Add JWT Auth to an Express API',
+    title: 'Añadir Auth JWT a una API de Express',
     description:
-      'The app has user registration and login but zero access control. Add JWT issuing on login and a protect() middleware for private routes.',
-    category: 'Security',
-    difficulty: 'Beginner / Intermediate',
+      'La aplicación cuenta con registro e inicio de sesión pero carece de control de acceso. Añadí emisión de JWT al iniciar sesión y un middleware protect() para rutas privadas.',
+    category: 'Seguridad',
+    difficulty: 'Principiante / Intermedio',
     estimatedDuration: '1–1.5 h',
-    matchReason: 'Covers auth fundamentals for Security and Backend engineers',
+    matchReason: 'Cubre conceptos de autenticación fundamentales para desarrolladores de Seguridad y Backend',
     targetRoles: ['security', 'backend', 'fullstack'],
     tags: ['JWT', 'Express', 'Auth', 'Middleware'],
     isFeatured: false,
   },
   {
     id: 'SCN-003',
-    title: 'Build a Reusable Data Table',
+    title: 'Construir una Tabla de Datos Reutilizable',
     description:
-      'Design and implement a sortable, filterable, paginated table component in React. Must support server-side data fetching and skeleton loading states.',
+      'Diseñá e implementá un componente de tabla ordenable, filtrable y paginada en React. Debe soportar búsqueda de datos remota y estados de carga (skeleton).',
     category: 'Frontend',
-    difficulty: 'Beginner / Intermediate',
+    difficulty: 'Principiante / Intermedio',
     estimatedDuration: '1–1.5 h',
-    matchReason: 'Covers core React patterns: composition, hooks, and UX polish',
+    matchReason: 'Cubre patrones clave de React: composición, hooks y pulido de UX',
     targetRoles: ['frontend', 'fullstack'],
-    tags: ['React', 'TypeScript', 'Components', 'UX'],
+    tags: ['React', 'TypeScript', 'Componentes', 'UX'],
     isFeatured: false,
   },
   {
     id: 'SCN-019',
-    title: 'Set Up a GitHub Actions Pipeline',
+    title: 'Configurar Pipeline de GitHub Actions',
     description:
-      'Create a CI workflow that lints, tests, and builds a Next.js app on every pull request. Add a deploy step gated on branch name.',
+      'Creá un workflow de CI que analice, testee y compile una aplicación de Next.js en cada Pull Request. Añadí un paso de despliegue condicionado por rama.',
     category: 'DevOps',
-    difficulty: 'Beginner',
+    difficulty: 'Principiante',
     estimatedDuration: '30–45 min',
-    matchReason: 'Foundational CI/CD — real-world workflow from day one',
+    matchReason: 'Integración continua (CI/CD) real y funcional desde el primer día',
     targetRoles: ['devops', 'fullstack'],
-    tags: ['GitHub Actions', 'CI/CD', 'YAML', 'Automation'],
+    tags: ['GitHub Actions', 'CI/CD', 'YAML', 'Automatización'],
     isFeatured: false,
   },
 ]
@@ -149,14 +149,15 @@ export type TourPhase =
   | 'testing' // Phase 2.5: Automated testing
   | 'checkpoint' // Phase 3: Checkpoint moments
   | 'pr' // Phase 4: PR & Review
+  | 'board' // Phase 4.5: Kanban board simulation
   | 'debrief' // Phase 5: Scenario debrief
 
 export const SCN008_META = {
   id: 'SCN-008',
-  title: 'Add User Profile Endpoint',
+  title: 'Crear Endpoint de Perfil de Usuario',
   type: 'Simple',
   category: 'Backend',
-  difficulty: 'Beginner / Intermediate' as DifficultyLevel,
+  difficulty: 'Principiante / Intermedio' as DifficultyLevel,
   estimatedDuration: '1–1.25 h',
   scenario: 'SCN-007 → SCN-008',
 }
@@ -188,43 +189,43 @@ export const SCN008_TEAM: TeamMember[] = [
 export const SCN008_CHECKPOINTS: CheckpointItem[] = [
   {
     id: 'cp1',
-    label: '401 for unauthenticated requests',
-    detail: 'GET /api/profile returns 401 Unauthorized when no token is supplied.',
+    label: 'Retorna 401 para peticiones no autenticadas',
+    detail: 'GET /api/profile retorna 401 Unauthorized cuando no se provee un token válido.',
   },
   {
     id: 'cp2',
-    label: 'Returns correct user data',
-    detail: 'Authenticated request returns { name, email, joinDate, avatarUrl }.',
+    label: 'Retorna los datos de usuario correctos',
+    detail: 'La petición autenticada retorna { name, email, joinDate, avatarUrl }.',
   },
   {
     id: 'cp3',
-    label: 'Sensitive fields excluded',
-    detail: 'The password hash and internal fields are never present in the response.',
+    label: 'Excluye campos sensibles',
+    detail: 'El hash de contraseña y los campos internos nunca están presentes en la respuesta.',
   },
   {
     id: 'cp4',
-    label: 'Input validation & error handling',
-    detail: 'Malformed tokens and DB errors return structured JSON error responses.',
+    label: 'Validación de entrada y manejo de errores',
+    detail: 'Los tokens con formato incorrecto y los errores de DB retornan respuestas estructuradas de error JSON.',
   },
 ]
 
 // Repository file tree shown in Phase 1
 export const SCN008_FILE_TREE = [
   { path: 'src/', isDir: true, level: 0 },
-  { path: 'src/index.ts', isDir: false, level: 1, note: 'Entry point' },
+  { path: 'src/index.ts', isDir: false, level: 1, note: 'Punto de entrada' },
   { path: 'src/middleware/', isDir: true, level: 1 },
-  { path: 'src/middleware/auth.ts', isDir: false, level: 2, note: 'JWT verify ← focus here' },
+  { path: 'src/middleware/auth.ts', isDir: false, level: 2, note: 'Verificación JWT ← enfocarse aquí' },
   { path: 'src/routes/', isDir: true, level: 1 },
   { path: 'src/routes/auth.ts', isDir: false, level: 2, note: '/register + /login' },
   {
     path: 'src/routes/profile.ts',
     isDir: false,
     level: 2,
-    note: '501 stub ← your task',
+    note: 'Stub 501 ← tu tarea',
     highlight: true,
   },
   { path: 'src/db/', isDir: true, level: 1 },
-  { path: 'src/db/schema.ts', isDir: false, level: 2, note: 'users table' },
+  { path: 'src/db/schema.ts', isDir: false, level: 2, note: 'Tabla de usuarios' },
   { path: 'src/db/queries.ts', isDir: false, level: 2, note: 'getUserById()' },
   { path: '.env.example', isDir: false, level: 0 },
   { path: 'package.json', isDir: false, level: 0 },
@@ -234,23 +235,23 @@ export const SCN008_FILE_TREE = [
 export const SCN008_HINTS = [
   {
     id: 'h1',
-    trigger: 'route handler',
-    text: 'The auth middleware already attaches `req.user` — you can access `req.user.id` directly.',
+    trigger: 'manejador de ruta',
+    text: 'El middleware de autenticación ya adjunta `req.user` — puedes acceder a `req.user.id` directamente.',
   },
   {
     id: 'h2',
-    trigger: 'query',
-    text: 'Use `getUserById(id)` from `src/db/queries.ts` — it already exists and is typed.',
+    trigger: 'consulta',
+    text: 'Usa `getUserById(id)` de `src/db/queries.ts` — ya existe y está tipado.',
   },
   {
     id: 'h3',
-    trigger: 'response',
-    text: 'Destructure carefully: `const { passwordHash, ...safeUser } = user` is the idiomatic pattern.',
+    trigger: 'respuesta',
+    text: 'Desestructura con cuidado: `const { passwordHash, ...safeUser } = user` es el patrón común.',
   },
   {
     id: 'h4',
     trigger: 'error',
-    text: "Return `{ error: 'User not found' }` with a 404 — not a 500 — when the DB returns null.",
+    text: "Retorna `{ error: 'User not found' }` con un 404 — no un 500 — cuando la base de datos devuelva null.",
   },
 ]
 
@@ -260,19 +261,19 @@ export const SCN008_PR_REVIEW = [
     author: 'senior_dev',
     type: 'comment' as const,
     line: 12,
-    text: 'Good call protecting this with the auth middleware. One thing — should we add rate limiting here early? Profile endpoints can get hammered.',
+    text: 'Buena decisión proteger esto con el middleware de autenticación. Una cosa — ¿deberíamos agregar rate limiting aquí pronto? Los endpoints de perfil suelen recibir muchas peticiones.',
   },
   {
     author: 'senior_dev',
     type: 'suggestion' as const,
     line: 18,
-    text: 'Consider wrapping the DB call in a try/catch and returning a proper 500 with a correlation ID. Makes debugging prod incidents much easier.',
+    text: 'Considera envolver la llamada de base de datos en un try/catch y retornar un 500 adecuado con un ID de correlación. Hace que depurar incidentes en prod sea mucho más sencillo.',
   },
   {
     author: 'senior_dev',
     type: 'approve' as const,
     line: 0,
-    text: "Clean implementation overall. The field exclusion is handled correctly. I'd extract the user mapping to a DTO helper in a follow-up — but this is solid for a first PR. ✅ Approving.",
+    text: "Implementación limpia en general. La exclusión de campos está manejada correctamente. Extraería el mapeo de usuario a un helper DTO en el futuro — pero esto es sólido para un primer PR. ✅ Aprobado.",
   },
 ]
 
@@ -282,15 +283,15 @@ export const SCN008_TICKET = {
   from: 'pm_bot',
   channel: '# eng-backend',
   timestamp: '9:03 AM',
-  subject: 'Profile page endpoint needed',
-  body: `Users keep asking for a profile page. We need a **GET /api/profile** endpoint that returns the current user's basic info (name, email, join date, avatar_url).
+  subject: 'Endpoint de página de perfil requerido',
+  body: `Los usuarios siguen pidiendo una página de perfil. Necesitamos un endpoint **GET /api/profile** que retorne la información básica del usuario actual (nombre, email, fecha de ingreso, url_avatar).
 
-The auth middleware is already there — just make sure it works with the existing JWT setup. No updates for now.`,
+El middleware de autenticación ya está listo — solo asegúrate de que funcione con la configuración de JWT existente. Sin cambios por ahora.`,
   acceptanceCriteria: [
-    'Endpoint returns 401 for unauthenticated requests',
-    'Authenticated request returns correct user data (name, email, etc.)',
-    'Sensitive fields (password hash) are never returned',
-    'Endpoint has basic input validation / error handling',
+    'El endpoint retorna 401 para peticiones no autenticadas',
+    'Las peticiones autenticadas retornan los datos correctos del usuario (nombre, email, etc.)',
+    'Nunca se retornan campos sensibles (como el hash de la contraseña)',
+    'El endpoint cuenta con validación básica de entrada / manejo de errores',
   ],
-  note: 'Can we add last_login timestamp later? Just flag it in a comment for now.',
+  note: '¿Podemos agregar la marca de tiempo last_login más adelante? Por ahora solo indícalo en un comentario.',
 }

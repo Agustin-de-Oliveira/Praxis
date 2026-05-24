@@ -41,24 +41,24 @@ const INITIAL_MSG_TEMPLATES = [
   {
     handle: 'frontend_dev',
     time: '9:00 AM',
-    text: "Hey @backend, trying to hook up the new Profile page but I'm getting a 404 on `GET /api/profile`. Is that endpoint live yet?",
+    text: "Hola @backend, estoy intentando conectar la nueva página de Perfil pero me da un 404 en `GET /api/profile`. ¿Ya está activo ese endpoint?",
   },
   {
     handle: 'pm_bot',
     time: '9:01 AM',
-    text: "We really need that for the Friday demo. The client wants to see the 'User Dashboard' section working.",
+    text: "Realmente lo necesitamos para la demo del viernes. El cliente quiere ver la sección de 'User Dashboard' funcionando.",
   },
   {
     handle: 'senior_dev',
     time: '9:02 AM',
-    text: "It's just a stub right now. @jordan, I'll have the new engineer handle it this morning. It's a perfect starter task.",
+    text: "Por ahora es solo un stub. @jordan, haré que el nuevo desarrollador se encargue de esto esta mañana. Es una tarea perfecta para empezar.",
   },
 ]
 
 const USER_OPTIONS = [
-  'Sure thing, Sarah. What do I need to do?',
-  'Ready when you are. Send over the details.',
-  "Excited to start! What's the priority?",
+  '¡Claro que sí, Sarah! ¿Qué tengo que hacer?',
+  'Listo cuando quieras. Envíame los detalles.',
+  '¡Con muchas ganas de empezar! ¿Cuál es la prioridad?',
 ]
 
 interface PhaseStorylineProps {
@@ -141,7 +141,7 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
           {
             user: getMember('senior_dev'),
             time: '9:05 AM',
-            text: 'Hey! Welcome to the team. Ready to dive into your first task?',
+            text: '¡Hola! Te doy la bienvenida al equipo. ¿Listo para empezar con tu primera tarea?',
           },
         ])
         setIsTyping(false)
@@ -194,7 +194,7 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
                 {
                   user: getMember('senior_dev'),
                   time: '9:07 AM',
-                  text: "Perfect. I've drafted a ticket with the specs and the repo structure. Jump in when you're ready!",
+                  text: "Perfecto. He redactado un ticket con las especificaciones y la estructura del repositorio. ¡Manos a la obra cuando quieras!",
                   isLink: true,
                 },
               ])
@@ -224,15 +224,15 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
       {/* Header Context */}
       <div className="mb-8">
         <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
-          Phase 0 · Contextual Storyline
+          Fase 0 · Historia Contextual
         </p>
         <h2 className="font-serif text-2xl font-medium text-white mb-2">
-          {view === 'channel' ? 'Morning Catch-up' : 'Direct Message'}
+          {view === 'channel' ? 'Puesta al día matutina' : 'Mensaje Directo'}
         </h2>
         <p className="text-sm text-white/40 max-w-md leading-relaxed">
           {view === 'channel'
-            ? 'The team is discussing the daily priorities in the general channel.'
-            : 'Your lead engineer, Sarah, is reaching out to get you started.'}
+            ? 'El equipo está discutiendo las prioridades del día en el canal general.'
+            : 'Tu líder de ingeniería, Sarah, se está comunicando contigo para que comiences.'}
         </p>
       </div>
 
@@ -250,7 +250,7 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
             <span className="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]" />
           </div>
           <span className="font-mono text-[9px] text-white/20 uppercase tracking-tighter">
-            Slack · Active Now
+            Slack · Activo ahora
           </span>
         </div>
 
@@ -320,10 +320,10 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
                       </div>
                       <div className="flex-1">
                         <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-0.5">
-                          Internal Ticket
+                          Ticket Interno
                         </p>
                         <p className="text-xs text-white font-medium">
-                          TICK-042: Add User Profile Endpoint
+                          TICK-042: Crear Endpoint del Perfil de Usuario
                         </p>
                       </div>
                       <ArrowRight
@@ -353,7 +353,7 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
                   </div>
                 </div>
                 <div className="mt-2 text-[10px] font-mono text-white/20 uppercase tracking-widest animate-pulse">
-                  Sarah is typing...
+                  Sarah está escribiendo...
                 </div>
               </motion.div>
             )}
@@ -363,7 +363,7 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
         {/* Input Area */}
         <div className="px-5 py-4 border-t border-[#171717] bg-[#0A0A0A] flex items-center gap-3">
           <div className="flex-1 h-10 px-4 rounded-sm border border-white/5 bg-white/[0.02] flex items-center text-xs text-white/20 font-mono">
-            {userResponse || 'Type a message...'}
+            {userResponse || 'Escribe un mensaje...'}
           </div>
           <button
             disabled
@@ -384,7 +384,7 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
             className="space-y-2"
           >
             <p className="font-mono text-[9px] uppercase tracking-widest text-white/25 mb-3 text-center">
-              Select your response
+              Selecciona tu respuesta
             </p>
             <div className="grid grid-cols-1 gap-2">
               {USER_OPTIONS.map((opt, i) => (
@@ -412,7 +412,7 @@ export default function PhaseStoryline({ onContinue }: PhaseStorylineProps) {
           animate={{ opacity: 1 }}
           className="mt-8 text-center font-mono text-[10px] uppercase tracking-widest text-[#a86f44]/60 animate-pulse"
         >
-          Click the ticket link to continue
+          Haz clic en el enlace del ticket para continuar
         </motion.p>
       )}
     </motion.div>

@@ -6,6 +6,7 @@
 // Immersive performance dashboard with senior insights and skill progression.
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { useState } from 'react'
 import { motion, type Variants } from 'framer-motion'
 import {
   CheckCircle,
@@ -21,6 +22,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { Beaker } from 'lucide-react'
+import { createClient } from '@/utils/supabase/client'
 
 const tourVariants: Variants = {
   hidden: { opacity: 0, filter: 'blur(8px)', scale: 0.98 },
@@ -56,10 +58,10 @@ const item: Variants = {
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 const PERFORMANCE_METRICS = [
-  { id: 'auth', label: 'Auth Middleware', icon: Key, status: 'Optimal' },
-  { id: 'db', label: 'Query Pattern', icon: Database, status: 'Optimal' },
-  { id: 'sec', label: 'Data Sanitization', icon: ShieldCheck, status: 'Secure' },
-  { id: 'test', label: 'Test Coverage', icon: Beaker, status: 'Verified' },
+  { id: 'auth', label: 'Middleware de Autenticación', icon: Key, status: 'Óptimo' },
+  { id: 'db', label: 'Patrón de Consulta', icon: Database, status: 'Óptimo' },
+  { id: 'sec', label: 'Sanitización de Datos', icon: ShieldCheck, status: 'Seguro' },
+  { id: 'test', label: 'Cobertura de Pruebas', icon: Beaker, status: 'Verificado' },
 ]
 
 const SENIOR_INSIGHTS = [
@@ -69,11 +71,11 @@ const SENIOR_INSIGHTS = [
     color: 'text-emerald-400',
     borderColor: 'border-emerald-500/15',
     bgColor: 'bg-emerald-500/5',
-    title: 'Key Strengths',
+    title: 'Fortalezas Clave',
     items: [
-      "Correct utilization of standard 'authenticate' middleware.",
-      'Clean implementation of field exclusion via destructuring.',
-      'Proper error handling for non-existent resource IDs (404).',
+      "Uso correcto del middleware estándar 'authenticate'.",
+      'Implementación limpia de la exclusión de campos mediante desestructuración.',
+      'Manejo de errores adecuado para IDs de recursos inexistentes (404).',
     ],
   },
   {
@@ -82,29 +84,55 @@ const SENIOR_INSIGHTS = [
     color: 'text-amber-400',
     borderColor: 'border-amber-500/15',
     bgColor: 'bg-amber-500/5',
-    title: 'Common Pitfalls to Avoid',
+    title: 'Errores Comunes a Evitar',
     items: [
-      "Over-fetching with 'SELECT *' instead of specific columns.",
-      'Leaking internal database structure in error messages.',
-      'Ignoring N+1 query patterns in higher-traffic endpoints.',
+      "Sobrecarga de consulta con 'SELECT *' en lugar de columnas específicas.",
+      'Filtración de la estructura interna de la base de datos en mensajes de error.',
+      'Ignorar patrones de consulta N+1 en endpoints de alto tráfico.',
     ],
   },
 ]
 
 const SENIOR_APPROACH = [
   {
-    label: 'Rate Limiting',
+    label: 'Límite de Tasa (Rate Limiting)',
     detail:
-      'In production, profile endpoints are high-value targets for scrapers. Always wrap these with rate-limiters.',
+      'En producción, los endpoints de perfil son objetivos valiosos para scrapers. Siempre envolvelos con limitadores de tasa.',
   },
   {
-    label: 'DTO Abstraction',
+    label: 'Abstracción DTO',
     detail:
-      'Instead of just destructuring, a Senior Dev uses Data Transfer Objects (DTOs) to strictly enforce response contracts.',
+      'En lugar de solo desestructurar, un Desarrollador Senior utiliza Data Transfer Objects (DTOs) para forzar estrictamente los contratos de respuesta.',
   },
 ]
 
 export default function PhaseDebrief() {
+  const [email, setEmail] = useState('')
+  const [formState, setFormState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email || formState === 'loading' || formState === 'success') return
+    setFormState('loading')
+
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('waitlist')
+        .insert([{ email, source: 'debrief' }])
+
+      if (error) {
+        console.error('Waitlist error:', error)
+        setFormState('error')
+      } else {
+        setFormState('success')
+      }
+    } catch (err) {
+      console.error('Waitlist catch:', err)
+      setFormState('error')
+    }
+  }
+
   return (
     <motion.div
       key="phase-debrief"
@@ -125,14 +153,13 @@ export default function PhaseDebrief() {
           <Trophy size={32} className="text-[#a86f44]" />
         </motion.div>
         <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
-          SCN-008 · Mission Complete
+          SCN-008 · Misión Completada
         </p>
         <h2 className="font-serif text-4xl font-medium text-white mb-4">
-          Exceptional Work, Engineer.
+          Trabajo Excepcional, Desarrollador.
         </h2>
         <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
-          You've successfully implemented, tested, and merged the User Profile endpoint. Here is
-          your final performance diagnostic and team feedback.
+          Implementaste, testeaste e integraste con éxito el endpoint de Perfil de Usuario. Aquí tenés tu diagnóstico de rendimiento final y el feedback del equipo.
         </p>
       </div>
 
@@ -147,7 +174,7 @@ export default function PhaseDebrief() {
         >
           <div className="p-6 rounded-sm border border-white/5 bg-[#0F0F0F]/80 shadow-2xl">
             <p className="font-mono text-[9px] uppercase tracking-widest text-white/20 mb-6">
-              Performance Matrix
+              Matriz de Rendimiento
             </p>
 
             <div className="space-y-6">
@@ -172,7 +199,7 @@ export default function PhaseDebrief() {
 
             <div className="mt-10 pt-6 border-t border-white/5">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs text-white/40">Overall Score</span>
+                <span className="text-xs text-white/40">Puntaje General</span>
                 <span className="font-serif text-2xl text-white">96%</span>
               </div>
               <div className="h-1 bg-white/5 rounded-full overflow-hidden">
@@ -194,9 +221,9 @@ export default function PhaseDebrief() {
             <ShieldCheck size={24} className="text-emerald-500/60" />
             <div>
               <p className="text-[10px] uppercase tracking-widest font-mono text-emerald-500/60 mb-0.5">
-                Skill Acquired
+                Habilidad Adquirida
               </p>
-              <p className="text-xs font-bold text-white">Advanced Data Sanitization</p>
+              <p className="text-xs font-bold text-white">Sanitización de Datos Avanzada</p>
             </div>
           </motion.div>
         </motion.div>
@@ -248,9 +275,9 @@ export default function PhaseDebrief() {
 
             <div>
               <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-1">
-                Senior Perspective
+                Perspectiva Senior
               </p>
-              <h3 className="text-lg font-bold text-white">How a Lead would approach this</h3>
+              <h3 className="text-lg font-bold text-white">Cómo lo abordaría un Líder</h3>
             </div>
 
             <div className="grid grid-cols-2 gap-8">
@@ -263,17 +290,85 @@ export default function PhaseDebrief() {
             </div>
           </motion.div>
 
-          {/* Final CTA */}
-          <motion.div variants={item} className="flex justify-center pt-8">
-            <Link href="/selection">
-              <button className="group h-14 px-12 flex items-center justify-center gap-4 rounded-sm bg-[#a86f44] text-sm font-bold text-white hover:bg-[#b87f54] transition-all shadow-xl shadow-[#a86f44]/20 cursor-pointer">
-                Proceed to Hub
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </button>
-            </Link>
-          </motion.div>
         </motion.div>
       </div>
+
+      {/* ── Grand Finale CTA Block (Full Width & Centered Protagonist) ────────────────── */}
+      <motion.div
+        variants={item}
+        initial="hidden"
+        animate="visible"
+        className="mt-16 p-8 rounded-sm border border-[#a86f44]/40 bg-[#0F0F0F]/80 relative overflow-hidden shadow-2xl space-y-6 text-center max-w-4xl mx-auto"
+      >
+        {/* background decorative glowing spot */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#a86f44]/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-xl mx-auto space-y-3">
+          <p className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44] font-bold">
+            PRÓXIMAMENTE EN PRAXIS
+          </p>
+          <h3 className="text-2xl font-serif text-white font-medium">¿Querés dominar el día a día de un desarrollador de software?</h3>
+          <p className="text-xs text-white/50 leading-relaxed">
+            Guardá tu progreso, desbloqueá más de 15 escenarios reales del día a día de ingeniería y accedé a feedback detallado de tu código. Registrate para recibir tu invitación exclusiva a la beta.
+          </p>
+        </div>
+
+        <div className="max-w-md mx-auto">
+          {formState !== 'success' ? (
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col items-center gap-4"
+            >
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Tu correo electrónico"
+                className="w-full h-11 px-4 rounded-sm border border-white/10 bg-[#050505] font-mono text-xs text-white outline-none focus:border-[#a86f44]/40 transition-all text-center"
+              />
+              <button
+                type="submit"
+                disabled={formState === 'loading'}
+                className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white transition-colors relative py-1 cursor-pointer disabled:cursor-wait"
+              >
+                <span>{formState === 'loading' ? 'Enviando...' : 'Anotarme para la Beta'}</span>
+                {formState !== 'loading' && (
+                  <ArrowRight className="w-3.5 h-3.5 inline-block transition-transform duration-300 group-hover:translate-x-1.5" />
+                )}
+                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
+              </button>
+              {formState === 'error' && (
+                <p className="text-xs text-red-400/90 font-mono mt-1">
+                  Hubo un problema. Por favor intentá de nuevo.
+                </p>
+              )}
+            </form>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="space-y-6"
+            >
+              <div className="flex items-center justify-center gap-3 p-4 rounded-sm border border-emerald-500/20 bg-emerald-500/5 text-emerald-400">
+                <CheckCircle size={18} />
+                <span className="text-xs font-mono">¡Listo! Te registraste correctamente. Te mantendremos al tanto.</span>
+              </div>
+              
+              <div className="pt-2 flex justify-center">
+                <Link
+                  href="/first-day"
+                  className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/40 hover:text-white transition-colors relative py-1 cursor-pointer"
+                >
+                  <span>Terminar Demo</span>
+                  <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/10 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </div>
+      </motion.div>
     </motion.div>
   )
 }

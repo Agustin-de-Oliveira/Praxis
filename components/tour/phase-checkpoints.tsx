@@ -39,33 +39,33 @@ const tourVariants: Variants = {
 // ── Checkpoint Details (Simulated Logs) ──────────────────────────────────────
 
 const CHECKPOINT_LOGS: Record<string, string[]> = {
-  'auth-middleware': [
-    '> verifying src/routes/profile.ts',
-    "> searching for 'authenticate' middleware...",
-    "MATCH: found 'authenticate' on line 8",
-    'CHECK: token validation logic active',
-    'SUCCESS: Authorization gate verified.',
+  'cp1': [
+    '> verificando src/routes/profile.ts',
+    "> buscando middleware 'authenticate'...",
+    "COINCIDENCIA: 'authenticate' encontrado en la línea 8",
+    'VERIFICACIÓN: lógica de validación de tokens activa',
+    'ÉXITO: Barrera de autorización verificada.',
   ],
-  'db-integration': [
-    '> scanning database access patterns',
-    "> verifying 'getUserById' connection...",
-    "MATCH: found async call to 'getUserById'",
-    "CHECK: parameter 'req.user.id' passed correctly",
-    'SUCCESS: Database integration verified.',
+  'cp2': [
+    '> escaneando patrones de acceso a base de datos',
+    "> verificado conexión 'getUserById'...",
+    "COINCIDENCIA: llamada asíncrona a 'getUserById' encontrada",
+    "VERIFICACIÓN: parámetro 'req.user.id' enviado correctamente",
+    'ÉXITO: Integración de base de datos verificada.',
   ],
-  'security-audit': [
-    '> running security linting',
-    '> scanning for sensitive exposures...',
-    "AUDIT: destructuring 'passwordHash' detected",
-    "CHECK: 'passwordHash' removed from response",
-    'SUCCESS: Security audit passed. No exposures found.',
+  'cp3': [
+    '> ejecutando análisis de seguridad (linting)',
+    '> escaneando exposiciones sensibles...',
+    "AUDITORÍA: desestructuración de 'passwordHash' detectada",
+    "VERIFICACIÓN: 'passwordHash' eliminado de la respuesta",
+    'ÉXITO: Auditoría de seguridad aprobada. No se encontraron exposiciones.',
   ],
-  'response-format': [
-    '> hitting endpoint stub /api/profile',
-    '> checking JSON schema...',
-    "SCHEMA: body contains 'id', 'name', 'email'",
-    'CHECK: status code is 200 OK',
-    'SUCCESS: Response format verified.',
+  'cp4': [
+    '> llamando al endpoint stub /api/profile',
+    '> verificando esquema JSON...',
+    "ESQUEMA: el cuerpo contiene 'id', 'name', 'email'",
+    'VERIFICACIÓN: código de estado es 200 OK',
+    'ÉXITO: Formato de respuesta verificado.',
   ],
 }
 
@@ -88,9 +88,12 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
   }, [activeLogs])
 
   const runCheckpoint = useCallback(async (id: string) => {
+    const cp = SCN008_CHECKPOINTS.find((c) => c.id === id)
+    const label = cp ? cp.label : id.toUpperCase()
+
     setActiveCheckpointId(id)
     setStatuses((prev) => ({ ...prev, [id]: 'running' }))
-    setActiveLogs([`[praxis-ci] Starting verification: ${id}...`])
+    setActiveLogs([`[praxis-ci] Iniciando verificación: ${label}...`])
 
     const logs = CHECKPOINT_LOGS[id] || []
     for (const log of logs) {
@@ -100,7 +103,7 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
 
     await new Promise((r) => setTimeout(r, 300))
     setStatuses((prev) => ({ ...prev, [id]: 'passed' }))
-    setActiveLogs((prev) => [...prev, `[praxis-ci] ${id.toUpperCase()} PASSED.`])
+    setActiveLogs((prev) => [...prev, `[praxis-ci] ÉXITO: ${label} - APROBADO.`])
   }, [])
 
   const runAll = async () => {
@@ -126,12 +129,11 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
       {/* Header */}
       <div className="text-center mb-10">
         <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
-          Phase 3 · Verification Pipeline
+          Fase 3 · Pipeline de Verificación
         </p>
-        <h2 className="font-serif text-3xl font-medium text-white mb-3">Run the Pipeline</h2>
+        <h2 className="font-serif text-3xl font-medium text-white mb-3">Ejecutá el Pipeline</h2>
         <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
-          Before we merge your PR, the CI system must verify the implementation against our security
-          and architectural standards.
+          Antes de integrar tu PR, el sistema de CI debe verificar la implementación contra nuestros estándares de seguridad y arquitectura.
         </p>
       </div>
 
@@ -141,7 +143,7 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
         <div className="col-span-5 space-y-3">
           <div className="px-4 py-2 flex items-center justify-between border-b border-white/5 mb-2">
             <span className="font-mono text-[9px] uppercase tracking-widest text-white/20">
-              Pipeline Stages
+              Etapas del Pipeline
             </span>
             <Activity size={14} className="text-white/10" />
           </div>
@@ -208,13 +210,13 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
           <button
             onClick={runAll}
             disabled={allPassed}
-            className={`w-full h-11 rounded-sm border border-white/5 font-mono text-[10px] uppercase tracking-widest transition-all ${
+            className={`w-full h-11 rounded-sm border border-white/5 font-mono text-[10px] uppercase tracking-widest transition-all cursor-pointer ${
               allPassed
                 ? 'opacity-0 pointer-events-none'
                 : 'bg-white/[0.02] text-white/30 hover:text-white/60 hover:bg-white/5'
             }`}
           >
-            Trigger Full Pipeline
+            Ejecutar Pipeline Completo
           </button>
         </div>
 
@@ -239,7 +241,7 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
               {activeLogs.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center opacity-10">
                   <Cpu size={40} className="mb-4" />
-                  <p className="uppercase tracking-widest">Select a stage to view diagnostics</p>
+                  <p className="uppercase tracking-widest">Seleccioná una etapa para ver diagnósticos</p>
                 </div>
               ) : (
                 <div className="space-y-1">
@@ -265,26 +267,26 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
               <div className="flex items-center gap-3 mb-2">
                 <ShieldCheck size={16} className="text-[#a86f44]" />
                 <span className="font-mono text-[9px] uppercase tracking-widest text-white/20">
-                  Security Score
+                  Puntaje de Seguridad
                 </span>
               </div>
               <div className="flex items-end gap-2">
                 <span className="text-2xl font-serif text-white">{allPassed ? 'A+' : 'B'}</span>
-                <span className="text-[10px] text-white/20 mb-1">Standard</span>
+                <span className="text-[10px] text-white/20 mb-1">Estándar</span>
               </div>
             </div>
             <div className="p-4 rounded-sm border border-white/5 bg-white/[0.02]">
               <div className="flex items-center gap-3 mb-2">
                 <Star size={16} className="text-[#a86f44]" />
                 <span className="font-mono text-[9px] uppercase tracking-widest text-white/20">
-                  Lead Approval
+                  Aprobación del Líder
                 </span>
               </div>
               <div className="flex items-end gap-2">
                 <span className="text-2xl font-serif text-white">
                   {passedCount}/{SCN008_CHECKPOINTS.length}
                 </span>
-                <span className="text-[10px] text-white/20 mb-1">Checks</span>
+                <span className="text-[10px] text-white/20 mb-1">Verificaciones</span>
               </div>
             </div>
           </div>
@@ -292,15 +294,20 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
           {/* Final Continue Button */}
           <AnimatePresence>
             {allPassed && (
-              <motion.button
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                onClick={() => onContinue(passedCount)}
-                className="w-full h-12 flex items-center justify-center gap-3 rounded-sm bg-[#a86f44] text-sm font-medium text-white cursor-pointer hover:bg-[#b87f54] transition-all shadow-xl shadow-[#a86f44]/20"
+                className="w-full flex justify-center pt-4"
               >
-                Create Pull Request
-                <ArrowRight className="w-4 h-4" />
-              </motion.button>
+                <button
+                  onClick={() => onContinue(passedCount)}
+                  className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white transition-colors relative py-1 cursor-pointer"
+                >
+                  <span>Crear Pull Request</span>
+                  <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
+                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
+                </button>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
