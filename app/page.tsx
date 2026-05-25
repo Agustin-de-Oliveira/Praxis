@@ -192,7 +192,7 @@ export default function StealthLandingPage() {
 
   return (
     <div
-      className={`min-h-screen scroll-y relative flex flex-col bg-[#060606] text-white selection:bg-[#a86f44]/20 selection:text-[#a86f44] overflow-hidden ${isEasterEgg ? 'font-tiny5' : ''}`}
+      className={`min-h-screen overflow-y-scroll relative flex flex-col bg-[#060606] text-white selection:bg-[#a86f44]/20 selection:text-[#a86f44] overflow-hidden ${isEasterEgg ? 'font-tiny5' : ''}`}
     >
       {/* Entrance Loader */}
       <AnimatePresence mode="wait">
