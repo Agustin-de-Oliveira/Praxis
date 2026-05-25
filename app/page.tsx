@@ -571,7 +571,7 @@ export default function StealthLandingPage() {
               animate="visible"
             >
               <a
-                href="https://github.com/Agus-dot1"
+                href="https://github.com/agustin-de-oliveira"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-white/60 transition-colors flex items-center gap-1.5"
@@ -580,7 +580,7 @@ export default function StealthLandingPage() {
                 GitHub
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/agustin-de-oliveira/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-white/60 transition-colors flex items-center gap-1.5"
@@ -589,11 +589,11 @@ export default function StealthLandingPage() {
                 LinkedIn
               </a>
               <a
-                href="mailto:agustin@praxis.dev"
+                href="mailto:agustindeoliveira1@gmail.com"
                 className="hover:text-white/60 transition-colors flex items-center gap-1.5"
               >
                 <Mail className="h-3.5 w-3.5" />
-                agustin@praxis.dev
+                Correo
               </a>
             </motion.nav>
           </div>
