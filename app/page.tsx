@@ -1,6 +1,13 @@
 'use client'
 
-import { motion, type Variants, AnimatePresence } from 'framer-motion'
+import {
+  motion,
+  type Variants,
+  AnimatePresence,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from 'framer-motion'
 import { Github, Linkedin, Mail, ArrowRight, Check, Loader2, Shield } from 'lucide-react'
 import { Dithering } from '@paper-design/shaders-react'
 import Link from 'next/link'
@@ -112,6 +119,36 @@ export default function StealthLandingPage() {
   const [activeBadges, setActiveBadges] = useState<{ id: number; x: number; rotate: number }[]>([])
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
+  // 1. Crear los valores de movimiento
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+
+  // 2. Configurar la suavidad (spring)
+  const springConfig = { damping: 25, stiffness: 150 }
+  const x = useSpring(mouseX, springConfig)
+  const y = useSpring(mouseY, springConfig)
+
+  // 3. Transformar los valores para que el movimiento sea sutil (ej: solo 15px)
+  const moveX = useTransform(x, [-500, 500], [-15, 15])
+  const moveY = useTransform(y, [-500, 500], [-15, 15])
+
+  const handleMouseMove = (event: React.MouseEvent) => {
+    const { clientX, clientY, currentTarget } = event
+    const { left, top, width, height } = currentTarget.getBoundingClientRect()
+
+    // Calcular posición relativa al centro del elemento
+    const centerX = left + width / 2
+    const centerY = top + height / 2
+
+    mouseX.set(clientX - centerX)
+    mouseY.set(clientY - centerY)
+  }
+
+  const handleMouseLeave = () => {
+    mouseX.set(0)
+    mouseY.set(0)
+  }
+
   useEffect(() => {
     const audio = new Audio('/sounds/shock boom.m4a')
     audio.volume = 0.06
@@ -128,7 +165,7 @@ export default function StealthLandingPage() {
   }, [])
 
   useEffect(() => {
-    if (logoClicks > 10) {
+    if (logoClicks > 5) {
       const id = Date.now() + Math.random()
       const randomX = (Math.random() - 0.5) * 80 // -40px to +40px
       const randomRotate = (Math.random() - 0.5) * 30 // -15deg to +15deg
@@ -212,7 +249,7 @@ export default function StealthLandingPage() {
               className="flex flex-col items-center gap-4"
             >
               {/* Logo */}
-              <div className="relative w-14 h-14">
+              <div className="relative w-16 h-16">
                 <img
                   src="/logo.png"
                   className="w-full h-full opacity-90 object-contain"
@@ -273,44 +310,53 @@ export default function StealthLandingPage() {
               initial="hidden"
               animate="visible"
             >
-              <div className="relative group cursor-pointer" onClick={triggerEasterEgg}>
-                {/* Glow effect behind logo */}
-                <div className="absolute inset-0 bg-[#a86f44]/25 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              {/* Contenedor estático para detectar el mouse */}
+              <div
+                className="relative group cursor-default p-30 -m-30" // El p-8 y -m-8 expanden el área de detección
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+              >
+                {/* Elemento que se mueve con el mouse */}
+                <motion.div onClick={triggerEasterEgg} style={{ x: moveX, y: moveY }}>
+                  {/* Glow effect behind logo */}
+                  <div className="absolute inset-0 bg-[#a86f44]/45 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-                {/* Floating Easter Egg Badge */}
-                <AnimatePresence>
-                  {activeBadges.map((badge) => (
-                    <motion.div
-                      key={badge.id}
-                      initial={{ opacity: 0, y: 15, x: 0, scale: 0.6, rotate: 0 }}
-                      animate={{
-                        opacity: [0, 1, 1, 0],
-                        y: -60,
-                        x: badge.x,
-                        scale: [0.6, 1.2, 1],
-                        rotate: badge.rotate,
-                      }}
-                      transition={{
-                        duration: 1.4,
-                        times: [0, 0.15, 0.7, 1],
-                        ease: [0.16, 1, 0.3, 1],
-                      }}
-                      onAnimationComplete={() => {
-                        setActiveBadges((prev) => prev.filter((b) => b.id !== badge.id))
-                      }}
-                      className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 whitespace-nowrap text-[#a86f44] text-[10px] font-mono tracking-wider font-bold drop-shadow-[0_2px_5px_rgba(0,0,0,0.95)] pointer-events-none z-20 ${fontClass}`}
-                    >
-                      felicidades encontraste el easter egg!
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
+                  {/* Floating Easter Egg Badge */}
+                  <AnimatePresence>
+                    {activeBadges.map((badge) => (
+                      <motion.div
+                        key={badge.id}
+                        initial={{ opacity: 0, y: 15, x: 0, scale: 0.6, rotate: 0 }}
+                        animate={{
+                          opacity: [0, 1, 1, 0],
+                          y: -60,
+                          x: badge.x,
+                          scale: [0.6, 1.2, 1],
+                          rotate: badge.rotate,
+                        }}
+                        transition={{
+                          duration: 1.4,
+                          times: [0, 0.15, 0.7, 1],
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
+                        onAnimationComplete={() => {
+                          setActiveBadges((prev) => prev.filter((b) => b.id !== badge.id))
+                        }}
+                        className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 whitespace-nowrap text-[#a86f44] text-[10px] font-mono tracking-wider font-bold drop-shadow-[0_2px_5px_rgba(0,0,0,0.95)] pointer-events-none z-20 ${fontClass}`}
+                      >
+                        ¡felicidades encontraste el easter egg!
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
 
-                <img
-                  src="/logo.png"
-                  className="h-16 w-16 opacity-95 relative z-10 transition-transform duration-500 ease-out group-hover:scale-110 object-contain"
-                  alt="Praxis Logo"
-                />
+                  <img
+                    src="/logo.png"
+                    className="h-18 w-18 opacity-95 relative cursor-pointer z-10 transition-transform duration-500 ease-out group-hover:scale-110 object-contain"
+                    alt="Praxis Logo"
+                  />
+                </motion.div>
               </div>
+
               <span
                 className={`${fontClass} text-[12px] font-semibold tracking-[0.45em] uppercase text-white/80`}
               >
