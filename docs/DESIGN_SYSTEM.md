@@ -1,6 +1,6 @@
 # Design System
 
-**Last updated:** 2026-05-07 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md)
+**Last updated:** 2026-05-25 | → [PROJECT_INDEX.md](./PROJECT_INDEX.md)
 
 ---
 
@@ -8,7 +8,7 @@
 
 **Transitional.** This document describes the current implementation, but it is no longer the creative north star for Praxis.
 
-The current "Obsidian & Steel" system overuses patterns that now read as generic AI-product design: serif editorial headings, excessive monospace labels, copper accents, dark cards, very low-opacity text, and uppercase tracking as decoration. Future work should follow [REALIGNMENT_PLAN.md](./REALIGNMENT_PLAN.md) and treat this file as a compatibility reference until the visual system is replaced.
+The current "Obsidian & Steel" system: serif editorial headings, excessive monospace labels, copper accents, dark cards, very low-opacity text, and uppercase tracking as decoration. Future work should follow [REALIGNMENT_PLAN.md](./REALIGNMENT_PLAN.md) and treat this file as a compatibility reference until the visual system is replaced.
 
 ---
 
@@ -125,7 +125,7 @@ text-4xl+ → 36px+ — hero text (Noto Serif)
 | `--radius-md` | `0.25rem (4px)`  | Moderate rounding                               |
 | `--radius-lg` | `0.5rem (8px)`   | Larger containers, modals                       |
 
-Praxis defaults to `rounded-sm` everywhere. This creates the "engineered" aesthetic. Avoid `rounded-full` except for avatars.
+Praxis defaults to `rounded-sm` everywhere. Avoid `rounded-full` except for avatars.
 
 ### Surfaces
 
