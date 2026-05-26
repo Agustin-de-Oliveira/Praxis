@@ -229,7 +229,7 @@ export default function StealthLandingPage() {
 
   return (
     <div
-      className={`min-h-screen overflow-y-scroll relative flex flex-col bg-[#060606] text-white selection:bg-[#a86f44]/20 selection:text-[#a86f44] overflow-hidden ${isEasterEgg ? 'font-tiny5' : ''}`}
+      className={`min-h-screen relative flex flex-col bg-[#060606] text-white selection:bg-[#a86f44]/20 selection:text-[#a86f44] ${isEasterEgg ? 'font-tiny5' : ''}`}
     >
       {/* Entrance Loader */}
       <AnimatePresence mode="wait">
@@ -292,313 +292,329 @@ export default function StealthLandingPage() {
       <div className="relative z-10 h-[1px] w-full bg-gradient-to-r from-transparent via-[#a86f44]/40 to-transparent" />
 
       {/* Content wrapper — vertically and horizontally centered */}
-      {!loading && (
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.21, 0.47, 0.32, 0.98], delay: 0.05 }}
-          className="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-24 md:py-36"
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={loading ? { opacity: 0 } : { opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.21, 0.47, 0.32, 0.98], delay: 0.05 }}
+        className="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-24 md:py-36"
+      >
+        <div
+          className={`w-full max-w-2xl flex flex-col items-center text-center transition-all duration-300 ${isVibrating ? 'animate-vibrate' : ''}`}
         >
-          <div
-            className={`w-full max-w-2xl flex flex-col items-center text-center transition-all duration-300 ${isVibrating ? 'animate-vibrate' : ''}`}
+          {/* Logo + wordmark */}
+          <motion.div
+            className="flex flex-col items-center gap-4 mb-12"
+            custom={0}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
           >
-            {/* Logo + wordmark */}
-            <motion.div
-              className="flex flex-col items-center gap-4 mb-12"
-              custom={0}
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
+            {/* Contenedor estático para detectar el mouse */}
+            <div
+              className="relative group cursor-default p-30 -m-30" // El p-8 y -m-8 expanden el área de detección
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
             >
-              {/* Contenedor estático para detectar el mouse */}
-              <div
-                className="relative group cursor-default p-30 -m-30" // El p-8 y -m-8 expanden el área de detección
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-              >
-                {/* Elemento que se mueve con el mouse */}
-                <motion.div onClick={triggerEasterEgg} style={{ x: moveX, y: moveY }}>
-                  {/* Glow effect behind logo */}
-                  <div className="absolute inset-0 bg-[#a86f44]/45 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-                  {/* Floating Easter Egg Badge */}
-                  <AnimatePresence>
-                    {activeBadges.map((badge) => (
-                      <motion.div
-                        key={badge.id}
-                        initial={{ opacity: 0, y: 15, x: 0, scale: 0.6, rotate: 0 }}
-                        animate={{
-                          opacity: [0, 1, 1, 0],
-                          y: -60,
-                          x: badge.x,
-                          scale: [0.6, 1.2, 1],
-                          rotate: badge.rotate,
-                        }}
-                        transition={{
-                          duration: 1.4,
-                          times: [0, 0.15, 0.7, 1],
-                          ease: [0.16, 1, 0.3, 1],
-                        }}
-                        onAnimationComplete={() => {
-                          setActiveBadges((prev) => prev.filter((b) => b.id !== badge.id))
-                        }}
-                        className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 whitespace-nowrap text-[#a86f44] text-[10px] font-mono tracking-wider font-bold drop-shadow-[0_2px_5px_rgba(0,0,0,0.95)] pointer-events-none z-20 ${fontClass}`}
-                      >
-                        ¡felicidades encontraste el easter egg!
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-
-                  <img
-                    src="/logo.png"
-                    className="h-18 w-18 opacity-95 relative cursor-pointer z-10 transition-transform duration-500 ease-out group-hover:scale-110 object-contain"
-                    alt="Praxis Logo"
-                  />
-                </motion.div>
-              </div>
-
-              <span
-                className={`${fontClass} text-[12px] font-semibold tracking-[0.45em] uppercase text-white/80`}
-              >
-                <ScrambleText text="Praxis" trigger={isEasterEgg} />
-              </span>
-            </motion.div>
-
-            {/* Headline */}
-            <motion.h1
-              className={`text-[clamp(2.2rem,6vw,3.6rem)] ${fontClass} font-semibold ${isEasterEgg ? 'tracking-[0.03em]' : 'tracking-tight'} text-white/95 leading-[1.12] mb-6 text-balance`}
-              custom={1}
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
-            >
-              <ScrambleText text="Simulaciones reales de ingeniería." trigger={isEasterEgg} />
-            </motion.h1>
-
-            {/* Subtext */}
-            <motion.p
-              className={`text-sm md:text-[15px] text-white/45 max-w-md leading-[1.8] mb-16 ${fontClass} text-pretty`}
-              custom={2}
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
-            >
-              <ScrambleText
-                text="Medí el criterio técnico de tus candidatos con entornos reales de trabajo, no acertijos de código."
-                trigger={isEasterEgg}
-              />
-            </motion.p>
-
-            {/* ── Enhanced Waitlist CTA ── */}
-            <motion.div
-              className="w-full max-w-2xl mb-24"
-              custom={3}
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
-            >
-              {/* CTA Card */}
-              <div
-                className={`relative rounded-sm border transition-all duration-500 ${
-                  isFocused
-                    ? 'border-[#a86f44]/30 shadow-[0_0_40px_-12px_rgba(168,111,68,0.15)]'
-                    : 'border-white/[0.06]'
-                }`}
-              >
-                {/* Shimmer edge — top */}
-                <div
-                  className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#a86f44]/40 to-transparent opacity-0 transition-opacity duration-500"
-                  style={{ opacity: isFocused ? 1 : 0 }}
-                />
-
-                <div className="px-8 pt-9 pb-8 sm:px-10 sm:pt-10 sm:pb-9">
-                  {/* Heading */}
-                  <div className="mb-8">
-                    <h2
-                      className={`${fontClass} text-[15px] sm:text-base font-semibold text-white/90 mb-2 ${isEasterEgg ? 'tracking-[0.12em]' : 'tracking-tight'}`}
+              {/* Elemento que se mueve con el mouse */}
+              <motion.div onClick={triggerEasterEgg} style={{ x: moveX, y: moveY }}>
+                {/* Floating Easter Egg Badge */}
+                <AnimatePresence>
+                  {activeBadges.map((badge) => (
+                    <motion.div
+                      key={badge.id}
+                      initial={{ opacity: 0, y: 15, x: 0, scale: 0.6, rotate: 0 }}
+                      animate={{
+                        opacity: [0, 1, 1, 0],
+                        y: -60,
+                        x: badge.x,
+                        scale: [0.6, 1.2, 1],
+                        rotate: badge.rotate,
+                      }}
+                      transition={{
+                        duration: 1.4,
+                        times: [0, 0.15, 0.7, 1],
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      onAnimationComplete={() => {
+                        setActiveBadges((prev) => prev.filter((b) => b.id !== badge.id))
+                      }}
+                      className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 whitespace-nowrap text-[#a86f44] text-[10px] font-mono tracking-wider font-bold drop-shadow-[0_2px_5px_rgba(0,0,0,0.95)] pointer-events-none z-20 ${fontClass}`}
                     >
-                      <ScrambleText text="Acceso anticipado" trigger={isEasterEgg} />
-                    </h2>
-                    <p className={`${fontClass} text-[13px] text-white/35 leading-relaxed`}>
-                      <ScrambleText
-                        text="Sé de los primeros en evaluar talento con simulaciones reales."
-                        trigger={isEasterEgg}
-                      />
-                    </p>
-                  </div>
+                      ¡felicidades encontraste el easter egg!
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
 
-                  {/* Form */}
-                  <AnimatePresence mode="wait">
-                    {formState === 'success' ? (
-                      <motion.div
-                        key="success"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, ease: [0.21, 0.47, 0.32, 0.98] }}
-                        className="flex items-center gap-3 py-3"
-                      >
-                        <div className="h-8 w-8 rounded-full bg-[#a86f44]/15 border border-[#a86f44]/30 flex items-center justify-center flex-shrink-0">
-                          <Check className="h-4 w-4 text-[#a86f44]" />
-                        </div>
-                        <div className="text-left">
-                          <p className={`${fontClass} text-[13px] font-medium text-white/80`}>
-                            Estás en la lista
-                          </p>
-                          <p className={`${fontClass} text-[11px] text-white/30 mt-0.5`}>
-                            Te contactamos pronto con tu acceso.
-                          </p>
-                        </div>
-                      </motion.div>
-                    ) : (
-                      <div className="flex flex-col gap-2 w-full">
-                        <motion.form
-                          key="form"
-                          onSubmit={handleSubmit}
-                          noValidate
-                          className="flex flex-col sm:flex-row gap-3 w-full"
-                        >
-                          <div className="relative flex-[1.4] w-full">
-                            <input
-                              type="email"
-                              value={email}
-                              onChange={(e) => {
-                                setEmail(e.target.value)
-                                if (emailError) setEmailError(null)
-                              }}
-                              onFocus={() => setIsFocused(true)}
-                              onBlur={() => setIsFocused(false)}
-                              placeholder="tu@empresa.com"
-                              className={`w-full px-4 py-3 text-sm ${fontClass} bg-white/[0.03] border border-white/[0.08] rounded-sm focus:outline-none focus:border-[#a86f44]/40 focus:bg-white/[0.05] text-white/90 placeholder:text-white/20 transition-all duration-300`}
-                            />
-                          </div>
-                          <button
-                            type="submit"
-                            disabled={formState === 'loading'}
-                            className={`group relative flex-1 px-6 py-3 text-xs uppercase tracking-[0.06em] ${fontClass} font-semibold text-white bg-[#a86f44]/15 border border-[#a86f44]/30 hover:bg-[#a86f44]/25 hover:border-[#a86f44]/50 active:scale-[0.98] transition-all duration-300 cursor-pointer overflow-hidden rounded-sm disabled:cursor-wait w-full sm:w-auto`}
-                          >
-                            {/* Shimmer sweep */}
-                            <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/[0.06] to-transparent pointer-events-none" />
-                            {/* Glow on hover */}
-                            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[#a86f44]/5 pointer-events-none" />
+                <img
+                  src="/logo.png"
+                  className="h-18 w-18 opacity-95 relative cursor-pointer z-10 transition-transform duration-500 ease-out group-hover:scale-110 object-contain"
+                  alt="Praxis Logo"
+                />
+              </motion.div>
+            </div>
 
-                            <span className="relative z-10 flex items-center justify-center gap-2">
-                              {formState === 'loading' ? (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                              ) : (
-                                <>
-                                  <ScrambleText text="Quiero acceso" trigger={isEasterEgg} />
-                                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
-                                </>
-                              )}
-                            </span>
-                          </button>
-                        </motion.form>
+            <span
+              className={`${fontClass} text-[12px] font-semibold tracking-[0.45em] uppercase text-white/80`}
+            >
+              <ScrambleText text="Praxis" trigger={isEasterEgg} />
+            </span>
+          </motion.div>
 
-                        <AnimatePresence>
-                          {emailError && (
-                            <motion.div
-                              initial={{ opacity: 0, y: -6 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -6 }}
-                              className={`text-left mt-2 px-3.5 py-2.5 border border-red-500/10 bg-red-500/[0.03] text-red-400 text-[11px] rounded-sm flex items-center gap-2 ${fontClass}`}
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
-                              {emailError}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+          {/* Headline */}
+          <motion.h1
+            className={`text-[clamp(2.2rem,6vw,3.6rem)] ${fontClass} font-semibold ${isEasterEgg ? 'tracking-[0.03em]' : 'tracking-tight'} text-white/95 leading-[1.12] mb-6 text-balance`}
+            custom={1}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          >
+            <ScrambleText text="Simulaciones reales de ingeniería." trigger={isEasterEgg} />
+          </motion.h1>
 
-                        {formState === 'error' && (
-                          <p className={`text-[11px] text-red-400/90 text-left mt-1 ${fontClass}`}>
-                            Hubo un problema de conexión. Por favor intentá de nuevo.
-                          </p>
-                        )}
+          {/* Subtext */}
+          <motion.p
+            className={`text-sm md:text-[15px] text-white/45 max-w-md leading-[1.8] mb-16 ${fontClass} text-pretty`}
+            custom={2}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          >
+            <ScrambleText
+              text="Medí el criterio técnico de tus candidatos con entornos reales de trabajo, no acertijos de código."
+              trigger={isEasterEgg}
+            />
+          </motion.p>
+
+          {/* ── Enhanced Waitlist CTA ── */}
+          <motion.div
+            className="w-full max-w-2xl mb-24"
+            custom={3}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          >
+            {/* CTA Card */}
+            <div
+              className={`relative rounded-sm border transition-all duration-500 ${
+                isFocused
+                  ? 'border-[#a86f44]/30 shadow-[0_0_40px_-12px_rgba(168,111,68,0.15)]'
+                  : 'border-white/[0.06]'
+              }`}
+            >
+              {/* Shimmer edge — top */}
+              <div
+                className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#a86f44]/40 to-transparent opacity-0 transition-opacity duration-500"
+                style={{ opacity: isFocused ? 1 : 0 }}
+              />
+
+              <div className="px-8 pt-9 pb-8 sm:px-10 sm:pt-10 sm:pb-9">
+                {/* Heading */}
+                <div className="mb-8">
+                  <h2
+                    className={`${fontClass} text-[15px] sm:text-base font-semibold text-white/90 mb-2 ${isEasterEgg ? 'tracking-[0.12em]' : 'tracking-tight'}`}
+                  >
+                    <ScrambleText text="Acceso anticipado" trigger={isEasterEgg} />
+                  </h2>
+                  <p className={`${fontClass} text-[13px] text-white/35 leading-relaxed`}>
+                    <ScrambleText
+                      text="Sé de los primeros en evaluar talento con simulaciones reales."
+                      trigger={isEasterEgg}
+                    />
+                  </p>
+                </div>
+
+                {/* Form */}
+                <AnimatePresence mode="wait">
+                  {formState === 'success' ? (
+                    <motion.div
+                      key="success"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, ease: [0.21, 0.47, 0.32, 0.98] }}
+                      className="flex items-center gap-3 py-3"
+                    >
+                      <div className="h-8 w-8 rounded-full bg-[#a86f44]/15 border border-[#a86f44]/30 flex items-center justify-center flex-shrink-0">
+                        <Check className="h-4 w-4 text-[#a86f44]" />
                       </div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Social proof + Trust row */}
-                  {formState !== 'success' && (
-                    <div className="flex flex-col sm:flex-row items-center justify-between mt-8 gap-4">
-                      {/* Social proof */}
-                      <div className="flex items-center gap-3">
-                        {/* Stacked avatars */}
-                        <div className="flex -space-x-1.5">
-                          {['#6366f1', '#a86f44', '#10b981', '#f59e0b'].map((color, i) => (
-                            <div
-                              key={i}
-                              className="h-5 w-5 rounded-full border border-[#060606]"
-                              style={{ backgroundColor: color, opacity: 0.7 - i * 0.1 }}
-                            />
-                          ))}
-                        </div>
-                        <p className={`${fontClass} text-[11px] text-white/30`}>
-                          <span className="text-white/50 font-medium tabular-nums">
-                            +<AnimatedCounter target={10} />
-                          </span>{' '}
-                          desarrolladores en espera
+                      <div className="text-left">
+                        <p className={`${fontClass} text-[13px] font-medium text-white/80`}>
+                          Estás en la lista
+                        </p>
+                        <p className={`${fontClass} text-[11px] text-white/30 mt-0.5`}>
+                          Te contactamos pronto con tu acceso.
                         </p>
                       </div>
+                    </motion.div>
+                  ) : (
+                    <div className="flex flex-col gap-2 w-full">
+                      <motion.form
+                        key="form"
+                        onSubmit={handleSubmit}
+                        noValidate
+                        className="flex flex-col sm:flex-row gap-3 w-full"
+                      >
+                        <div className="relative flex-[1.4] w-full">
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => {
+                              setEmail(e.target.value)
+                              if (emailError) setEmailError(null)
+                            }}
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={() => setIsFocused(false)}
+                            placeholder="tu@empresa.com"
+                            className={`w-full px-4 py-3 text-sm ${fontClass} bg-white/[0.03] border border-white/[0.08] rounded-sm focus:outline-none focus:border-[#a86f44]/40 focus:bg-white/[0.05] text-white/90 placeholder:text-white/20 transition-all duration-300`}
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          disabled={formState === 'loading'}
+                          className={`group relative flex-1 px-6 py-3 text-xs uppercase ${fontClass} font-semibold text-white bg-[#a86f44]/15 border border-[#a86f44]/30 hover:bg-[#a86f44]/25 hover:border-[#a86f44]/50 active:scale-[0.98] transition-all duration-300 cursor-pointer overflow-hidden rounded-sm disabled:cursor-wait w-full sm:w-auto`}
+                        >
+                          {/* Shimmer sweep */}
+                          <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/[0.06] to-transparent pointer-events-none" />
+                          {/* Glow on hover */}
+                          <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[#a86f44]/5 pointer-events-none" />
 
-                      {/* Trust signal */}
-                      <div className="flex items-center gap-1.5 text-white/20">
-                        <Shield className="h-3 w-3" />
-                        <span className={`${fontClass} text-[10px] uppercase tracking-[0.15em]`}>
-                          Sin spam · cancelá cuando quieras
-                        </span>
-                      </div>
+                          <span className="relative z-10 flex items-center justify-center gap-2">
+                            {formState === 'loading' ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <>
+                                <ScrambleText text="Quiero acceso" trigger={isEasterEgg} />
+                                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+                              </>
+                            )}
+                          </span>
+                        </button>
+                      </motion.form>
+
+                      <AnimatePresence>
+                        {emailError && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -6 }}
+                            className={`text-left mt-2 px-3.5 py-2.5 border border-red-500/10 bg-red-500/[0.03] text-red-400 text-[11px] rounded-sm flex items-center gap-2 ${fontClass}`}
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                            {emailError}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {formState === 'error' && (
+                        <p className={`text-[11px] text-red-400/90 text-left mt-1 ${fontClass}`}>
+                          Hubo un problema de conexión. Por favor intentá de nuevo.
+                        </p>
+                      )}
                     </div>
                   )}
+                </AnimatePresence>
+
+                {/* Secondary Demo CTA */}
+                <div className="mt-8 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="text-left">
+                    <p className="text-[12px] text-white/50 font-medium">
+                      ¿Quieres probar la simulación?
+                    </p>
+                    <p className="text-[10px] text-white/25 mt-0.5">
+                      Experimenta el Modo Tour interactivo ahora.
+                    </p>
+                  </div>
+                  <Link
+                    href="/tour/SCN-008"
+                    className="group shimmer-sweep inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm border border-white/10 bg-white/[0.03] text-[11px] uppercase tracking-[0.2em] font-sans font-semibold text-white/80 hover:text-white hover:bg-white/[0.08] hover:border-white/20 active:scale-[0.98] transition-all duration-300 cursor-pointer w-full sm:w-auto"
+                  >
+                    <span>Probar Demo</span>
+                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                      →
+                    </span>
+                  </Link>
                 </div>
+
+                {/* Social proof + Trust row */}
+                {formState !== 'success' && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between mt-8 gap-4">
+                    {/* Social proof */}
+                    <div className="flex items-center gap-3">
+                      {/* Stacked avatars */}
+                      <div className="flex -space-x-1.5">
+                        {['#6366f1', '#a86f44', '#5f8a6b', '#f59e0b'].map((color, i) => (
+                          <div
+                            key={i}
+                            className="h-5 w-5 rounded-full border border-[#060606]"
+                            style={{ backgroundColor: color, opacity: 0.7 - i * 0.1 }}
+                          />
+                        ))}
+                      </div>
+                      <p className={`${fontClass} text-[11px] text-white/30`}>
+                        <span className="text-white/50 font-medium tabular-nums">
+                          +<AnimatedCounter target={10} />
+                        </span>{' '}
+                        desarrolladores en espera
+                      </p>
+                    </div>
+
+                    {/* Trust signal */}
+                    <div className="flex items-center gap-1.5 text-white/20">
+                      <Shield className="h-3 w-3" />
+                      <span className={`${fontClass} text-[10px] uppercase tracking-[0.10em]`}>
+                        Sin spam · cancelá cuando quieras
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
-            </motion.div>
+            </div>
+          </motion.div>
 
-            {/* Divider */}
-            <motion.div
-              className="h-[1px] w-12 bg-white/[0.08] mb-8"
-              custom={5}
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
-            />
+          {/* Divider */}
+          <motion.div
+            className="h-[1px] w-12 bg-white/[0.08] mb-8"
+            custom={5}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          />
 
-            {/* Links row */}
-            <motion.nav
-              className={`flex flex-wrap justify-center items-center gap-x-8 gap-y-3 text-white/25 text-[11px] ${fontClass}`}
-              custom={6}
-              variants={fadeUp}
-              initial="hidden"
-              animate="visible"
+          {/* Links row */}
+          <motion.nav
+            className={`flex flex-wrap justify-center items-center gap-x-8 gap-y-3 text-white/25 text-[11px] ${fontClass}`}
+            custom={6}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+          >
+            <a
+              href="https://github.com/agustin-de-oliveira"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white/60 transition-colors flex items-center gap-1.5"
             >
-              <a
-                href="https://github.com/agustin-de-oliveira"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white/60 transition-colors flex items-center gap-1.5"
-              >
-                <Github className="h-3.5 w-3.5" />
-                GitHub
-              </a>
-              <a
-                href="https://www.linkedin.com/in/agustin-de-oliveira/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white/60 transition-colors flex items-center gap-1.5"
-              >
-                <Linkedin className="h-3.5 w-3.5" />
-                LinkedIn
-              </a>
-              <a
-                href="mailto:agustindeoliveira1@gmail.com"
-                className="hover:text-white/60 transition-colors flex items-center gap-1.5"
-              >
-                <Mail className="h-3.5 w-3.5" />
-                Correo
-              </a>
-            </motion.nav>
-          </div>
-        </motion.div>
-      )}
+              <Github className="h-3.5 w-3.5" />
+              GitHub
+            </a>
+            <a
+              href="https://www.linkedin.com/in/agustin-de-oliveira/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white/60 transition-colors flex items-center gap-1.5"
+            >
+              <Linkedin className="h-3.5 w-3.5" />
+              LinkedIn
+            </a>
+            <a
+              href="mailto:agustindeoliveira1@gmail.com"
+              className="hover:text-white/60 transition-colors flex items-center gap-1.5"
+            >
+              <Mail className="h-3.5 w-3.5" />
+              Correo
+            </a>
+          </motion.nav>
+        </div>
+      </motion.div>
 
       {/* Footer — barely there */}
       <footer className="relative z-10 px-6 py-6 text-center">

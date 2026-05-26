@@ -35,7 +35,7 @@ const ACCENT_COLORS = [
   { name: 'Copper', hex: '#a86f44' },
   { name: 'Titanium', hex: '#94a3b8' },
   { name: 'Cobalt', hex: '#3b82f6' },
-  { name: 'Emerald', hex: '#10b981' },
+  { name: 'Emerald', hex: '#5f8a6b' },
   { name: 'Crimson', hex: '#f43f5e' },
   { name: 'Carbon', hex: '#4a4a4a' },
 ]
@@ -406,7 +406,7 @@ export function PreferencesModal() {
                           }
                           const audio = new Audio(bootSounds[v.id as keyof typeof bootSounds])
                           audio.volume = 0.2
-                          audio.play().catch(() => { })
+                          audio.play().catch(() => {})
                         }, 50)
                       }}
                       className={`flex-1 py-2 rounded-sm border font-mono text-[8px] uppercase tracking-widest transition-all ${bootSoundVariant === v.id ? 'bg-white/20 text-white border-white/20' : 'bg-white/5 text-white/20 border-white/10 hover:bg-white/10'}`}

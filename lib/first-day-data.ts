@@ -138,6 +138,7 @@ export interface TeamMember {
   role: string
   color: string // CSS color class for avatar bg
   textColor: string // CSS color for text
+  avatarUrl?: string // path to 8-bit image avatar
 }
 
 // Tour phases enum
@@ -169,6 +170,7 @@ export const SCN008_TEAM: TeamMember[] = [
     role: 'Product Manager',
     color: 'bg-orange-500/15 border-orange-500/25',
     textColor: 'text-orange-400',
+    avatarUrl: '/avatars/alex.png',
   },
   {
     handle: 'senior_dev',
@@ -176,6 +178,7 @@ export const SCN008_TEAM: TeamMember[] = [
     role: 'Senior Engineer',
     color: 'bg-emerald-500/15 border-emerald-500/25',
     textColor: 'text-emerald-400',
+    avatarUrl: '/avatars/sarah.png',
   },
   {
     handle: 'frontend_dev',
@@ -183,6 +186,7 @@ export const SCN008_TEAM: TeamMember[] = [
     role: 'Frontend Engineer',
     color: 'bg-sky-500/15 border-sky-500/25',
     textColor: 'text-sky-400',
+    avatarUrl: '/avatars/jordan.png',
   },
 ]
 
@@ -284,9 +288,9 @@ export const SCN008_TICKET = {
   channel: '# eng-backend',
   timestamp: '9:03 AM',
   subject: 'Endpoint de página de perfil requerido',
-  body: `Los usuarios siguen pidiendo una página de perfil. Necesitamos un endpoint **GET /api/profile** que retorne la información básica del usuario actual (nombre, email, fecha de ingreso, url_avatar).
+  body: `Como discutimos en el canal, Jordan está teniendo un 404 al intentar conectar la página de Perfil porque nos falta el endpoint **GET /api/profile**. Necesitamos implementarlo para retornar la información básica del usuario actual (nombre, email, fecha de ingreso, url_avatar).
 
-El middleware de autenticación ya está listo — solo asegúrate de que funcione con la configuración de JWT existente. Sin cambios por ahora.`,
+El middleware de autenticación ya está listo — solo asegúrate de que funcione con la configuración de JWT existente.`,
   acceptanceCriteria: [
     'El endpoint retorna 401 para peticiones no autenticadas',
     'Las peticiones autenticadas retornan los datos correctos del usuario (nombre, email, etc.)',

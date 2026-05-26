@@ -8,8 +8,9 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
-import { Lightbulb, CheckCircle, Terminal, Monitor } from 'lucide-react'
+import { Lightbulb, CheckCircle, Terminal, Monitor, ArrowRight } from 'lucide-react'
 import { Beaker } from 'lucide-react'
+import { sfx } from '@/lib/audio'
 
 const tourVariants: Variants = {
   hidden: { opacity: 0, filter: 'blur(8px)', scale: 0.98 },
@@ -132,12 +133,24 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [inputValue, setInputValue] = useState('')
   const [isCorrect, setIsCorrect] = useState(false)
-  const [showHint, setShowHint] = useState(false)
   const [completedLines, setCompletedLines] = useState<string[]>([])
   const [logs, setLogs] = useState<string[]>([
     '[praxis-jest] Se encontró 1 suite de pruebas.',
     '[praxis-jest] Observando cambios...',
   ])
+
+  const [isShaking, setIsShaking] = useState(false)
+  const shakeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const isTransitioningRef = useRef(false)
+
+  // Clean up shake timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (shakeTimeoutRef.current) {
+        clearTimeout(shakeTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const inputRef = useRef<HTMLInputElement>(null)
   const prefixRef = useRef<HTMLSpanElement>(null)
@@ -149,12 +162,70 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
   const [suggestionPrefix, setSuggestionPrefix] = useState('')
   const [suggestionOffset, setSuggestionOffset] = useState(0)
 
+  // Compute text parts for error highlighting and ghost text alignment
+  let correctLen = 0
+  if (step) {
+    const typedLower = inputValue.toLowerCase()
+    const targetLower = step.target.toLowerCase()
+    while (
+      correctLen < inputValue.length &&
+      correctLen < step.target.length &&
+      typedLower[correctLen] === targetLower[correctLen]
+    ) {
+      correctLen++
+    }
+  }
+  const correctPart = inputValue.slice(0, correctLen)
+  const incorrectPart = inputValue.slice(correctLen)
+  const remainingGhostText = step ? step.target.slice(correctLen + incorrectPart.length) : ''
+
   useEffect(() => {
     inputRef.current?.focus()
   }, [currentStep])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isTransitioningRef.current) return
     const val = e.target.value
+
+    if (step) {
+      // Calculate correct length for new value
+      let newCorrectLen = 0
+      const valLower = val.toLowerCase()
+      const targetLower = step.target.toLowerCase()
+      while (
+        newCorrectLen < val.length &&
+        newCorrectLen < step.target.length &&
+        valLower[newCorrectLen] === targetLower[newCorrectLen]
+      ) {
+        newCorrectLen++
+      }
+      const newIncorrectLen = val.length - newCorrectLen
+
+      // Calculate correct length for current inputValue
+      let prevCorrectLen = 0
+      const prevLower = inputValue.toLowerCase()
+      while (
+        prevCorrectLen < inputValue.length &&
+        prevCorrectLen < step.target.length &&
+        prevLower[prevCorrectLen] === targetLower[prevCorrectLen]
+      ) {
+        prevCorrectLen++
+      }
+      const prevIncorrectLen = inputValue.length - prevCorrectLen
+
+      // Shake and play error SFX if a new mistake is introduced
+      if (newIncorrectLen > prevIncorrectLen && newIncorrectLen > 0) {
+        sfx.playError()
+        setIsShaking(true)
+        if (shakeTimeoutRef.current) {
+          clearTimeout(shakeTimeoutRef.current)
+        }
+        shakeTimeoutRef.current = setTimeout(() => {
+          setIsShaking(false)
+        }, 250)
+      }
+    }
+
     setInputValue(val)
 
     // Check for suggestions
@@ -205,6 +276,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
     // Accept suggestion or autocomplete line on Tab
     if (e.key === 'Tab') {
       e.preventDefault()
+      if (isTransitioningRef.current) return
       if (suggestions.length > 0) {
         const chosen = suggestions[activeSuggestion]
         if (chosen) insertSuggestion(chosen)
@@ -212,6 +284,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
       }
 
       // No suggestions: autocomplete the full target line
+      isTransitioningRef.current = true
       setInputValue(step.target)
       setTimeout(() => handleStepSuccess(), 60)
       return
@@ -274,6 +347,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
   const handleStepSuccess = () => {
     if (isCorrectRef.current) return
     isCorrectRef.current = true
+    isTransitioningRef.current = true
     setIsCorrect(true)
     setLogs((prev) => [...prev, `PASS  tests/profile.test.ts > ${step.feedback}`])
 
@@ -282,19 +356,23 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
       setInputValue('')
       setIsCorrect(false)
       isCorrectRef.current = false
-      setShowHint(false)
+      isTransitioningRef.current = false
       setSuggestions([])
-      if (currentStep < TEST_STEPS.length - 1) {
-        setCurrentStep((prev) => prev + 1)
-      } else {
-        setLogs((prev) => [
-          ...prev,
-          'Test Suites: 1 passed, 1 total',
-          'Tests: 4 passed, 4 total',
-          'Snapshots: 0 total',
-          'Time: 1.24s',
-        ])
-      }
+      setCurrentStep((prev) => {
+        if (prev < TEST_STEPS.length - 1) {
+          return prev + 1
+        }
+        setTimeout(() => {
+          setLogs((prevLogs) => [
+            ...prevLogs,
+            'Test Suites: 1 passed, 1 total',
+            'Tests: 4 passed, 4 total',
+            'Snapshots: 0 total',
+            'Time: 1.24s',
+          ])
+        }, 0)
+        return prev
+      })
     }, 800)
   }
 
@@ -340,34 +418,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
                 <h3 className="text-base font-bold text-white mb-3">{step.title}</h3>
                 <p className="text-xs text-white/50 leading-relaxed mb-6">{step.instruction}</p>
 
-                <div className="pt-4 border-t border-white/5">
-                  <button
-                    onClick={() => setShowHint(!showHint)}
-                    className="text-[10px] font-mono text-[#a86f44] hover:text-[#c88f64] transition-colors flex items-center gap-2 cursor-pointer"
-                  >
-                    <Lightbulb size={14} />
-                    {showHint ? 'Ocultar fragmento' : 'Mostrar fragmento'}
-                  </button>
-                  <AnimatePresence>
-                    {showHint && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-3 p-3 rounded-sm bg-black/40 border border-white/5"
-                      >
-                        <p className="text-[9px] text-white/30 uppercase tracking-widest mb-2 font-mono">
-                          Fragmento de referencia
-                        </p>
-                        <code className="text-[10px] text-[#a86f44] font-mono leading-relaxed block break-all">
-                          {step.target}
-                        </code>
-                        <p className="mt-2 text-[10px] text-white/40 italic leading-relaxed">
-                          {step.hint}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+
               </motion.div>
             ) : (
               <motion.div
@@ -381,14 +432,15 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
                   Tu endpoint ahora es oficialmente a prueba de balas. El equipo va a apreciar la cobertura.
                 </p>
                 <div className="w-full flex justify-center pt-2">
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={onContinue}
-                    className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white transition-colors relative py-1 cursor-pointer"
+                    className="group shimmer-sweep inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-sm border border-[#a86f44]/30 bg-[#a86f44]/15 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white hover:bg-[#a86f44]/25 hover:border-[#a86f44]/50 transition-all duration-300 cursor-pointer"
                   >
                     <span>Proceder a Puntos de Control</span>
-                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
-                    <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
-                  </button>
+                    <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                  </motion.button>
                 </div>
               </motion.div>
             )}
@@ -453,21 +505,30 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
                 </motion.div>
               ))}
 
-              {!isAllDone && (
+              {!isAllDone && !completedLines.includes(step.target) && (
                 <div className="flex flex-col relative">
                   <div className="flex items-center gap-6 group">
                     <span className="w-4 text-white/10 text-right select-none">
                       {7 + completedLines.length}
                     </span>
-                    <div className="flex-1 flex items-center gap-2 relative">
+                    <motion.div
+                      className="flex-1 flex items-center gap-2 relative"
+                      animate={isShaking ? { x: [0, -4, 4, -4, 4, 0] } : { x: 0 }}
+                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    >
                       <div className="w-1.5 h-4 bg-[#a86f44] animate-pulse shrink-0 rounded-full" />
                       <div className="relative w-full min-h-5">
                         {/* Presentation overlay: shows typed text + ghost text precisely in-flow */}
                         <div className="absolute inset-0 pointer-events-none flex items-center">
                           <div className="font-mono text-[13px] leading-[20px] whitespace-pre text-white w-full">
-                            <span className="opacity-100">{inputValue}</span>
-                            {showHint && step.target.startsWith(inputValue) && (
-                              <span className="text-white/20">{step.target.slice(inputValue.length)}</span>
+                            <span className="text-[#a86f44]">{correctPart}</span>
+                            {incorrectPart.length > 0 && (
+                              <span className="text-red-400 bg-red-950/40 px-0.5 rounded-sm font-semibold">
+                                {incorrectPart}
+                              </span>
+                            )}
+                            {remainingGhostText.length > 0 && (
+                              <span className="text-white/20">{remainingGhostText}</span>
                             )}
                           </div>
                         </div>
@@ -489,7 +550,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
                           onKeyDown={handleKeyDown}
                           spellCheck={false}
                           autoComplete="off"
-                          placeholder={showHint ? '' : 'Escribí tu lógica de prueba...'}
+                          placeholder=""
                           className="absolute left-0 top-0 w-full h-5 bg-transparent border-none outline-none text-transparent font-mono text-[13px] leading-5 whitespace-pre p-0 focus:ring-0"
                           style={{ caretColor: '#a86f44' }}
                         />
@@ -522,7 +583,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
                           </motion.div>
                         )}
                       </AnimatePresence>
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
               )}

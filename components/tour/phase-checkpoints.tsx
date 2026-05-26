@@ -3,7 +3,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // components/tour/phase-checkpoints.tsx
 // Phase 3: High-Fidelity Verification Dashboard (CI/CD Simulation).
-// Immersive pipeline view with streaming logs and diagnostic feedback.
+// Now data-driven — receives checkpoints and logs as props.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect, useCallback, useRef } from 'react'
@@ -11,14 +11,15 @@ import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import {
   CheckCircle,
   Play,
-  ArrowRight,
-  Star,
   Terminal,
   Activity,
   ShieldCheck,
   Cpu,
+  Star,
+  ArrowRight,
 } from 'lucide-react'
-import { SCN008_CHECKPOINTS } from '@/lib/first-day-data'
+import { sfx } from '@/lib/audio'
+import type { CheckpointData } from '@/lib/tour-scenarios'
 
 const tourVariants: Variants = {
   hidden: { opacity: 0, filter: 'blur(8px)', scale: 0.98 },
@@ -36,46 +37,16 @@ const tourVariants: Variants = {
   },
 }
 
-// ── Checkpoint Details (Simulated Logs) ──────────────────────────────────────
-
-const CHECKPOINT_LOGS: Record<string, string[]> = {
-  'cp1': [
-    '> verificando src/routes/profile.ts',
-    "> buscando middleware 'authenticate'...",
-    "COINCIDENCIA: 'authenticate' encontrado en la línea 8",
-    'VERIFICACIÓN: lógica de validación de tokens activa',
-    'ÉXITO: Barrera de autorización verificada.',
-  ],
-  'cp2': [
-    '> escaneando patrones de acceso a base de datos',
-    "> verificado conexión 'getUserById'...",
-    "COINCIDENCIA: llamada asíncrona a 'getUserById' encontrada",
-    "VERIFICACIÓN: parámetro 'req.user.id' enviado correctamente",
-    'ÉXITO: Integración de base de datos verificada.',
-  ],
-  'cp3': [
-    '> ejecutando análisis de seguridad (linting)',
-    '> escaneando exposiciones sensibles...',
-    "AUDITORÍA: desestructuración de 'passwordHash' detectada",
-    "VERIFICACIÓN: 'passwordHash' eliminado de la respuesta",
-    'ÉXITO: Auditoría de seguridad aprobada. No se encontraron exposiciones.',
-  ],
-  'cp4': [
-    '> llamando al endpoint stub /api/profile',
-    '> verificando esquema JSON...',
-    "ESQUEMA: el cuerpo contiene 'id', 'name', 'email'",
-    'VERIFICACIÓN: código de estado es 200 OK',
-    'ÉXITO: Formato de respuesta verificado.',
-  ],
-}
-
 interface PhaseCheckpointsProps {
+  checkpoints: CheckpointData
   onContinue: (doneCnt: number) => void
 }
 
-export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) {
+export default function PhaseCheckpoints({ checkpoints, onContinue }: PhaseCheckpointsProps) {
+  const { items, logs: CHECKPOINT_LOGS } = checkpoints
+
   const [statuses, setStatuses] = useState<Record<string, 'idle' | 'running' | 'passed'>>(() =>
-    Object.fromEntries(SCN008_CHECKPOINTS.map((c) => [c.id, 'idle']))
+    Object.fromEntries(items.map((c) => [c.id, 'idle']))
   )
   const [activeLogs, setActiveLogs] = useState<string[]>([])
   const [activeCheckpointId, setActiveCheckpointId] = useState<string | null>(null)
@@ -88,7 +59,7 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
   }, [activeLogs])
 
   const runCheckpoint = useCallback(async (id: string) => {
-    const cp = SCN008_CHECKPOINTS.find((c) => c.id === id)
+    const cp = items.find((c) => c.id === id)
     const label = cp ? cp.label : id.toUpperCase()
 
     setActiveCheckpointId(id)
@@ -98,16 +69,19 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
     const logs = CHECKPOINT_LOGS[id] || []
     for (const log of logs) {
       await new Promise((r) => setTimeout(r, 250))
+      sfx.playTyping()
       setActiveLogs((prev) => [...prev, log])
     }
 
     await new Promise((r) => setTimeout(r, 300))
     setStatuses((prev) => ({ ...prev, [id]: 'passed' }))
+    sfx.playNotification()
     setActiveLogs((prev) => [...prev, `[praxis-ci] ÉXITO: ${label} - APROBADO.`])
-  }, [])
+  }, [items, CHECKPOINT_LOGS])
 
   const runAll = async () => {
-    for (const c of SCN008_CHECKPOINTS) {
+    sfx.playClick()
+    for (const c of items) {
       if (statuses[c.id] === 'passed') continue
       await runCheckpoint(c.id)
       await new Promise((r) => setTimeout(r, 500))
@@ -115,7 +89,13 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
   }
 
   const passedCount = Object.values(statuses).filter((s) => s === 'passed').length
-  const allPassed = passedCount === SCN008_CHECKPOINTS.length
+  const allPassed = passedCount === items.length
+
+  useEffect(() => {
+    if (allPassed) {
+      sfx.playNotification()
+    }
+  }, [allPassed])
 
   return (
     <motion.div
@@ -133,7 +113,8 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
         </p>
         <h2 className="font-serif text-3xl font-medium text-white mb-3">Ejecutá el Pipeline</h2>
         <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
-          Antes de integrar tu PR, el sistema de CI debe verificar la implementación contra nuestros estándares de seguridad y arquitectura.
+          Antes de integrar tu PR, el sistema de CI debe verificar la implementación contra nuestros
+          estándares de seguridad y arquitectura.
         </p>
       </div>
 
@@ -148,9 +129,8 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
             <Activity size={14} className="text-white/10" />
           </div>
 
-          {SCN008_CHECKPOINTS.map((c, i) => {
+          {items.map((c, i) => {
             const status = statuses[c.id]
-            const isActive = activeCheckpointId === c.id
 
             return (
               <motion.div
@@ -159,7 +139,7 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1 }}
                 onClick={() => status === 'idle' && runCheckpoint(c.id)}
-                className={`group relative p-4 rounded-sm border transition-all duration-300 cursor-pointer overflow-hidden ${
+                className={`group relative p-3 rounded-sm border transition-all duration-300 cursor-pointer overflow-hidden ${
                   status === 'passed'
                     ? 'border-emerald-500/20 bg-emerald-500/[0.03]'
                     : status === 'running'
@@ -241,7 +221,9 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
               {activeLogs.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center opacity-10">
                   <Cpu size={40} className="mb-4" />
-                  <p className="uppercase tracking-widest">Seleccioná una etapa para ver diagnósticos</p>
+                  <p className="uppercase tracking-widest">
+                    Seleccioná una etapa para ver diagnósticos
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-1">
@@ -250,7 +232,7 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
                       key={i}
                       initial={{ opacity: 0, x: -5 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className={`${log.includes('SUCCESS') || log.includes('PASSED') ? 'text-emerald-500 font-bold' : log.includes('CHECK') ? 'text-white/60' : ''}`}
+                      className={`${log.includes('ÉXITO') || log.includes('PASSED') ? 'text-emerald-500 font-bold' : log.includes('VERIFICACIÓN') ? 'text-white/60' : ''}`}
                     >
                       {log}
                     </motion.div>
@@ -284,7 +266,7 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
               </div>
               <div className="flex items-end gap-2">
                 <span className="text-2xl font-serif text-white">
-                  {passedCount}/{SCN008_CHECKPOINTS.length}
+                  {passedCount}/{items.length}
                 </span>
                 <span className="text-[10px] text-white/20 mb-1">Verificaciones</span>
               </div>
@@ -299,14 +281,18 @@ export default function PhaseCheckpoints({ onContinue }: PhaseCheckpointsProps) 
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full flex justify-center pt-4"
               >
-                <button
-                  onClick={() => onContinue(passedCount)}
-                  className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white transition-colors relative py-1 cursor-pointer"
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    sfx.playClick()
+                    onContinue(passedCount)
+                  }}
+                  className="group shimmer-sweep inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-sm border border-[#a86f44]/30 bg-[#a86f44]/15 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white hover:bg-[#a86f44]/25 hover:border-[#a86f44]/50 transition-all duration-300 cursor-pointer"
                 >
                   <span>Crear Pull Request</span>
-                  <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
-                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
-                </button>
+                  <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                </motion.button>
               </motion.div>
             )}
           </AnimatePresence>

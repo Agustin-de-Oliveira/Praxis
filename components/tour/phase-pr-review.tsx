@@ -3,24 +3,24 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // components/tour/phase-pr-review.tsx
 // Phase 4: High-Fidelity Pull Request Dashboard.
-// Side-by-side view with Diff Viewer and Contextual Inline Comments.
+// Now data-driven — receives PRReviewData and reviewer as props.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import {
   GitMerge,
-  MessageCircle,
   CheckCircle,
-  ArrowRight,
-  TriangleAlert,
   FileCode,
-  Users,
+  User,
   Clock,
   ShieldCheck,
   Lightbulb,
+  ArrowRight,
 } from 'lucide-react'
-import { SCN008_PR_REVIEW, SCN008_TEAM } from '@/lib/first-day-data'
+import { sfx } from '@/lib/audio'
+import type { PRReviewData } from '@/lib/tour-scenarios'
+import { TOUR_TEAM } from '@/lib/tour-scenarios'
 
 const tourVariants: Variants = {
   hidden: { opacity: 0, filter: 'blur(8px)', scale: 0.98 },
@@ -38,59 +38,23 @@ const tourVariants: Variants = {
   },
 }
 
-const senior = SCN008_TEAM.find((t) => t.handle === 'senior_dev')!
-
-// ── Diff Data ────────────────────────────────────────────────────────────────
-
-const DIFF_LINES = [
-  { type: 'old', content: '  // TODO: implement this', line: 9 },
-  { type: 'old', content: "  return res.status(501).json({ error: 'Not implemented' })", line: 10 },
-  { type: 'new', content: '  try {', line: 9 },
-  { type: 'new', content: '    const user = await getUserById(req.user.id)', line: 10 },
-  {
-    type: 'new',
-    content: "    if (!user) return res.status(404).json({ error: 'User not found' })",
-    line: 11,
-  },
-  {
-    type: 'new',
-    content: '    const { passwordHash, ...safeUser } = user',
-    line: 12,
-    hasComment: true,
-  },
-  { type: 'new', content: '    return res.json(safeUser)', line: 13 },
-  { type: 'new', content: '  } catch (err) {', line: 14 },
-  {
-    type: 'new',
-    content: "    return res.status(500).json({ error: 'Internal server error' })",
-    line: 15,
-  },
-  { type: 'new', content: '  }', line: 16 },
-]
-
-const PR_SUGGESTIONS = [
-  'feat: agregar endpoint de perfil de usuario',
-  'feat: implementar GET /api/profile',
-  'feat: endpoint de perfil con auth JWT',
-  'fix: middleware de autenticación jwt',
-  'chore: configurar endpoint de perfil de usuario',
-]
-
 interface PhasePRReviewProps {
+  prReview: PRReviewData
   onContinue: () => void
 }
 
 type PRState = 'form' | 'submitting' | 'reviewing' | 'approved'
 
-export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
+export default function PhasePRReview({ prReview, onContinue }: PhasePRReviewProps) {
+  const senior = TOUR_TEAM.find((t) => t.handle === 'senior_dev')!
+
   const [prState, setPrState] = useState<PRState>('form')
   const [visibleCommentIdx, setVisibleCommentIdx] = useState(-1)
+  const [typedCommentText, setTypedCommentText] = useState('')
 
   // Interactive Form State
   const [title, setTitle] = useState('')
-  const [description, setDescription] = useState(
-    '## Cambios\n- GET /api/profile implementado\n- Agregada validación del middleware de autenticación\n- Sanitizados los campos sensibles'
-  )
+  const [description, setDescription] = useState(prReview.defaultDescription)
 
   // Autocomplete State
   const [prSuggestions, setPrSuggestions] = useState<string[]>([])
@@ -100,9 +64,9 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
   const handleTitleChange = (val: string) => {
     setTitle(val)
     if (val.trim() === '') {
-      setPrSuggestions(PR_SUGGESTIONS)
+      setPrSuggestions(prReview.suggestions)
     } else {
-      const filtered = PR_SUGGESTIONS.filter((s) =>
+      const filtered = prReview.suggestions.filter((s) =>
         s.toLowerCase().includes(val.toLowerCase())
       )
       setPrSuggestions(filtered)
@@ -134,23 +98,53 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
   }
 
   const isValidTitle =
-    /^(feat|fix|chore|docs|refactor|test|style|ci|perf|build)(\(.*\))?: .+/i.test(title)
+    /^(feat|fix|chore|docs|refactor|test|style|ci|perf|build|ui|infra)(\(.*\))?: .+/i.test(title)
 
   useEffect(() => {
     if (prState === 'reviewing') {
       const timer = setTimeout(() => {
-        setVisibleCommentIdx(0) // Show Sarah's first comment
-        setTimeout(() => setPrState('approved'), 2500)
+        setVisibleCommentIdx(0)
+        sfx.playNotification()
       }, 1500)
       return () => clearTimeout(timer)
     }
   }, [prState])
 
+  useEffect(() => {
+    if (visibleCommentIdx === 0) {
+      let idx = 0
+      let currentText = ''
+      const commentText = prReview.commentText
+
+      const typeInterval = setInterval(() => {
+        if (idx < commentText.length) {
+          currentText += commentText[idx]
+          setTypedCommentText(currentText)
+          if (commentText[idx] !== ' ' && idx % 2 === 0) {
+            sfx.playTyping('senior_dev')
+          }
+          idx++
+        } else {
+          clearInterval(typeInterval)
+          setTimeout(() => {
+            setPrState('approved')
+            sfx.playNotification()
+          }, 800)
+        }
+      }, 20)
+      return () => clearInterval(typeInterval)
+    }
+  }, [visibleCommentIdx, prReview.commentText])
+
   const handleSubmit = () => {
     if (!isValidTitle) return
+    sfx.playClick()
     setPrState('submitting')
     setTimeout(() => setPrState('reviewing'), 1500)
   }
+
+  // Find the diff line with hasComment=true
+  const commentLine = prReview.diffLines.find((l) => l.hasComment)
 
   return (
     <motion.div
@@ -159,7 +153,7 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="w-full max-w-5xl mx-auto flex flex-col items-center"
+      className="w-full max-w-6xl mx-auto flex flex-col items-center"
     >
       {/* Header */}
       <div className="text-center mb-10">
@@ -168,7 +162,8 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
         </p>
         <h2 className="font-serif text-3xl font-medium text-white mb-3">Proponé tus Cambios</h2>
         <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
-          Enviá tu implementación para revisión. El equipo sénior de ingeniería auditará tu código en busca de patrones y seguridad.
+          Enviá tu implementación para revisión. El equipo sénior de ingeniería auditará tu código
+          en busca de patrones y seguridad.
         </p>
       </div>
 
@@ -188,7 +183,8 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                 "En Praxis seguimos Conventional Commits. Comenzá tu título con{' '}
                 <span className="text-white/60">feat:</span>,{' '}
                 <span className="text-white/60">fix:</span> o{' '}
-                <span className="text-white/60">chore:</span> para mantener limpio nuestro historial de cambios."
+                <span className="text-white/60">chore:</span> para mantener limpio nuestro historial
+                de cambios."
               </p>
 
               <div className="space-y-4 pt-4 border-t border-white/5">
@@ -202,7 +198,13 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                     onChange={(e) => handleTitleChange(e.target.value)}
                     onKeyDown={handleTitleKeyDown}
                     onFocus={() => {
-                      setPrSuggestions(title ? PR_SUGGESTIONS.filter(s => s.toLowerCase().includes(title.toLowerCase())) : PR_SUGGESTIONS)
+                      setPrSuggestions(
+                        title
+                          ? prReview.suggestions.filter((s) =>
+                              s.toLowerCase().includes(title.toLowerCase())
+                            )
+                          : prReview.suggestions
+                      )
                       setShowPrSuggestions(true)
                     }}
                     onBlur={() => setShowPrSuggestions(false)}
@@ -228,10 +230,7 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                         {prSuggestions.map((s, i) => (
                           <button
                             key={i}
-                            onMouseDown={(e) => {
-                              // prevent blur before click registers
-                              e.preventDefault()
-                            }}
+                            onMouseDown={(e) => e.preventDefault()}
                             onClick={() => {
                               setTitle(s)
                               setShowPrSuggestions(false)
@@ -272,19 +271,16 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                   <button
                     onClick={handleSubmit}
                     disabled={!isValidTitle}
-                    className={`group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold transition-colors relative py-1 cursor-pointer ${
+                    className={`group inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-sm border transition-all duration-300 ${
                       isValidTitle
-                        ? 'text-white/90 hover:text-white'
-                        : 'text-white/20 cursor-not-allowed opacity-50'
+                        ? 'border-[#a86f44]/30 bg-[#a86f44]/15 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white hover:bg-[#a86f44]/25 hover:border-[#a86f44]/50 active:scale-[0.98] cursor-pointer'
+                        : 'border-white/5 bg-white/[0.01] text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/20 cursor-not-allowed opacity-50'
                     }`}
                   >
                     <span>Crear Pull Request</span>
-                    {isValidTitle && (
-                      <>
-                        <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
-                        <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
-                      </>
-                    )}
+                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
+                      →
+                    </span>
                   </button>
                 </div>
               </div>
@@ -311,18 +307,27 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
               </div>
 
               {/* Title */}
-              <div>
-                <h3 className="text-base font-bold text-white mb-1 truncate">
-                  {title || 'feat: Endpoint de datos de perfil'}
-                </h3>
-                <p className="text-[10px] text-white/30 font-mono">Creado por ti · hace 2 min</p>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-sm border border-white/5 bg-white/[0.02] flex items-center justify-center shrink-0">
+                  <User size={16} className="text-[#a86f44]/60" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-base font-bold text-white mb-0.5 truncate">
+                    {title || prReview.suggestions[0]}
+                  </h3>
+                  <p className="text-[10px] text-white/30 font-mono">
+                    Creado por Pasante · hace 2 min
+                  </p>
+                </div>
               </div>
 
               {/* Checklist */}
               <div className="space-y-3 py-4 border-y border-white/5">
                 <div className="flex items-center gap-3 opacity-60">
                   <CheckCircle size={14} className="text-emerald-500" />
-                  <span className="text-[11px] text-white/80">Implementación verificada por CI</span>
+                  <span className="text-[11px] text-white/80">
+                    Implementación verificada por CI
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   {prState === 'approved' ? (
@@ -342,8 +347,16 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                   Revisores
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-sm bg-[#a86f44] flex items-center justify-center font-mono text-[10px] font-bold text-white">
-                    SC
+                  <div className="w-8 h-8 rounded-sm border border-emerald-500/25 overflow-hidden bg-[#0A0A0A] flex items-center justify-center shrink-0">
+                    {senior.avatarUrl ? (
+                      <img
+                        src={senior.avatarUrl}
+                        alt={senior.name}
+                        className="w-full h-full object-cover rendering-pixelated"
+                      />
+                    ) : (
+                      <span className="font-mono text-[10px] font-bold text-emerald-400">SC</span>
+                    )}
                   </div>
                   <div className="flex-1">
                     <p className="text-xs font-bold text-white">Sarah Chen</p>
@@ -371,14 +384,21 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full flex justify-center pt-4"
               >
-                <button
-                  onClick={onContinue}
-                  className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-emerald-400 hover:text-emerald-300 transition-colors relative py-1 cursor-pointer"
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    sfx.playClick()
+                    onContinue()
+                  }}
+                  className="group shimmer-sweep inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-sm border border-emerald-500/30 bg-emerald-500/15 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/25 hover:border-emerald-500/50 transition-all duration-300 cursor-pointer"
                 >
-                  <span>Ver Tablero de Tareas</span>
-                  <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
-                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-emerald-500/30 group-hover:bg-emerald-400 transition-transform duration-300 origin-left scale-x-100" />
-                </button>
+                  <span>Ver Diagnóstico de Misión</span>
+                  <ArrowRight
+                    size={14}
+                    className="group-hover:translate-x-0.5 transition-transform"
+                  />
+                </motion.button>
               </motion.div>
             )}
           </AnimatePresence>
@@ -390,39 +410,40 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
             <div className="flex items-center gap-3">
               <FileCode size={16} className="text-[#a86f44]" />
               <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest">
-                src / routes / profile.ts
+                {prReview.filePath}
               </span>
             </div>
             <div className="flex gap-4 font-mono text-[9px] uppercase text-white/20">
-              <span className="text-emerald-500/40">+8 lines</span>
-              <span className="text-red-500/40">-2 lines</span>
+              <span className="text-emerald-500/40">{prReview.addedLines}</span>
+              <span className="text-red-500/40">{prReview.removedLines}</span>
             </div>
           </div>
 
           <div className="flex-1 font-mono text-[11px] leading-relaxed overflow-y-auto bg-[#050505]">
-            {/* Context lines (muted) */}
-            <div className="p-4 py-2 text-white/10 opacity-30 select-none">
-              {`7  // GET /api/profile — returns current user's public data\n8  router.get('/', authenticate, async (req, res) => {`}
-            </div>
-
             {/* Diff lines */}
             <div className="relative">
-              {DIFF_LINES.map((line, i) => (
+              {prReview.diffLines.map((line, i) => (
                 <div key={i} className="flex flex-col">
                   <div
                     className={`flex items-center gap-6 px-4 py-0.5 ${
                       line.type === 'new'
                         ? 'bg-emerald-500/10 border-l-2 border-emerald-500/30'
-                        : 'bg-red-500/10 border-l-2 border-red-500/30 opacity-40'
+                        : line.type === 'old'
+                          ? 'bg-red-500/10 border-l-2 border-red-500/30 opacity-40'
+                          : 'bg-transparent'
                     }`}
                   >
                     <span className="w-6 text-white/10 text-right select-none">{line.line}</span>
                     <span className="w-4 text-white/20 select-none">
-                      {line.type === 'new' ? '+' : '-'}
+                      {line.type === 'new' ? '+' : line.type === 'old' ? '-' : ' '}
                     </span>
                     <span
                       className={
-                        line.type === 'new' ? 'text-white/80' : 'text-white/40 line-through'
+                        line.type === 'new'
+                          ? 'text-white/80'
+                          : line.type === 'old'
+                            ? 'text-white/40 line-through'
+                            : 'text-white/20'
                       }
                     >
                       {line.content}
@@ -441,8 +462,18 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                         <div className="absolute -top-1 left-4 w-2 h-2 bg-[#0F0F0F] border-l border-t border-[#a86f44]/25 rotate-45" />
 
                         <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-sm bg-[#a86f44] flex items-center justify-center font-mono text-[10px] font-bold text-white shrink-0">
-                            SC
+                          <div className="w-8 h-8 rounded-sm border border-emerald-500/25 overflow-hidden bg-[#0A0A0A] flex items-center justify-center shrink-0">
+                            {senior.avatarUrl ? (
+                              <img
+                                src={senior.avatarUrl}
+                                alt={senior.name}
+                                className="w-full h-full object-cover rendering-pixelated"
+                              />
+                            ) : (
+                              <span className="font-mono text-[10px] font-bold text-emerald-400">
+                                SC
+                              </span>
+                            )}
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
@@ -452,7 +483,7 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                               </span>
                             </div>
                             <p className="text-[11px] text-white/50 leading-relaxed italic">
-                              "Excelente detalle en la desestructuración. Mantener campos sensibles como passwordHash fuera de la respuesta es una parte crítica de nuestros estándares de seguridad de API. Buen trabajo."
+                              "{typedCommentText}"
                             </p>
                           </div>
                         </div>
@@ -461,11 +492,6 @@ export default function PhasePRReview({ onContinue }: PhasePRReviewProps) {
                   </AnimatePresence>
                 </div>
               ))}
-            </div>
-
-            {/* Context lines footer */}
-            <div className="p-4 py-2 text-white/10 opacity-30 select-none">
-              {`17 })\n18\n19 export default router`}
             </div>
           </div>
         </div>
