@@ -8,7 +8,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
-import { Lightbulb, CheckCircle, Terminal, Monitor, Code } from 'lucide-react'
+import { Lightbulb, CheckCircle, Terminal, Monitor, Code, ArrowRight } from 'lucide-react'
+import { sfx } from '@/lib/audio'
 
 const tourVariants: Variants = {
   hidden: { opacity: 0, filter: 'blur(8px)', scale: 0.98 },
@@ -30,7 +31,8 @@ const STEPS = [
   {
     id: 'fetch',
     title: '1. Obtención de Datos',
-    instruction: 'Obtené el usuario de la base de datos usando el ID provisto por el middleware de autenticación.',
+    instruction:
+      'Obtené el usuario de la base de datos usando el ID provisto por el middleware de autenticación.',
     target: 'const user = await getUserById(req.user.id)',
     hint: 'Usa el helper `getUserById` que exploramos en la capa de base de datos.',
     feedback: 'Consulta de base de datos iniciada.',
@@ -141,6 +143,19 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
     '[praxis-server] Listo para recarga en caliente (hot-reload).',
   ])
 
+  const [isShaking, setIsShaking] = useState(false)
+  const shakeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const isTransitioningRef = useRef(false)
+
+  // Clean up shake timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (shakeTimeoutRef.current) {
+        clearTimeout(shakeTimeoutRef.current)
+      }
+    }
+  }, [])
+
   // Suggestions state
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [activeSuggestion, setActiveSuggestion] = useState(0)
@@ -151,12 +166,70 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const step = STEPS[currentStep]
 
+  // Compute text parts for error highlighting and ghost text alignment
+  let correctLen = 0
+  if (step) {
+    const typedLower = inputValue.toLowerCase()
+    const targetLower = step.target.toLowerCase()
+    while (
+      correctLen < inputValue.length &&
+      correctLen < step.target.length &&
+      typedLower[correctLen] === targetLower[correctLen]
+    ) {
+      correctLen++
+    }
+  }
+  const correctPart = inputValue.slice(0, correctLen)
+  const incorrectPart = inputValue.slice(correctLen)
+  const remainingGhostText = step ? step.target.slice(correctLen + incorrectPart.length) : ''
+
   useEffect(() => {
     inputRef.current?.focus()
   }, [currentStep])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isTransitioningRef.current) return
     const val = e.target.value
+
+    if (step) {
+      // Calculate correct length for new value
+      let newCorrectLen = 0
+      const valLower = val.toLowerCase()
+      const targetLower = step.target.toLowerCase()
+      while (
+        newCorrectLen < val.length &&
+        newCorrectLen < step.target.length &&
+        valLower[newCorrectLen] === targetLower[newCorrectLen]
+      ) {
+        newCorrectLen++
+      }
+      const newIncorrectLen = val.length - newCorrectLen
+
+      // Calculate correct length for current inputValue
+      let prevCorrectLen = 0
+      const prevLower = inputValue.toLowerCase()
+      while (
+        prevCorrectLen < inputValue.length &&
+        prevCorrectLen < step.target.length &&
+        prevLower[prevCorrectLen] === targetLower[prevCorrectLen]
+      ) {
+        prevCorrectLen++
+      }
+      const prevIncorrectLen = inputValue.length - prevCorrectLen
+
+      // Shake and play error SFX if a new mistake is introduced
+      if (newIncorrectLen > prevIncorrectLen && newIncorrectLen > 0) {
+        sfx.playError()
+        setIsShaking(true)
+        if (shakeTimeoutRef.current) {
+          clearTimeout(shakeTimeoutRef.current)
+        }
+        shakeTimeoutRef.current = setTimeout(() => {
+          setIsShaking(false)
+        }, 250)
+      }
+    }
+
     setInputValue(val)
 
     // Check for suggestions
@@ -208,6 +281,7 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
     // Accept suggestion or autocomplete line on Tab
     if (e.key === 'Tab') {
       e.preventDefault()
+      if (isTransitioningRef.current) return
       if (suggestions.length > 0) {
         const chosen = suggestions[activeSuggestion]
         if (chosen) insertSuggestion(chosen)
@@ -215,6 +289,7 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
       }
 
       // No suggestions: autocomplete the full target line
+      isTransitioningRef.current = true
       setInputValue(step.target)
       setTimeout(() => handleStepSuccess(), 60)
       return
@@ -296,6 +371,7 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
   const handleStepSuccess = () => {
     if (isCorrectRef.current) return
     isCorrectRef.current = true
+    isTransitioningRef.current = true
     setIsCorrect(true)
     setLogs((prev) => [...prev, `[praxis-test] Paso ${currentStep + 1} aprobado: ${step.feedback}`])
 
@@ -304,13 +380,18 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
       setInputValue('')
       setIsCorrect(false)
       isCorrectRef.current = false
+      isTransitioningRef.current = false
       setShowHint(false)
       setSuggestions([])
-      if (currentStep < STEPS.length - 1) {
-        setCurrentStep((prev) => prev + 1)
-      } else {
-        setLogs((prev) => [...prev, '[praxis-success] Verificaciones aprobadas. Listo para PR.'])
-      }
+      setCurrentStep((prev) => {
+        if (prev < STEPS.length - 1) {
+          return prev + 1
+        }
+        setTimeout(() => {
+          setLogs((prevLogs) => [...prevLogs, '[praxis-success] Verificaciones aprobadas. Listo para PR.'])
+        }, 0)
+        return prev
+      })
     }, 800)
   }
 
@@ -323,7 +404,7 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="w-full max-w-5xl mx-auto flex flex-col items-center"
+      className="w-full max-w-6xl mx-auto flex flex-col items-center"
     >
       {/* Centered Header */}
       <div className="text-center mb-10">
@@ -334,7 +415,8 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
           Construí el Endpoint de Perfil
         </h2>
         <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
-          El entorno está listo. Usa el autocompletado (intellisense) integrado para acelerar tu desarrollo.
+          El entorno está listo. Usa el autocompletado (intellisense) integrado para acelerar tu
+          desarrollo.
         </p>
       </div>
 
@@ -359,8 +441,6 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
                 </div>
                 <h3 className="text-base font-bold text-white mb-3">{step.title}</h3>
                 <p className="text-xs text-white/50 leading-relaxed mb-6">{step.instruction}</p>
-
-
               </motion.div>
             ) : (
               <motion.div
@@ -368,35 +448,39 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
                 animate={{ opacity: 1, scale: 1 }}
                 className="p-8 rounded-sm border border-white/5 bg-[#0A0A0A] text-center shadow-2xl relative overflow-hidden"
               >
-                <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500/50" />
-
                 {/* Sarah's Avatar */}
-                <div className="w-12 h-12 rounded-sm bg-[#a86f44]/15 border border-[#a86f44]/25 flex items-center justify-center font-mono text-lg font-bold text-[#a86f44] mx-auto mb-4">
-                  SC
-                </div>
+                <img
+                  src="/avatars/sarah.png"
+                  alt="Sarah Chen"
+                  className="w-18 h-18 object-cover rendering-pixelated mx-auto mb-3"
+                />
 
                 <h3 className="text-sm font-bold text-white mb-2">Sarah Chen (Senior Dev)</h3>
                 <p className="text-xs text-white/50 leading-relaxed mb-6 italic">
-                  "¡Buen trabajo! La implementación se ve sólida y la lógica está limpia. Antes de pasar esto a producción, ¿querés implementar las pruebas unitarias ahora o se lo dejamos al equipo de QA?"
+                  "¡Buen trabajo! La implementación se ve sólida y la lógica está limpia. Antes de
+                  pasar esto a producción, ¿querés implementar las pruebas unitarias ahora o se lo
+                  dejamos al equipo de QA?"
                 </p>
 
-                <div className="flex flex-col gap-4 items-center pt-2">
-                  <button
+                <div className="flex flex-col gap-3 items-center pt-2">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => onContinue('testing')}
-                    className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white transition-colors relative py-1 cursor-pointer"
+                    className="group shimmer-sweep inline-flex items-center justify-center gap-2.5 w-80 py-3 rounded-sm border border-[#a86f44]/30 bg-[#a86f44]/15 text-[10px] uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white hover:bg-[#a86f44]/25 hover:border-[#a86f44]/50 transition-all duration-300 cursor-pointer"
                   >
                     <span>Implementar Pruebas</span>
-                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
-                    <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
-                  </button>
-                  <button
+                    <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => onContinue('checkpoint')}
-                    className="group inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-sans font-medium text-white/40 hover:text-white/70 transition-colors relative py-1 cursor-pointer"
+                    className="group shimmer-sweep inline-flex items-center justify-center gap-2.5 w-80 py-3 rounded-sm border border-white/10 bg-white/[0.02] text-[10px] uppercase tracking-[0.2em] font-sans font-semibold text-white/40 hover:text-white/70 hover:bg-white/[0.05] hover:border-white/20 transition-all duration-300 cursor-pointer"
                   >
-                    <span>No, dejarlo al equipo de QA</span>
-                    <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
-                    <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/10 group-hover:bg-white/30 transition-transform duration-300 origin-left scale-x-100" />
-                  </button>
+                    <span>Nah, dejarlo al equipo de QA</span>
+                    <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                  </motion.button>
                 </div>
               </motion.div>
             )}
@@ -470,21 +554,32 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
               ))}
 
               {/* Active Input Line */}
-              {!isAllDone && (
+              {!isAllDone && !completedLines.includes(step.target) && (
                 <div className="flex flex-col relative">
                   <div className="flex items-center gap-6 group">
                     <span className="w-4 text-white/10 text-right select-none">
                       {8 + completedLines.length}
                     </span>
-                    <div className="flex-1 flex items-center gap-2 relative">
+                    <motion.div
+                      className="flex-1 flex items-center gap-2 relative"
+                      animate={isShaking ? { x: [0, -4, 4, -4, 4, 0] } : { x: 0 }}
+                      transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    >
                       <div className="w-1.5 h-4 bg-[#a86f44] animate-pulse shrink-0 rounded-full" />
                       <div className="relative w-full min-h-5">
                         {/* Presentation overlay: shows typed text + ghost text precisely in-flow */}
                         <div className="absolute inset-0 pointer-events-none flex items-center">
                           <div className="font-mono text-[13px] leading-[20px] whitespace-pre text-white w-full">
-                            <span className="opacity-100">{inputValue}</span>
-                            {step.target.startsWith(inputValue) && (
-                              <span className="text-white/20">{step.target.slice(inputValue.length)}</span>
+                            <span className="text-[#a86f44]">{correctPart}</span>
+                            {incorrectPart.length > 0 && (
+                              <span className="text-red-400 bg-red-950/40 px-0.5 rounded-sm font-semibold">
+                                {incorrectPart}
+                              </span>
+                            )}
+                            {remainingGhostText.length > 0 && (
+                              <span className="text-white/20">
+                                {remainingGhostText}
+                              </span>
                             )}
                           </div>
                         </div>
@@ -512,16 +607,16 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
                         />
                       </div>
 
-                        {/* Contextual Suggestions Menu */}
-                        <AnimatePresence>
-                          {suggestions.length > 0 && (
-                            <motion.div
-                              initial={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
-                              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                              exit={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
-                              className="absolute top-6 z-50 min-w-[120px] rounded-sm bg-[#111] border border-white/10 shadow-2xl p-1"
-                              style={{ left: suggestionOffset }}
-                            >
+                      {/* Contextual Suggestions Menu */}
+                      <AnimatePresence>
+                        {suggestions.length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
+                            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                            exit={{ opacity: 0, y: 5, filter: 'blur(4px)' }}
+                            className="absolute top-6 z-50 min-w-[120px] rounded-sm bg-[#111] border border-white/10 shadow-2xl p-1"
+                            style={{ left: suggestionOffset }}
+                          >
                             {suggestions.map((s, i) => (
                               <button
                                 key={i}
@@ -539,7 +634,7 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
                           </motion.div>
                         )}
                       </AnimatePresence>
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
               )}

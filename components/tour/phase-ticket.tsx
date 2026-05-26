@@ -2,13 +2,15 @@
 
 // ─────────────────────────────────────────────────────────────────────────────
 // components/tour/phase-ticket.tsx
-// Phase 0: @pm_bot ticket reveal with "new ticket" animation.
-// Slides in from right, border pulses copper, acceptance criteria stagger in.
+// Phase 1: @pm_bot ticket reveal with "new ticket" animation.
+// Now data-driven — receives TicketData and team as props.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { motion, type Variants } from 'framer-motion'
 import { Bell, ArrowRight } from 'lucide-react'
-import { SCN008_TICKET, SCN008_TEAM } from '@/lib/first-day-data'
+import { sfx } from '@/lib/audio'
+import type { TicketData } from '@/lib/tour-scenarios'
+import { TOUR_TEAM } from '@/lib/tour-scenarios'
 
 // ── Variants ──────────────────────────────────────────────────────────────────
 
@@ -41,17 +43,16 @@ const listItem: Variants = {
   },
 }
 
-// ── PM avatar ─────────────────────────────────────────────────────────────────
-
-const pm = SCN008_TEAM.find((t) => t.handle === 'pm_bot')!
-
 // ── Component ─────────────────────────────────────────────────────────────────
 
 interface PhaseTicketProps {
+  ticket: TicketData
   onContinue: () => void
 }
 
-export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
+export default function PhaseTicket({ ticket, onContinue }: PhaseTicketProps) {
+  const pm = TOUR_TEAM.find((t) => t.handle === ticket.from) || TOUR_TEAM[0]
+
   return (
     <motion.div
       key="phase-ticket"
@@ -76,7 +77,7 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
           <Bell className="text-[#a86f44] w-4 h-4" />
         </motion.div>
         <span className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44]">
-          Nuevo ticket asignado · {SCN008_TICKET.id}
+          Nuevo ticket asignado · {ticket.id}
         </span>
       </motion.div>
 
@@ -84,36 +85,44 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
       <div className="rounded-sm border border-[#171717] bg-[#0A0A0A] overflow-hidden">
         {/* Header */}
         <div className="px-5 py-3.5 border-b border-[#171717] bg-[#0F0F0F] flex items-center gap-3">
-          <span className="font-mono text-[10px] text-white/30">{SCN008_TICKET.channel}</span>
+          <span className="font-mono text-[10px] text-white/30">{ticket.channel}</span>
           <span className="w-1 h-1 rounded-full bg-white/15" />
-          <span className="font-mono text-[10px] text-white/20">{SCN008_TICKET.id}</span>
+          <span className="font-mono text-[10px] text-white/20">{ticket.id}</span>
         </div>
 
         <div className="p-6">
           {/* Author */}
           <div className="flex items-center gap-3 mb-5">
             <div
-              className={`w-9 h-9 rounded-sm flex items-center justify-center font-mono text-xs font-bold border ${pm.color} ${pm.textColor}`}
+              className={`w-9 h-9 rounded-sm overflow-hidden flex items-center justify-center font-mono text-xs font-bold border ${pm.color} ${pm.textColor}`}
             >
-              AR
+              {pm.avatarUrl ? (
+                <img
+                  src={pm.avatarUrl}
+                  alt={pm.name}
+                  className="w-full h-full object-cover rendering-pixelated"
+                />
+              ) : (
+                <span>{pm.name.split(' ').map(n => n[0]).join('')}</span>
+              )}
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-medium text-white">{pm.name}</span>
                 <span className="font-mono text-[9px] text-white/25">{pm.role}</span>
               </div>
-              <span className="font-mono text-[9px] text-white/20">{SCN008_TICKET.timestamp}</span>
+              <span className="font-mono text-[9px] text-white/20">{ticket.timestamp}</span>
             </div>
           </div>
 
           {/* Subject */}
           <h3 className="font-serif text-lg font-medium text-white mb-3">
-            {SCN008_TICKET.subject}
+            {ticket.subject}
           </h3>
 
           {/* Body (render markdown-style bold) */}
           <p className="text-sm text-white/50 leading-relaxed mb-6 whitespace-pre-line">
-            {SCN008_TICKET.body.split(/\*\*(.*?)\*\*/g).map((part, i) =>
+            {ticket.body.split(/\*\*(.*?)\*\*/g).map((part, i) =>
               i % 2 === 1 ? (
                 <span key={i} className="text-white font-medium">
                   {part}
@@ -135,7 +144,7 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
               initial="hidden"
               animate="visible"
             >
-              {SCN008_TICKET.acceptanceCriteria.map((c, i) => (
+              {ticket.acceptanceCriteria.map((c, i) => (
                 <motion.li key={i} variants={listItem} className="flex items-start gap-3">
                   <div className="w-4 h-4 rounded-sm border border-[#a86f44]/30 bg-[#a86f44]/8 flex items-center justify-center mt-0.5 shrink-0">
                     <span className="font-mono text-[8px] text-[#a86f44]">{i + 1}</span>
@@ -148,7 +157,7 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
 
           {/* PM note */}
           <div className="rounded-sm border border-white/5 bg-white/2 px-4 py-3 text-xs text-white/30 italic">
-            💬 {SCN008_TICKET.note}
+            💬 {ticket.note}
           </div>
         </div>
       </div>
@@ -161,14 +170,18 @@ export default function PhaseTicket({ onContinue }: PhaseTicketProps) {
         className="mt-6"
       >
         <div className="w-full flex justify-center py-2">
-          <button
-            onClick={onContinue}
-            className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white transition-colors relative py-1 cursor-pointer"
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              sfx.playClick()
+              onContinue()
+            }}
+            className="group shimmer-sweep inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-sm border border-[#a86f44]/30 bg-[#a86f44]/15 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white hover:bg-[#a86f44]/25 hover:border-[#a86f44]/50 transition-all duration-300 cursor-pointer"
           >
-            <span>Explorar el repositorio</span>
-            <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
-            <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
-          </button>
+            <span>Implementar feature</span>
+            <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+          </motion.button>
         </div>
       </motion.div>
     </motion.div>

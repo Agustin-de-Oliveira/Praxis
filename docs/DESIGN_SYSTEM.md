@@ -52,7 +52,7 @@ Users can select from the following palette in **Settings.exe**:
 
 - **Amber**: `#a86f44` (Default)
 - **Blue**: `#3b82f6`
-- **Emerald**: `#10b981`
+- **Emerald**: `#5f8a6b`
 - **Rose**: `#f43f5e`
 - **Purple**: `#8b5cf6`
 - **Slate**: `#64748b`

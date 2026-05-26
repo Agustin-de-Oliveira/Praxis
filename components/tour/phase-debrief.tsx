@@ -2,27 +2,18 @@
 
 // ─────────────────────────────────────────────────────────────────────────────
 // components/tour/phase-debrief.tsx
-// Phase 5: High-Fidelity Scenario Debrief.
-// Immersive performance dashboard with senior insights and skill progression.
+// Phase 5: Debriefing. Slack DM closeout with Sarah and inline Praxis Bot.
+// Now data-driven — receives DebriefData as prop.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState } from 'react'
-import { motion, type Variants } from 'framer-motion'
-import {
-  CheckCircle,
-  TriangleAlert,
-  Lightbulb,
-  Trophy,
-  ArrowRight,
-  Home,
-  ShieldCheck,
-  Database,
-  Key,
-  FileWarning,
-} from 'lucide-react'
-import Link from 'next/link'
-import { Beaker } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence, type Variants } from 'framer-motion'
+import { User, Send, ArrowRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { sfx } from '@/lib/audio'
 import { createClient } from '@/utils/supabase/client'
+import type { DebriefData } from '@/lib/tour-scenarios'
+import { TOUR_TEAM } from '@/lib/tour-scenarios'
 
 const tourVariants: Variants = {
   hidden: { opacity: 0, filter: 'blur(8px)', scale: 0.98 },
@@ -30,7 +21,7 @@ const tourVariants: Variants = {
     opacity: 1,
     filter: 'blur(0px)',
     scale: 1,
-    transition: { duration: 0.5, ease: 'easeOut' as const },
+    transition: { duration: 0.4, ease: 'easeOut' as const },
   },
   exit: {
     opacity: 0,
@@ -40,96 +31,361 @@ const tourVariants: Variants = {
   },
 }
 
-const stagger: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
-}
-
-const item: Variants = {
-  hidden: { opacity: 0, y: 10, filter: 'blur(4px)' },
+const messageReveal: Variants = {
+  hidden: { opacity: 0, filter: 'blur(4px)', x: -4 },
   visible: {
     opacity: 1,
-    y: 0,
     filter: 'blur(0px)',
-    transition: { duration: 0.4, ease: 'easeOut' as const },
+    x: 0,
+    transition: { duration: 0.3, ease: 'easeOut' as const },
   },
 }
 
-// ── Data ──────────────────────────────────────────────────────────────────────
+interface Message {
+  user: {
+    name: string
+    color: string
+    textColor: string
+    handle: string
+    avatarUrl?: string
+  }
+  time: string
+  text: string
+}
 
-const PERFORMANCE_METRICS = [
-  { id: 'auth', label: 'Middleware de Autenticación', icon: Key, status: 'Óptimo' },
-  { id: 'db', label: 'Patrón de Consulta', icon: Database, status: 'Óptimo' },
-  { id: 'sec', label: 'Sanitización de Datos', icon: ShieldCheck, status: 'Seguro' },
-  { id: 'test', label: 'Cobertura de Pruebas', icon: Beaker, status: 'Verificado' },
-]
+const PRAXIS_BOT = {
+  name: 'Praxis Bot',
+  color: 'bg-[#a86f44]/10 border-[#a86f44]/25',
+  textColor: 'text-[#a86f44]',
+  handle: 'praxis_bot',
+  avatarUrl: '/avatars/player_robot.png',
+  role: 'Asistente',
+}
 
-const SENIOR_INSIGHTS = [
-  {
-    type: 'success',
-    icon: CheckCircle,
-    color: 'text-emerald-400',
-    borderColor: 'border-emerald-500/15',
-    bgColor: 'bg-emerald-500/5',
-    title: 'Fortalezas Clave',
-    items: [
-      "Uso correcto del middleware estándar 'authenticate'.",
-      'Implementación limpia de la exclusión de campos mediante desestructuración.',
-      'Manejo de errores adecuado para IDs de recursos inexistentes (404).',
-    ],
-  },
-  {
-    type: 'warning',
-    icon: FileWarning,
-    color: 'text-amber-400',
-    borderColor: 'border-amber-500/15',
-    bgColor: 'bg-amber-500/5',
-    title: 'Errores Comunes a Evitar',
-    items: [
-      "Sobrecarga de consulta con 'SELECT *' en lugar de columnas específicas.",
-      'Filtración de la estructura interna de la base de datos en mensajes de error.',
-      'Ignorar patrones de consulta N+1 en endpoints de alto tráfico.',
-    ],
-  },
-]
+interface PhaseDebriefProps {
+  debrief: DebriefData
+}
 
-const SENIOR_APPROACH = [
-  {
-    label: 'Límite de Tasa (Rate Limiting)',
-    detail:
-      'En producción, los endpoints de perfil son objetivos valiosos para scrapers. Siempre envolvelos con limitadores de tasa.',
-  },
-  {
-    label: 'Abstracción DTO',
-    detail:
-      'En lugar de solo desestructurar, un Desarrollador Senior utiliza Data Transfer Objects (DTOs) para forzar estrictamente los contratos de respuesta.',
-  },
-]
+export default function PhaseDebrief({ debrief }: PhaseDebriefProps) {
+  const router = useRouter()
 
-export default function PhaseDebrief() {
-  const [email, setEmail] = useState('')
-  const [formState, setFormState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const getMember = (handle: string) => {
+    return (
+      TOUR_TEAM.find((t) => t.handle === handle) || {
+        name: 'Unknown',
+        handle: 'unknown',
+        role: 'Unknown',
+        color: 'bg-gray-500/10 border-gray-500/20',
+        textColor: 'text-gray-400',
+      }
+    )
+  }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email || formState === 'loading' || formState === 'success') return
-    setFormState('loading')
+  const sarah = getMember('senior_dev')
+
+  const [visibleMessages, setVisibleMessages] = useState<Message[]>([])
+  const [activeDm, setActiveDm] = useState<'sarah' | 'bot'>('sarah')
+  const [typingUser, setTypingUser] = useState<typeof sarah | null>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const [showDmOptions, setShowDmOptions] = useState(false)
+  const [userResponseText, setUserResponseText] = useState('')
+
+  const [isWaitlistActive, setIsWaitlistActive] = useState(false)
+  const [inputEmail, setInputEmail] = useState('')
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
+  }, [visibleMessages, typingUser, showDmOptions])
+
+  // ── Slack DM flow ──────────────────────────────────────────────────────────
+  useEffect(() => {
+    let active = true
+
+    const runDialogue = async () => {
+      await new Promise((r) => setTimeout(r, 1000))
+
+      for (let i = 0; i < debrief.messages.length; i++) {
+        if (!active) return
+
+        setTypingUser(sarah)
+        await new Promise((r) => setTimeout(r, 1500))
+        setTypingUser(null)
+
+        if (!active) return
+
+        setVisibleMessages((prev) => [
+          ...prev,
+          {
+            user: sarah,
+            time: '5:00 PM',
+            text: '',
+          },
+        ])
+
+        const fullText = debrief.messages[i]
+        let currentText = ''
+
+        for (let charIdx = 0; charIdx < fullText.length; charIdx++) {
+          if (!active) return
+          currentText += fullText[charIdx]
+
+          setVisibleMessages((prev) => {
+            const updated = [...prev]
+            const last = updated[updated.length - 1]
+            if (last) {
+              last.text = currentText
+            }
+            return updated
+          })
+
+          if (fullText[charIdx] !== ' ' && charIdx % 2 === 0) {
+            sfx.playTyping('senior_dev')
+          }
+
+          await new Promise((r) => setTimeout(r, 20))
+        }
+
+        await new Promise((r) => setTimeout(r, 800))
+      }
+
+      if (active) {
+        setShowDmOptions(true)
+      }
+    }
+
+    runDialogue()
+
+    return () => {
+      active = false
+    }
+  }, [])
+
+  // ── Handle sending Slack reply ──────────────────────────────────────────────
+  const handleSelectDmOption = (option: string) => {
+    sfx.playClick()
+    setShowDmOptions(false)
+
+    let currentText = ''
+    const chars = option.split('')
+    let charIdx = 0
+
+    const typeTimer = setInterval(() => {
+      if (charIdx < chars.length) {
+        currentText += chars[charIdx]
+        setUserResponseText(currentText)
+        if (chars[charIdx] !== ' ' && charIdx % 2 === 0) {
+          sfx.playTyping('you')
+        }
+        charIdx++
+      } else {
+        clearInterval(typeTimer)
+
+        setTimeout(() => {
+          setVisibleMessages((prev) => [
+            ...prev,
+            {
+              user: {
+                name: 'Pasante',
+                color: 'bg-[#a86f44]/10 border-[#a86f44]/20',
+                textColor: 'text-[#a86f44]/60',
+                handle: 'you',
+              },
+              time: '5:01 PM',
+              text: option,
+            },
+          ])
+          setUserResponseText('')
+          sfx.playNotification()
+
+          setTimeout(() => {
+            sfx.playSwosh()
+            setActiveDm('bot')
+            setVisibleMessages([])
+            runBotDialogue()
+          }, 1500)
+        }, 300)
+      }
+    }, 20)
+  }
+
+  // ── Praxis Bot Dialogue ───────────────────────────────────────────────────
+  const runBotDialogue = async () => {
+    setTypingUser(PRAXIS_BOT)
+    await new Promise((r) => setTimeout(r, 1500))
+    setTypingUser(null)
+
+    setVisibleMessages((prev) => [
+      ...prev,
+      {
+        user: PRAXIS_BOT,
+        time: '5:02 PM',
+        text: '',
+      },
+    ])
+
+    const botMsg = "¡Hola! Soy Praxis Bot. ¡Felicitaciones por completar la demo técnica de Praxis! 🥳\n\nSi deseas recibir un aviso por correo electrónico tan pronto como Praxis esté listo y disponible para el público general, escribe tu correo aquí mismo en el chat."
+    let currentText = ''
+
+    for (let charIdx = 0; charIdx < botMsg.length; charIdx++) {
+      currentText += botMsg[charIdx]
+      setVisibleMessages((prev) => {
+        const updated = [...prev]
+        const last = updated[updated.length - 1]
+        if (last) {
+          last.text = currentText
+        }
+        return updated
+      })
+
+      if (botMsg[charIdx] !== ' ' && charIdx % 2 === 0) {
+        sfx.playTyping('pm_bot')
+      }
+      await new Promise((r) => setTimeout(r, 20))
+    }
+
+    sfx.playNotification()
+    setIsWaitlistActive(true)
+  }
+
+  // ── Handle Email waitlist submit inline ─────────────────────────────────────
+  const handleSubmitEmail = async (emailVal: string) => {
+    const trimmedEmail = emailVal.trim()
+    if (!trimmedEmail) return
+
+    setVisibleMessages((prev) => [
+      ...prev,
+      {
+        user: {
+          name: 'Pasante',
+          color: 'bg-[#a86f44]/10 border-[#a86f44]/20',
+          textColor: 'text-[#a86f44]/60',
+          handle: 'you',
+        },
+        time: '5:03 PM',
+        text: trimmedEmail,
+      },
+    ])
+
+    setInputEmail('')
+    setIsWaitlistActive(false)
+    sfx.playClick()
+
+    setTypingUser(PRAXIS_BOT)
+    await new Promise((r) => setTimeout(r, 1200))
+    setTypingUser(null)
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(trimmedEmail)) {
+      sfx.playError()
+
+      setVisibleMessages((prev) => [
+        ...prev,
+        {
+          user: PRAXIS_BOT,
+          time: '5:03 PM',
+          text: '',
+        },
+      ])
+
+      const errorMsg = "El formato de correo electrónico no es válido. Por favor, asegúrate de escribir una dirección correcta (ejemplo: tu@correo.com) para poder registrar tu aviso."
+      let currentText = ''
+
+      for (let charIdx = 0; charIdx < errorMsg.length; charIdx++) {
+        currentText += errorMsg[charIdx]
+        setVisibleMessages((prev) => {
+          const updated = [...prev]
+          const last = updated[updated.length - 1]
+          if (last) {
+            last.text = currentText
+          }
+          return updated
+        })
+
+        if (errorMsg[charIdx] !== ' ' && charIdx % 2 === 0) {
+          sfx.playTyping('pm_bot')
+        }
+        await new Promise((r) => setTimeout(r, 20))
+      }
+
+      sfx.playNotification()
+      setIsWaitlistActive(true)
+      return
+    }
 
     try {
       const supabase = createClient()
       const { error } = await supabase
         .from('waitlist')
-        .insert([{ email, source: 'debrief' }])
+        .insert([{ email: trimmedEmail, source: 'tour_slack_bot' }])
 
       if (error) {
-        console.error('Waitlist error:', error)
-        setFormState('error')
+        console.error('Waitlist DB error:', error)
+        sfx.playError()
+
+        setVisibleMessages((prev) => [
+          ...prev,
+          {
+            user: PRAXIS_BOT,
+            time: '5:03 PM',
+            text: 'Detecté un problema de conexión al intentar guardar tu registro. Por favor, escribe tu correo nuevamente para reintentar.',
+          },
+        ])
+        setIsWaitlistActive(true)
       } else {
-        setFormState('success')
+        sfx.playNotification()
+
+        setVisibleMessages((prev) => [
+          ...prev,
+          {
+            user: PRAXIS_BOT,
+            time: '5:03 PM',
+            text: '',
+          },
+        ])
+
+        const successMsg = `¡Excelente! Te he registrado correctamente. Te enviaremos un correo a ${trimmedEmail} tan pronto como Praxis esté listo.\n\nMuchas gracias por jugar. Redirigiendo al inicio en breve...`
+        let currentText = ''
+
+        for (let charIdx = 0; charIdx < successMsg.length; charIdx++) {
+          currentText += successMsg[charIdx]
+          setVisibleMessages((prev) => {
+            const updated = [...prev]
+            const last = updated[updated.length - 1]
+            if (last) {
+              last.text = currentText
+            }
+            return updated
+          })
+
+          if (successMsg[charIdx] !== ' ' && charIdx % 2 === 0) {
+            sfx.playTyping('pm_bot')
+          }
+          await new Promise((r) => setTimeout(r, 20))
+        }
+
+        sfx.playNotification()
+
+        setTimeout(() => {
+          sfx.playSwosh()
+          router.push('/')
+        }, 3000)
       }
     } catch (err) {
-      console.error('Waitlist catch:', err)
-      setFormState('error')
+      console.error('Waitlist catch error:', err)
+      sfx.playError()
+
+      setVisibleMessages((prev) => [
+        ...prev,
+        {
+          user: PRAXIS_BOT,
+          time: '5:03 PM',
+          text: 'Ocurrió un error inesperado. Escribe tu correo de nuevo para reintentar.',
+        },
+      ])
+      setIsWaitlistActive(true)
     }
   }
 
@@ -140,235 +396,233 @@ export default function PhaseDebrief() {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="w-full max-w-5xl mx-auto pb-20"
+      className="w-full max-w-2xl mx-auto"
     >
-      {/* ── Top Header ────────────────────────────────────────────────────────── */}
-      <div className="text-center mb-16">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.1, type: 'spring' }}
-          className="w-16 h-16 rounded-sm border border-[#a86f44]/30 bg-[#a86f44]/10 flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-[#a86f44]/10"
-        >
-          <Trophy size={32} className="text-[#a86f44]" />
-        </motion.div>
+      {/* Header Context */}
+      <div className="mb-8">
         <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-3">
-          SCN-008 · Misión Completada
+          Fase 5 · Diagnóstico de Misión
         </p>
-        <h2 className="font-serif text-4xl font-medium text-white mb-4">
-          Trabajo Excepcional, Desarrollador.
+        <h2 className="font-serif text-2xl font-medium text-white mb-2">
+          Fin de la Jornada
         </h2>
-        <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
-          Implementaste, testeaste e integraste con éxito el endpoint de Perfil de Usuario. Aquí tenés tu diagnóstico de rendimiento final y el feedback del equipo.
+        <p className="text-sm text-white/40 max-w-md leading-relaxed">
+          {activeDm === 'sarah'
+            ? 'Tu Pull Request ha sido aprobada e integrada con éxito. Sarah se comunica contigo para cerrar el sprint.'
+            : 'Tu jornada laboral ha finalizado. Praxis Bot se conecta para recibir tus comentarios de cierre.'}
         </p>
       </div>
 
-      {/* ── Main Dashboard ────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-12 gap-8 items-start">
-        {/* Left: Performance Scorecard (4 cols) */}
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          animate="visible"
-          className="col-span-4 space-y-4"
-        >
-          <div className="p-6 rounded-sm border border-white/5 bg-[#0F0F0F]/80 shadow-2xl">
-            <p className="font-mono text-[9px] uppercase tracking-widest text-white/20 mb-6">
-              Matriz de Rendimiento
-            </p>
-
-            <div className="space-y-6">
-              {PERFORMANCE_METRICS.map((m, i) => (
-                <motion.div
-                  key={m.id}
-                  variants={item}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-sm bg-white/5 flex items-center justify-center">
-                      <m.icon size={16} className="text-[#a86f44]" />
-                    </div>
-                    <span className="text-xs text-white/60">{m.label}</span>
+      {/* Slack Container */}
+      <div className="rounded-sm border border-[#171717] bg-[#0A0A0A] overflow-hidden mb-8 shadow-2xl">
+        {/* Channel Header */}
+        <div className="px-5 py-3 border-b border-[#171717] bg-[#0F0F0F] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 text-white/40">
+              {activeDm === 'sarah' ? (
+                <>
+                  <User size={14} />
+                  <span className="font-mono text-[10px] uppercase tracking-widest">
+                    Sarah Chen
+                  </span>
+                </>
+              ) : (
+                <>
+                  <div className="w-4 h-4 rounded-sm overflow-hidden bg-[#a86f44]/15 border border-[#a86f44]/30 flex items-center justify-center shrink-0">
+                    <img src="/avatars/player_robot.png" alt="Bot" className="w-full h-full object-cover rendering-pixelated" />
                   </div>
-                  <span className="font-mono text-[10px] text-emerald-500 uppercase tracking-tighter">
-                    {m.status}
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44]">
+                    Praxis Bot
                   </span>
-                </motion.div>
-              ))}
+                </>
+              )}
             </div>
-
-            <div className="mt-10 pt-6 border-t border-white/5">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs text-white/40">Puntaje General</span>
-                <span className="font-serif text-2xl text-white">96%</span>
-              </div>
-              <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-[#8a5a35] to-[#a86f44]"
-                  initial={{ width: 0 }}
-                  animate={{ width: '96%' }}
-                  transition={{ delay: 0.8, duration: 1 }}
-                />
-              </div>
-            </div>
+            <span className="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]" />
           </div>
-
-          {/* Level Progress */}
-          <motion.div
-            variants={item}
-            className="p-4 rounded-sm border border-emerald-500/10 bg-emerald-500/[0.03] flex items-center gap-4"
-          >
-            <ShieldCheck size={24} className="text-emerald-500/60" />
-            <div>
-              <p className="text-[10px] uppercase tracking-widest font-mono text-emerald-500/60 mb-0.5">
-                Habilidad Adquirida
-              </p>
-              <p className="text-xs font-bold text-white">Sanitización de Datos Avanzada</p>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Right: Technical Insights (8 cols) */}
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          animate="visible"
-          className="col-span-8 space-y-6"
-        >
-          {/* Insights Grid */}
-          <div className="grid grid-cols-2 gap-6">
-            {SENIOR_INSIGHTS.map((insight, i) => (
-              <motion.div
-                key={i}
-                variants={item}
-                className={`p-6 rounded-sm border ${insight.borderColor} ${insight.bgColor} space-y-4`}
-              >
-                <div className="flex items-center gap-3">
-                  <insight.icon size={18} className={insight.color} />
-                  <span
-                    className={`font-mono text-[10px] uppercase tracking-widest ${insight.color}`}
-                  >
-                    {insight.title}
-                  </span>
-                </div>
-                <ul className="space-y-3">
-                  {insight.items.map((it, idx) => (
-                    <li
-                      key={idx}
-                      className="flex items-start gap-2 text-xs text-white/50 leading-relaxed"
-                    >
-                      <span className="mt-1.5 w-1 h-1 rounded-full bg-white/20 shrink-0" />
-                      {it}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Senior Approach Card */}
-          <motion.div
-            variants={item}
-            className="p-8 rounded-sm border border-[#a86f44]/20 bg-[#a86f44]/[0.03] space-y-6 relative overflow-hidden"
-          >
-            <Lightbulb size={120} className="absolute -right-10 -bottom-10 text-[#a86f44]/5" />
-
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-[#a86f44] mb-1">
-                Perspectiva Senior
-              </p>
-              <h3 className="text-lg font-bold text-white">Cómo lo abordaría un Líder</h3>
-            </div>
-
-            <div className="grid grid-cols-2 gap-8">
-              {SENIOR_APPROACH.map((s, i) => (
-                <div key={i}>
-                  <p className="text-xs font-bold text-white mb-2">{s.label}</p>
-                  <p className="text-xs text-white/40 leading-relaxed">{s.detail}</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-        </motion.div>
-      </div>
-
-      {/* ── Grand Finale CTA Block (Full Width & Centered Protagonist) ────────────────── */}
-      <motion.div
-        variants={item}
-        initial="hidden"
-        animate="visible"
-        className="mt-16 p-8 rounded-sm border border-[#a86f44]/40 bg-[#0F0F0F]/80 relative overflow-hidden shadow-2xl space-y-6 text-center max-w-4xl mx-auto"
-      >
-        {/* background decorative glowing spot */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#a86f44]/5 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="max-w-xl mx-auto space-y-3">
-          <p className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44] font-bold">
-            PRÓXIMAMENTE EN PRAXIS
-          </p>
-          <h3 className="text-2xl font-serif text-white font-medium">¿Querés dominar el día a día de un desarrollador de software?</h3>
-          <p className="text-xs text-white/50 leading-relaxed">
-            Guardá tu progreso, desbloqueá más de 15 escenarios reales del día a día de ingeniería y accedé a feedback detallado de tu código. Registrate para recibir tu invitación exclusiva a la beta.
-          </p>
+          <span className="font-mono text-[9px] text-white/20 uppercase tracking-tighter">
+            Slack · Activo ahora
+          </span>
         </div>
 
-        <div className="max-w-md mx-auto">
-          {formState !== 'success' ? (
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col items-center gap-4"
-            >
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Tu correo electrónico"
-                className="w-full h-11 px-4 rounded-sm border border-white/10 bg-[#050505] font-mono text-xs text-white outline-none focus:border-[#a86f44]/40 transition-all text-center"
-              />
-              <button
-                type="submit"
-                disabled={formState === 'loading'}
-                className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/90 hover:text-white transition-colors relative py-1 cursor-pointer disabled:cursor-wait"
-              >
-                <span>{formState === 'loading' ? 'Enviando...' : 'Anotarme para la Beta'}</span>
-                {formState !== 'loading' && (
-                  <ArrowRight className="w-3.5 h-3.5 inline-block transition-transform duration-300 group-hover:translate-x-1.5" />
-                )}
-                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/30 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
-              </button>
-              {formState === 'error' && (
-                <p className="text-xs text-red-400/90 font-mono mt-1">
-                  Hubo un problema. Por favor intentá de nuevo.
-                </p>
-              )}
-            </form>
-          ) : (
+        {/* Message Feed */}
+        <div
+          ref={scrollRef}
+          className={`p-6 space-y-6 overflow-y-auto scrollbar-hide flex flex-col transition-all duration-500 ${
+            showDmOptions ? 'h-[220px]' : 'h-[340px]'
+          }`}
+        >
+          {visibleMessages.map((msg, i) => (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="space-y-6"
+              key={i}
+              variants={messageReveal}
+              initial="hidden"
+              animate="visible"
+              className="flex items-start gap-4"
             >
-              <div className="flex items-center justify-center gap-3 p-4 rounded-sm border border-emerald-500/20 bg-emerald-500/5 text-emerald-400">
-                <CheckCircle size={18} />
-                <span className="text-xs font-mono">¡Listo! Te registraste correctamente. Te mantendremos al tanto.</span>
+              {/* Avatar */}
+              <div
+                className={`w-9 h-9 rounded-sm border ${msg.user.color} overflow-hidden flex items-center justify-center font-mono text-xs font-bold ${msg.user.textColor} shrink-0`}
+              >
+                {msg.user.avatarUrl ? (
+                  <img src={msg.user.avatarUrl} alt={msg.user.name} className="w-full h-full object-cover rendering-pixelated" />
+                ) : msg.user.name === 'Pasante' ? (
+                  <User size={16} className="text-[#a86f44]/60" />
+                ) : (
+                  msg.user.name
+                    .split(' ')
+                    .map((n: string) => n[0])
+                    .join('')
+                )}
               </div>
-              
-              <div className="pt-2 flex justify-center">
-                <Link
-                  href="/first-day"
-                  className="group inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-sans font-semibold text-white/40 hover:text-white transition-colors relative py-1 cursor-pointer"
-                >
-                  <span>Terminar Demo</span>
-                  <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
-                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-white/10 group-hover:bg-white transition-transform duration-300 origin-left scale-x-100" />
-                </Link>
+
+              {/* Content */}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs font-medium text-white">{msg.user.name}</span>
+                  {msg.user.handle === 'praxis_bot' && (
+                    <span className="px-1 py-0.5 rounded-sm bg-[#a86f44]/10 border border-[#a86f44]/20 font-mono text-[8px] uppercase tracking-wider text-[#a86f44]">BOT</span>
+                  )}
+                  <span className="font-mono text-[9px] text-white/20">{msg.time}</span>
+                </div>
+                <div className="text-sm text-white/50 leading-relaxed break-words whitespace-pre-line">
+                  {msg.text.split(/(`.*?`|\*.*?\*)/g).map((part: string, idx: number) => {
+                    if (part.startsWith('`'))
+                      return (
+                        <code
+                          key={idx}
+                          className="px-1.5 py-0.5 rounded-sm bg-white/5 border border-white/10 text-[11px] font-mono text-white/80"
+                        >
+                          {part.slice(1, -1)}
+                        </code>
+                      )
+                    if (part.startsWith('*') && part.endsWith('*'))
+                      return (
+                        <strong key={idx} className="text-white font-semibold">
+                          {part.slice(1, -1)}
+                        </strong>
+                      )
+                    return part
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+
+          {typingUser && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex items-start gap-4"
+            >
+              <div
+                className={`w-9 h-9 rounded-sm border ${typingUser.color} overflow-hidden flex items-center justify-center shrink-0 relative`}
+              >
+                {typingUser.avatarUrl ? (
+                  <>
+                    <img src={typingUser.avatarUrl} alt={typingUser.name} className="w-full h-full object-cover opacity-45 rendering-pixelated" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                      <div className="flex gap-1">
+                        <span className="w-1 h-1 rounded-full bg-white/80 animate-bounce" />
+                        <span className="w-1 h-1 rounded-full bg-white/80 animate-bounce [animation-delay:0.2s]" />
+                        <span className="w-1 h-1 rounded-full bg-white/80 animate-bounce [animation-delay:0.4s]" />
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex gap-1">
+                    <span className="w-1 h-1 rounded-full bg-white/25 animate-bounce" />
+                    <span className="w-1 h-1 rounded-full bg-white/25 animate-bounce [animation-delay:0.2s]" />
+                    <span className="w-1 h-1 rounded-full bg-white/25 animate-bounce [animation-delay:0.4s]" />
+                  </div>
+                )}
+              </div>
+              <div className="mt-2 text-[10px] font-mono text-white/20 uppercase tracking-widest animate-pulse">
+                {typingUser.name} está escribiendo...
               </div>
             </motion.div>
           )}
         </div>
-      </motion.div>
+
+        {/* Input Area */}
+        {isWaitlistActive ? (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleSubmitEmail(inputEmail)
+            }}
+            className="px-5 py-4 border-t border-[#171717] bg-[#0A0A0A] flex items-center gap-3"
+          >
+            <input
+              type="text"
+              required
+              value={inputEmail}
+              onChange={(e) => setInputEmail(e.target.value)}
+              placeholder="Ingresa tu correo para recibir el aviso..."
+              className="flex-1 h-10 px-4 rounded-sm border border-white/5 bg-white/[0.02] focus:bg-[#050505] focus:border-[#a86f44]/40 outline-none text-xs text-white font-mono transition-all"
+              autoFocus
+            />
+            <motion.button
+              type="submit"
+              whileHover={inputEmail.trim() ? { scale: 1.05 } : {}}
+              whileTap={inputEmail.trim() ? { scale: 0.95 } : {}}
+              disabled={!inputEmail.trim()}
+              className={`w-10 h-10 flex items-center justify-center rounded-sm border transition-colors cursor-pointer ${
+                inputEmail.trim()
+                  ? 'border-[#a86f44]/30 text-[#a86f44] hover:bg-[#a86f44]/5'
+                  : 'border-white/5 text-white/10 cursor-not-allowed'
+              }`}
+            >
+              <Send size={18} />
+            </motion.button>
+          </form>
+        ) : (
+          <div className="px-5 py-4 border-t border-[#171717] bg-[#0A0A0A] flex items-center gap-3">
+            <div className="flex-1 h-10 px-4 rounded-sm border border-white/5 bg-white/[0.02] flex items-center text-xs text-white/20 font-mono">
+              {userResponseText || 'Escribe un mensaje...'}
+            </div>
+            <button
+              disabled
+              className="w-10 h-10 flex items-center justify-center rounded-sm border border-white/5 text-white/10"
+            >
+              <Send size={18} />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* DM Dialog Options */}
+      <AnimatePresence>
+        {showDmOptions && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            className="space-y-2.5"
+          >
+            <p className="font-mono text-[9px] uppercase tracking-widest text-white/25 text-center">
+              Selecciona tu respuesta
+            </p>
+            <div className="grid grid-cols-1 gap-2">
+              {debrief.dmOptions.map((opt, i) => (
+                <motion.button
+                  key={i}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => handleSelectDmOption(opt)}
+                  className="w-full py-3 px-5 rounded-sm border border-white/10 bg-white/[0.03] text-xs text-white/60 hover:text-white hover:border-[#a86f44]/40 hover:bg-[#a86f44]/5 transition-all text-left cursor-pointer group flex items-center justify-between shimmer-sweep"
+                >
+                  {opt}
+                  <ArrowRight
+                    size={14}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity text-[#a86f44]"
+                  />
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }

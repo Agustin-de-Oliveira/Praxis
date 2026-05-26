@@ -2,15 +2,15 @@
 
 > **Experience real work, before the first day.**
 
-**Last updated:** 2026-05-08 | **Status:** Phase 1.5 — The Vertical Slice
+**Last updated:** 2026-05-26 | **Status:** Phase 1.5 — The Vertical Slice
 
 ---
 
 ## What Is Praxis?
 
-Praxis is a high-fidelity flight simulator for software engineers. Instead of teaching code, it teaches **the job** — picking up tickets, working in realistic codebases, interacting with simulated teammates, handling incidents, and receiving structured feedback.
+Praxis es un simulador de rol técnico e inmersivo para desarrolladores de software. En lugar de resolver acertijos lógicos aislados, el usuario experimenta el día a día real de un ingeniero: resolver tickets de negocio, codificar en bases de código realistas dentro de una estación de trabajo virtual, interactuar con colegas y bots simulados (Slack/correo), y someter sus cambios a revisiones de código dinámicas con feedback contextual.
 
-The core insight: there's a documented 3–6 month "reality shock" when junior developers join their first team. Praxis eliminates it.
+La plataforma fomenta la gamificación a través de la simulación diegética y el autodesarrollo, recompensando al jugador con la generación automatizada de un CV o currículum interactivo verificado con sus logros prácticos en el simulador.
 
 ---
 
@@ -19,7 +19,7 @@ The core insight: there's a documented 3–6 month "reality shock" when junior d
 | Area                      | Status         | Notes                                                           |
 | ------------------------- | -------------- | --------------------------------------------------------------- |
 | Landing page              | ✅ Done        | Brand identity established                                      |
-| Immersive Tour Engine     | ✅ Done        | Core instructional loop proven (SCN-008)                        |
+| Immersive Tour Engine     | ✅ Done        | Core instructional loop proven (SCN-008, DevOps, Frontend)      |
 | Scenario Library          | ✅ Done        | Library view with filters                                       |
 | Scenario Board UI         | ✅ Done        | Windowed OS environment with Mail, Terminal, and IDE            |
 | Onboarding Flow           | ✅ Done        | Contextual OS initiation sequence complete                      |
@@ -37,7 +37,7 @@ The core insight: there's a documented 3–6 month "reality shock" when junior d
 
 | Document                                 | Description                                                                                              |
 | ---------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| [PRODUCT_VISION.md](./PRODUCT_VISION.md) | Problem, personas, core concept, competitive differentiation, skill framework, brand                     |
+| [PRODUCT_VISION.md](./PRODUCT_VISION.md) | Visión del producto en español, gamificación en base a un CV interactivo y colaboración multidisciplinaria |
 | [OS_EXPERIENCE.md](./OS_EXPERIENCE.md)   | Praxis OS as the central interactive workplace sim, Candidate OS, hiring flow, and calibration challenge |
 | [REALIGNMENT_PLAN.md](./REALIGNMENT_PLAN.md) | Product and design correction plan for restoring the original Praxis direction                         |
 | [SCENARIOS.md](./SCENARIOS.md)           | Scenario types, structure spec, authoring guide, full examples (SCN-003, SCN-007, SCN-008)               |

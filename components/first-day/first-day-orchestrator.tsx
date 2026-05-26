@@ -33,9 +33,9 @@ const pageVariants: Variants = {
 }
 
 const ROLE_LABELS: Record<string, string> = {
-  frontend: 'Desarrollador Frontend',
-  backend: 'Desarrollador Backend',
-  fullstack: 'Desarrollador Full-Stack',
+  frontend: 'Desarrollador/a Frontend',
+  backend: 'Desarrollador/a Backend',
+  fullstack: 'Desarrollador/a Full-Stack',
   devops: 'Especialista DevOps / SRE',
   security: 'Especialista en Seguridad',
 }
@@ -51,11 +51,11 @@ const STACK_LABELS: Record<string, string> = {
 }
 
 const ROLE_SUMMARIES: Record<string, string> = {
-  backend: 'Especialista en arquitectura de APIs, optimización de consultas a bases de datos y desarrollo de lógica de servidor segura.',
-  frontend: 'Enfocado en el diseño de interfaces responsivas, optimización del rendimiento del lado del cliente y componentes de UI altamente reutilizables.',
-  fullstack: 'Capaz de liderar tanto el desarrollo de interfaces de usuario atractivas como la integración de servicios de backend y bases de datos robustos.',
-  devops: 'Experto en automatización de despliegues (CI/CD), contenerización de aplicaciones, orquestación y monitoreo de infraestructura en la nube.',
-  security: 'Dedicado a la auditoría de código, implementación de protocolos de autenticación seguros y mitigación de vulnerabilidades de seguridad.',
+  backend: 'Especialidad en arquitectura de APIs, optimización de consultas a bases de datos y desarrollo de lógica de servidor segura.',
+  frontend: 'Con enfoque en el diseño de interfaces responsivas, optimización del rendimiento del lado del cliente y componentes de UI altamente reutilizables.',
+  fullstack: 'Con capacidad para liderar tanto el desarrollo de interfaces de usuario atractivas como la integración de servicios de backend y bases de datos robustos.',
+  devops: 'Especialidad en automatización de despliegues (CI/CD), contenerización de aplicaciones, orquestación y monitoreo de infraestructura en la nube.',
+  security: 'Con dedicación a la auditoría de código, implementación de protocolos de autenticación seguros y mitigación de vulnerabilidades de seguridad.',
 }
 
 const AVATARS = [
@@ -122,7 +122,7 @@ export function FirstDayOrchestrator({
   const [currentLang, setCurrentLang] = useState(lang)
   const [avatarIndex, setAvatarIndex] = useState(0)
 
-  const roleLabel = ROLE_LABELS[currentRoleId] ?? 'Desarrollador Backend'
+  const roleLabel = ROLE_LABELS[currentRoleId] ?? 'Desarrollador/a Backend'
   const stackLabel = STACK_LABELS[currentLang] ?? currentLang
   const scenarios = getRecommendedScenarios(currentRoleId)
 
@@ -444,7 +444,7 @@ export function FirstDayOrchestrator({
                               Síntesis de Perfil
                             </p>
                             <p className="font-serif text-xs text-[#4a4339] leading-relaxed italic">
-                              "{ROLE_SUMMARIES[currentRoleId] ?? 'Desarrollador especializado listo para la acción.'} Foco de desarrollo prioritario configurado en {currentLang}."
+                              "{ROLE_SUMMARIES[currentRoleId] ?? 'Especialista en desarrollo con todo listo para la acción.'} Foco de desarrollo prioritario configurado en {currentLang}."
                             </p>
                           </div>
                         </div>

@@ -27,6 +27,24 @@ Para mantener la base de código limpia y ordenada, te sugerimos seguir estas pa
    pnpm dev
    ```
 
+## Contribuciones de diseño y sonido
+
+Queremos que Praxis se sienta como un juego retro inmersivo. Si eres diseñador, artista de pixel art o diseñador de sonido, puedes aportar mejoras en la identidad visual y sonora del proyecto.
+
+### Arte y avatares de 8 bits
+Los avatares de los AI teammates actuales están ubicados en `public/avatars/`.
+- **Formato**: Archivos PNG con transparencia.
+- **Dimensiones**: 64x64 píxeles reales.
+- **Estilo**: Estética pixel art de 8 bits con paleta de colores compacta.
+- **Cómo colaborar**: Puedes proponer rediseños de los avatares existentes (Sarah, Alex, Jordan) o proponer retratos para futuros roles directamente reemplazando o añadiendo archivos en la carpeta `public/avatars/`.
+
+### Efectos de sonido (SFX)
+Los efectos de sonido de Praxis se sintetizan en tiempo real usando la API de Web Audio en `lib/audio.ts` para evitar la carga de archivos de audio tradicionales.
+- **Síntesis**: Usamos osciladores nativos (`square`, `triangle`, `sine`, `sawtooth`) y modulaciones de frecuencia y ganancia para emular chips de sonido retro (estilo NES, Game Boy).
+- **Cómo colaborar**: 
+  - Puedes refinar las notas, frecuencias o transiciones de volumen de los efectos existentes en `lib/audio.ts` para darles un mejor acabado.
+  - Puedes sintetizar nuevos efectos en la clase `SoundEffects` para enriquecer la respuesta sonora de la plataforma.
+
 ## Flujo de desarrollo
 
 ### Ramas y commits

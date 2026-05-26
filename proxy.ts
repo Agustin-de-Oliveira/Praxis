@@ -9,7 +9,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 // Routes that require an authenticated session (prefix match)
-const PROTECTED_PREFIXES = ['/tour', '/first-day']
+const PROTECTED_PREFIXES = ['/first-day']
 
 // Routes authenticated users should not see (bounce them to workstation)
 const AUTH_ONLY_PATHS = ['/login']
@@ -35,10 +35,15 @@ function isProtectedPath(pathname: string): boolean {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Restrict all routes other than landing page (/) and API routes (/api/*) for the public launch.
+  // Restrict all routes other than landing page (/), public tour (/tour*), and API routes (/api/*) for the public launch.
   // Static assets with extensions are bypassed to ensure they load correctly.
   const hasFileExtension = /\.[a-zA-Z0-9]+$/.test(pathname)
-  if (pathname !== '/' && !pathname.startsWith('/api/') && !hasFileExtension) {
+  const isPublicPath =
+    pathname === '/' ||
+    pathname === '/tour' ||
+    pathname.startsWith('/tour/') ||
+    pathname.startsWith('/api/')
+  if (!isPublicPath && !hasFileExtension) {
     const landingUrl = request.nextUrl.clone()
     landingUrl.pathname = '/'
     landingUrl.search = ''
