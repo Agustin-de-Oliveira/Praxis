@@ -329,6 +329,20 @@ export default function PhaseStoryline({
     }
   }, [selectedRole])
 
+  // Preload bot avatars to prevent production loading flicker
+  useEffect(() => {
+    const avatars = [
+      '/avatars/alex.png',
+      '/avatars/sarah.png',
+      '/avatars/jordan.png',
+      '/avatars/player_robot.png',
+    ]
+    avatars.forEach((src) => {
+      const img = new Image()
+      img.src = src
+    })
+  }, [])
+
   const y = useMotionValue(0)
   const [containerHeight, setContainerHeight] = useState(400)
 
