@@ -349,7 +349,7 @@ export default function PhaseStoryline({
   useEffect(() => {
     if (view !== 'role-select' || !constraintsRef.current) return
     const observer = new ResizeObserver((entries) => {
-      for (let entry of entries) {
+      for (const entry of entries) {
         setContainerHeight(entry.contentRect.height)
       }
     })
