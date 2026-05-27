@@ -42,6 +42,7 @@ export async function proxy(request: NextRequest) {
     pathname === '/' ||
     pathname === '/tour' ||
     pathname.startsWith('/tour/') ||
+    pathname === '/contribute' ||
     pathname.startsWith('/api/')
   if (!isPublicPath && !hasFileExtension) {
     const landingUrl = request.nextUrl.clone()
