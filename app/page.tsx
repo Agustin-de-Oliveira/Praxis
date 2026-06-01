@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { Spotlight } from '@/components/ui/spotlight'
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { sfx } from '@/lib/audio'
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -290,6 +291,19 @@ export default function StealthLandingPage() {
 
       {/* Thin accent line at very top */}
       <div className="relative z-10 h-[1px] w-full bg-gradient-to-r from-transparent via-[#a86f44]/40 to-transparent" />
+
+      {/* Floating Header Navbar */}
+      <header className="relative z-30 w-full max-w-6xl mx-auto px-6 pt-6 flex items-center justify-center pointer-events-auto">
+        <nav className="flex items-center">
+          <Link
+            href="/contribute"
+            onClick={() => sfx.playNotification()}
+            className={`${fontClass} text-[10px] uppercase tracking-[0.2em] font-semibold text-[#5f8a6b] hover:text-[#5f8a6b]/80 hover:border-[#5f8a6b]/30 border border-[#5f8a6b]/15 px-4 py-2 rounded-sm bg-[#5f8a6b]/5 hover:bg-[#5f8a6b]/10 transition-all shadow-md`}
+          >
+            ¿Cómo puedo contribuir?
+          </Link>
+        </nav>
+      </header>
 
       {/* Content wrapper — vertically and horizontally centered */}
       <motion.div
@@ -587,6 +601,20 @@ export default function StealthLandingPage() {
             initial="hidden"
             animate="visible"
           >
+            <Link
+              href="/tour/SCN-008"
+              onClick={() => sfx.playNotification()}
+              className="hover:text-white/60 transition-colors"
+            >
+              Probar Demo
+            </Link>
+            <Link
+              href="/contribute"
+              onClick={() => sfx.playNotification()}
+              className="hover:text-[#5f8a6b] text-[#5f8a6b]/80 transition-colors font-semibold"
+            >
+              ¿Cómo puedo contribuir?
+            </Link>
             <a
               href="https://github.com/agustin-de-oliveira"
               target="_blank"
