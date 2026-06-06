@@ -8,7 +8,7 @@ Para mantener la base de código limpia y ordenada, te sugerimos seguir estas pa
 
 1. Haz un fork del repositorio y clónalo localmente:
    ```bash
-   git clone https://github.com/tu-usuario/Praxis.git
+   git clone https://github.com/agustin-de-oliveira/Praxis.git
    cd Praxis
    ```
 
