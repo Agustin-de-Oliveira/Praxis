@@ -249,7 +249,8 @@ const CATEGORIES: CategoryData[] = [
               },
               {
                 label: 'Bases de Datos & SQL',
-                description: 'Esquemas, migraciones de PostgreSQL y políticas de Row Level Security (RLS).',
+                description:
+                  'Esquemas, migraciones de PostgreSQL y políticas de Row Level Security (RLS).',
                 areas: [
                   {
                     title: 'Esquemas y Migraciones',
@@ -360,19 +361,22 @@ const CATEGORIES: CategoryData[] = [
         title: 'Diseñador de Escenarios',
         subtitle: 'Tickets • Narrativa • Flow de juego',
         icon: ScenarioIcon,
-        tagline: 'Diseñá los escenarios, tickets y situaciones que vive el candidato durante el tour.',
+        tagline:
+          'Diseñá los escenarios, tickets y situaciones que vive el candidato durante el tour.',
         steps: [
           {
             type: 'content',
             title: 'El corazón del juego: los escenarios',
             body: 'Cada tour en Praxis es una experiencia narrativa: el candidato llega a una empresa ficticia, recibe un ticket de Jira, codea una solución y la ve en producción. Todos esos detalles — el nombre de la empresa, el bug, los diálogos del equipo — los diseña alguien. Ese alguien podés ser vos.',
-            imagePlaceholder: 'Diagrama mostrando las fases de un escenario: storyline → ticket → código → testing → PR → debrief',
+            imagePlaceholder:
+              'Diagrama mostrando las fases de un escenario: storyline → ticket → código → testing → PR → debrief',
           },
           {
             type: 'content',
             title: '¿Qué podés crear?',
             body: 'Hay distintos niveles de contribución. Podés proponer variaciones de tickets existentes, crear personajes nuevos con su personalidad y estilo de escritura, diseñar escenarios end-to-end completos, o simplemente mejorar los diálogos y las pistas del autocompletado. No necesitás saber programar para muchas de estas contribuciones.',
-            imagePlaceholder: 'Grid de tarjetas mostrando los distintos tipos de contribución narrativa posibles',
+            imagePlaceholder:
+              'Grid de tarjetas mostrando los distintos tipos de contribución narrativa posibles',
           },
           {
             type: 'content',
@@ -395,7 +399,8 @@ const CATEGORIES: CategoryData[] = [
   },
   {
     label: 'Arte & Narrativa',
-    description: 'Dale vida al mundo de Praxis con historias, sonido, diseño visual y experiencia de juego.',
+    description:
+      'Dale vida al mundo de Praxis con historias, sonido, diseño visual y experiencia de juego.',
     roles: [
       {
         id: 'sound',
@@ -409,7 +414,8 @@ const CATEGORIES: CategoryData[] = [
             type: 'content',
             title: 'Praxis tiene sonido — y podría sonar mejor',
             body: 'Cada interacción en Praxis tiene un efecto de sonido: notificaciones, clics, el boot del sistema operativo, el sonido de tipear código. Hoy los generamos con Web Audio API directamente en el código, pero si vos trabajás con audio y tenés mejor oído y mejores herramientas, nos interesa lo que podés crear.',
-            imagePlaceholder: 'Catálogo visual de los eventos de audio actuales del juego con ejemplos de cada uno',
+            imagePlaceholder:
+              'Catálogo visual de los eventos de audio actuales del juego con ejemplos de cada uno',
           },
           {
             type: 'content',
@@ -425,7 +431,8 @@ const CATEGORIES: CategoryData[] = [
                 href: 'https://github.com/Agustin-de-Oliveira/Praxis/issues/new',
               },
             ],
-            imagePlaceholder: 'Ejemplo de issue de audio con archivo adjunto y descripción del contexto de uso',
+            imagePlaceholder:
+              'Ejemplo de issue de audio con archivo adjunto y descripción del contexto de uso',
           },
           {
             type: 'content',
@@ -446,7 +453,8 @@ const CATEGORIES: CategoryData[] = [
         title: 'Game Design',
         subtitle: 'Progresión • Dificultad • Flow',
         icon: DiceIcon,
-        tagline: 'Jugá Praxis con ojo crítico y proponé mejoras a la experiencia y la curva de dificultad.',
+        tagline:
+          'Jugá Praxis con ojo crítico y proponé mejoras a la experiencia y la curva de dificultad.',
         steps: [
           {
             type: 'content',
@@ -470,7 +478,8 @@ const CATEGORIES: CategoryData[] = [
                 href: 'https://github.com/Agustin-de-Oliveira/Praxis/issues/new',
               },
             ],
-            imagePlaceholder: 'Ejemplo de un documento de diseño con propuestas de balance de dificultad',
+            imagePlaceholder:
+              'Ejemplo de un documento de diseño con propuestas de balance de dificultad',
           },
         ],
       },
@@ -622,11 +631,9 @@ const CODEBASE_TREE: FileNode = {
           name: 'workflows',
           path: 'Praxis/.github/workflows',
           isDir: true,
-          children: [
-            { name: 'ci.yml', path: 'Praxis/.github/workflows/ci.yml' }
-          ]
-        }
-      ]
+          children: [{ name: 'ci.yml', path: 'Praxis/.github/workflows/ci.yml' }],
+        },
+      ],
     },
     {
       name: 'app',
@@ -637,9 +644,7 @@ const CODEBASE_TREE: FileNode = {
           name: 'contribute',
           path: 'Praxis/app/contribute',
           isDir: true,
-          children: [
-            { name: 'page.tsx', path: 'Praxis/app/contribute/page.tsx' }
-          ]
+          children: [{ name: 'page.tsx', path: 'Praxis/app/contribute/page.tsx' }],
         },
         {
           name: 'tour',
@@ -650,16 +655,14 @@ const CODEBASE_TREE: FileNode = {
               name: '[id]',
               path: 'Praxis/app/tour/[id]',
               isDir: true,
-              children: [
-                { name: 'page.tsx', path: 'Praxis/app/tour/[id]/page.tsx' }
-              ]
-            }
-          ]
+              children: [{ name: 'page.tsx', path: 'Praxis/app/tour/[id]/page.tsx' }],
+            },
+          ],
         },
         { name: 'globals.css', path: 'Praxis/app/globals.css' },
         { name: 'layout.tsx', path: 'Praxis/app/layout.tsx' },
-        { name: 'page.tsx', path: 'Praxis/app/page.tsx' }
-      ]
+        { name: 'page.tsx', path: 'Praxis/app/page.tsx' },
+      ],
     },
     {
       name: 'components',
@@ -673,8 +676,8 @@ const CODEBASE_TREE: FileNode = {
           children: [
             { name: 'phase-storyline.tsx', path: 'Praxis/components/tour/phase-storyline.tsx' },
             { name: 'phase-implement.tsx', path: 'Praxis/components/tour/phase-implement.tsx' },
-            { name: 'phase-testing.tsx', path: 'Praxis/components/tour/phase-testing.tsx' }
-          ]
+            { name: 'phase-testing.tsx', path: 'Praxis/components/tour/phase-testing.tsx' },
+          ],
         },
         {
           name: 'ui',
@@ -682,10 +685,10 @@ const CODEBASE_TREE: FileNode = {
           isDir: true,
           children: [
             { name: 'button.tsx', path: 'Praxis/components/ui/button.tsx' },
-            { name: 'dialog.tsx', path: 'Praxis/components/ui/dialog.tsx' }
-          ]
-        }
-      ]
+            { name: 'dialog.tsx', path: 'Praxis/components/ui/dialog.tsx' },
+          ],
+        },
+      ],
     },
     {
       name: 'lib',
@@ -693,8 +696,8 @@ const CODEBASE_TREE: FileNode = {
       isDir: true,
       children: [
         { name: 'audio.ts', path: 'Praxis/lib/audio.ts' },
-        { name: 'first-day-data.ts', path: 'Praxis/lib/first-day-data.ts' }
-      ]
+        { name: 'first-day-data.ts', path: 'Praxis/lib/first-day-data.ts' },
+      ],
     },
     {
       name: 'public',
@@ -707,11 +710,11 @@ const CODEBASE_TREE: FileNode = {
           isDir: true,
           children: [
             { name: 'alex.png', path: 'Praxis/public/avatars/alex.png' },
-            { name: 'sarah.png', path: 'Praxis/public/avatars/sarah.png' }
-          ]
+            { name: 'sarah.png', path: 'Praxis/public/avatars/sarah.png' },
+          ],
         },
-        { name: 'logo.png', path: 'Praxis/public/logo.png' }
-      ]
+        { name: 'logo.png', path: 'Praxis/public/logo.png' },
+      ],
     },
     {
       name: 'supabase',
@@ -722,16 +725,14 @@ const CODEBASE_TREE: FileNode = {
           name: 'migrations',
           path: 'Praxis/supabase/migrations',
           isDir: true,
-          children: [
-            { name: '0001_init.sql', path: 'Praxis/supabase/migrations/0001_init.sql' }
-          ]
-        }
-      ]
+          children: [{ name: '0001_init.sql', path: 'Praxis/supabase/migrations/0001_init.sql' }],
+        },
+      ],
     },
     { name: 'CONTRIBUTING.md', path: 'Praxis/CONTRIBUTING.md' },
     { name: 'package.json', path: 'Praxis/package.json' },
-    { name: 'README.md', path: 'Praxis/README.md' }
-  ]
+    { name: 'README.md', path: 'Praxis/README.md' },
+  ],
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -872,10 +873,34 @@ function FileExplorer({ highlightedPaths }: { highlightedPaths: string[] }) {
 
 function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
   const cast = [
-    { initials: 'AR', name: 'Alex Rivera', role: 'Tech Lead', color: 'bg-[#5f8a6b]/20 text-[#5f8a6b] border-[#5f8a6b]/30', desc: 'Tu guía. Paciente, exigente a largo plazo.' },
-    { initials: 'SC', name: 'Sarah Chen', role: 'Senior Dev', color: 'bg-purple-950/40 text-purple-300 border-purple-800/30', desc: 'Revisará tu PR. Brillante y directa.' },
-    { initials: 'JL', name: 'Jordan Lee', role: 'Junior Dev', color: 'bg-amber-950/40 text-amber-300 border-amber-800/30', desc: 'El aliado inesperado. Ansioso pero solidario.' },
-    { initials: 'MT', name: 'Mia Torres', role: 'Product Manager', color: 'bg-rose-950/40 text-rose-300 border-rose-800/30', desc: 'Aparece solo en momentos de crisis. Pragmática.' },
+    {
+      initials: 'AR',
+      name: 'Alex Rivera',
+      role: 'Tech Lead',
+      color: 'bg-[#5f8a6b]/20 text-[#5f8a6b] border-[#5f8a6b]/30',
+      desc: 'Tu guía. Paciente, exigente a largo plazo.',
+    },
+    {
+      initials: 'SC',
+      name: 'Sarah Chen',
+      role: 'Senior Dev',
+      color: 'bg-purple-950/40 text-purple-300 border-purple-800/30',
+      desc: 'Revisará tu PR. Brillante y directa.',
+    },
+    {
+      initials: 'JL',
+      name: 'Jordan Lee',
+      role: 'Junior Dev',
+      color: 'bg-amber-950/40 text-amber-300 border-amber-800/30',
+      desc: 'El aliado inesperado. Ansioso pero solidario.',
+    },
+    {
+      initials: 'MT',
+      name: 'Mia Torres',
+      role: 'Product Manager',
+      color: 'bg-rose-950/40 text-rose-300 border-rose-800/30',
+      desc: 'Aparece solo en momentos de crisis. Pragmática.',
+    },
   ]
 
   return (
@@ -898,35 +923,54 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
         {/* Header */}
         <div className="shrink-0 px-6 py-4 border-b border-white/[0.05] flex items-start justify-between gap-4">
           <div>
-            <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-white/20 mb-1">Ejemplo de escenario end-to-end</p>
-            <h2 className="text-lg font-serif font-medium text-white/90">NovaTech / Bug en el carrito</h2>
+            <p className="font-mono text-[9px] uppercase tracking-[0.35em] text-white/20 mb-1">
+              Ejemplo de escenario end-to-end
+            </p>
+            <h2 className="text-lg font-serif font-medium text-white/90">
+              NovaTech / Bug en el carrito
+            </h2>
             <div className="flex items-center gap-3 mt-1.5 flex-wrap">
               {[
                 { label: 'NovaTech Solutions', icon: '🏢' },
                 { label: '~18 minutos', icon: '⏱' },
                 { label: 'Dificultad media', icon: '📊' },
-              ].map(m => (
-                <span key={m.label} className="flex items-center gap-1 text-[10px] text-white/30 font-mono">
-                  <span>{m.icon}</span>{m.label}
+              ].map((m) => (
+                <span
+                  key={m.label}
+                  className="flex items-center gap-1 text-[10px] text-white/30 font-mono"
+                >
+                  <span>{m.icon}</span>
+                  {m.label}
                 </span>
               ))}
             </div>
           </div>
-          <button onClick={onClose} className="shrink-0 p-1.5 rounded-sm border border-white/[0.06] bg-white/[0.02] text-white/30 hover:text-white/60 hover:bg-white/[0.05] transition-all cursor-pointer">
+          <button
+            onClick={onClose}
+            className="shrink-0 p-1.5 rounded-sm border border-white/[0.06] bg-white/[0.02] text-white/30 hover:text-white/60 hover:bg-white/[0.05] transition-all cursor-pointer"
+          >
             <X size={13} />
           </button>
         </div>
 
         {/* Scrollable content */}
         <div className="flex-1 min-h-0 overflow-y-auto px-6 py-5 space-y-6 scrollbar-thin">
-
           {/* Cast */}
           <section>
-            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/20 mb-3">Elenco</p>
+            <p className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/20 mb-3">
+              Elenco
+            </p>
             <div className="grid grid-cols-2 gap-2">
-              {cast.map(c => (
-                <div key={c.initials} className="flex items-start gap-2.5 p-2.5 rounded-sm border border-white/[0.04] bg-white/[0.01]">
-                  <div className={`w-6 h-6 rounded-sm border flex items-center justify-center text-[9px] font-mono font-bold shrink-0 ${c.color}`}>{c.initials}</div>
+              {cast.map((c) => (
+                <div
+                  key={c.initials}
+                  className="flex items-start gap-2.5 p-2.5 rounded-sm border border-white/[0.04] bg-white/[0.01]"
+                >
+                  <div
+                    className={`w-6 h-6 rounded-sm border flex items-center justify-center text-[9px] font-mono font-bold shrink-0 ${c.color}`}
+                  >
+                    {c.initials}
+                  </div>
                   <div>
                     <p className="text-[11px] font-medium text-white/75 leading-none">{c.name}</p>
                     <p className="text-[9px] text-white/30 mt-0.5">{c.role}</p>
@@ -944,15 +988,24 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
           <section>
             <div className="flex items-center gap-3 mb-4">
               <div className="h-px flex-1 bg-white/[0.05]" />
-              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/25">Acto I — Llegada</span>
+              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/25">
+                Acto I — Llegada
+              </span>
               <div className="h-px flex-1 bg-white/[0.05]" />
             </div>
             <div className="space-y-2.5">
-              <TimelineEvent icon="💬" label="STORYLINE" tag="canal #general" color="text-purple-400">
-                El equipo da la bienvenida. Alex explica la cultura del equipo. Jordan hace una pregunta nerviosa. Sarah apenas responde.
+              <TimelineEvent
+                icon="💬"
+                label="STORYLINE"
+                tag="canal #general"
+                color="text-purple-400"
+              >
+                El equipo da la bienvenida. Alex explica la cultura del equipo. Jordan hace una
+                pregunta nerviosa. Sarah apenas responde.
               </TimelineEvent>
               <TimelineEvent icon="📋" label="TICKET" tag="BUG-4421" color="text-blue-400">
-                <span className="font-medium text-white/60">Cart total wrong on coupon</span> — el descuento se aplica dos veces en pedidos con múltiples ítems. Prioridad: Alta.
+                <span className="font-medium text-white/60">Cart total wrong on coupon</span> — el
+                descuento se aplica dos veces en pedidos con múltiples ítems. Prioridad: Alta.
               </TimelineEvent>
             </div>
           </section>
@@ -960,10 +1013,16 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
           {/* Branch 1 */}
           <BranchNode question="¿Leés los comentarios del ticket antes de arrancar?">
             <BranchPath color="green" label="Sí, los leés">
-              Jordan te manda un DM privado: <em>"El módulo de descuentos tiene un bug conocido en calculateTotal(). Fijate ahí primero."</em> Ganás contexto clave.
+              Jordan te manda un DM privado:{' '}
+              <em>
+                "El módulo de descuentos tiene un bug conocido en calculateTotal(). Fijate ahí
+                primero."
+              </em>{' '}
+              Ganás contexto clave.
             </BranchPath>
             <BranchPath color="amber" label="No, arrancás directo">
-              Vas por el camino equivocado. Perdés 10 minutos antes de encontrar la pista real. Sarah lo va a notar en el PR.
+              Vas por el camino equivocado. Perdés 10 minutos antes de encontrar la pista real.
+              Sarah lo va a notar en el PR.
             </BranchPath>
           </BranchNode>
 
@@ -971,15 +1030,29 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
           <section>
             <div className="flex items-center gap-3 mb-4">
               <div className="h-px flex-1 bg-white/[0.05]" />
-              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/25">Acto II — El plot twist</span>
+              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/25">
+                Acto II — El plot twist
+              </span>
               <div className="h-px flex-1 bg-white/[0.05]" />
             </div>
             <div className="space-y-2.5">
-              <TimelineEvent icon="⚡" label="EVENTO ALEATORIO" tag="imprevisto" color="text-rose-400">
-                Alerta en <span className="font-mono text-[10px] text-rose-400/70">#producción</span>: el carrito está caído para usuarios con cupones activos. Es tu bug, en producción ahora.
+              <TimelineEvent
+                icon="⚡"
+                label="EVENTO ALEATORIO"
+                tag="imprevisto"
+                color="text-rose-400"
+              >
+                Alerta en{' '}
+                <span className="font-mono text-[10px] text-rose-400/70">#producción</span>: el
+                carrito está caído para usuarios con cupones activos. Es tu bug, en producción
+                ahora.
               </TimelineEvent>
               <TimelineEvent icon="📣" label="ENTRADA DE MIA" tag="PM" color="text-rose-300">
-                Mia Torres entra al canal: <em>"¿Esto está relacionado con lo que estás mirando? Necesito una respuesta en 5 minutos para el CEO."</em>
+                Mia Torres entra al canal:{' '}
+                <em>
+                  "¿Esto está relacionado con lo que estás mirando? Necesito una respuesta en 5
+                  minutos para el CEO."
+                </em>
               </TimelineEvent>
             </div>
           </section>
@@ -987,10 +1060,12 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
           {/* Branch 2 */}
           <BranchNode question="¿Cómo respondés a la presión de Mia?">
             <BranchPath color="green" label="Con calma">
-              Explicás el problema con claridad. Mia queda satisfecha, te da 20 minutos más. La presión se convierte en foco.
+              Explicás el problema con claridad. Mia queda satisfecha, te da 20 minutos más. La
+              presión se convierte en foco.
             </BranchPath>
             <BranchPath color="amber" label="Con pánico">
-              Prometés algo que no podés garantizar. Terminás la tarea, pero con más tensión. El debrief lo va a mencionar.
+              Prometés algo que no podés garantizar. Terminás la tarea, pero con más tensión. El
+              debrief lo va a mencionar.
             </BranchPath>
           </BranchNode>
 
@@ -998,21 +1073,27 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
           <section>
             <div className="flex items-center gap-3 mb-4">
               <div className="h-px flex-1 bg-white/[0.05]" />
-              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/25">Acto III — El Pull Request</span>
+              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/25">
+                Acto III — El Pull Request
+              </span>
               <div className="h-px flex-1 bg-white/[0.05]" />
             </div>
             <TimelineEvent icon="🔍" label="CODE REVIEW" tag="Sarah Chen" color="text-purple-400">
-              Sarah deja dos comentarios duros. <em>"¿Por qué usás parseInt acá? Esto puede fallar con decimales."</em> Y <em>"Este test no cubre el edge case del cupón vacío."</em>
+              Sarah deja dos comentarios duros.{' '}
+              <em>"¿Por qué usás parseInt acá? Esto puede fallar con decimales."</em> Y{' '}
+              <em>"Este test no cubre el edge case del cupón vacío."</em>
             </TimelineEvent>
           </section>
 
           {/* Branch 3 */}
           <BranchNode question="¿Cómo respondés a los comentarios de Sarah?">
             <BranchPath color="green" label="Con curiosidad">
-              Preguntás, entendés, corregís. Sarah responde: <em>"Está bien. Mergeá."</em> — su versión de un cumplido.
+              Preguntás, entendés, corregís. Sarah responde: <em>"Está bien. Mergeá."</em> — su
+              versión de un cumplido.
             </BranchPath>
             <BranchPath color="red" label="Defendiendo el ego">
-              Argumentás que tu solución también funciona. Sarah cierra los comentarios sin responder y escala a Alex. Segunda vuelta de review.
+              Argumentás que tu solución también funciona. Sarah cierra los comentarios sin
+              responder y escala a Alex. Segunda vuelta de review.
             </BranchPath>
           </BranchNode>
 
@@ -1020,17 +1101,30 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
           <section>
             <div className="flex items-center gap-3 mb-4">
               <div className="h-px flex-1 bg-white/[0.05]" />
-              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/25">Desenlaces posibles</span>
+              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-white/25">
+                Desenlaces posibles
+              </span>
               <div className="h-px flex-1 bg-white/[0.05]" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div className="p-3 rounded-sm border border-[#5f8a6b]/25 bg-[#5f8a6b]/[0.05]">
-                <p className="text-[10px] font-mono text-[#5f8a6b] uppercase mb-2">Final A — Éxito limpio</p>
-                <p className="text-[11px] text-white/50 leading-relaxed">El equipo celebra en Slack. Alex escribe: <em>"Fue el mejor primer día que vi en mucho tiempo."</em> El bug está cerrado en producción.</p>
+                <p className="text-[10px] font-mono text-[#5f8a6b] uppercase mb-2">
+                  Final A — Éxito limpio
+                </p>
+                <p className="text-[11px] text-white/50 leading-relaxed">
+                  El equipo celebra en Slack. Alex escribe:{' '}
+                  <em>"Fue el mejor primer día que vi en mucho tiempo."</em> El bug está cerrado en
+                  producción.
+                </p>
               </div>
               <div className="p-3 rounded-sm border border-amber-900/30 bg-amber-950/20">
-                <p className="text-[10px] font-mono text-amber-400 uppercase mb-2">Final B — Éxito con turbulencia</p>
-                <p className="text-[11px] text-white/50 leading-relaxed">Funcionó, pero quedaron roces. Alex te manda un DM: <em>"Buen trabajo hoy. La próxima, animate a preguntar más temprano."</em></p>
+                <p className="text-[10px] font-mono text-amber-400 uppercase mb-2">
+                  Final B — Éxito con turbulencia
+                </p>
+                <p className="text-[11px] text-white/50 leading-relaxed">
+                  Funcionó, pero quedaron roces. Alex te manda un DM:{' '}
+                  <em>"Buen trabajo hoy. La próxima, animate a preguntar más temprano."</em>
+                </p>
               </div>
             </div>
           </section>
@@ -1043,8 +1137,18 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
 }
 
 // Sub-components for ScenarioExampleOverlay
-function TimelineEvent({ icon, label, tag, color, children }: {
-  icon: string; label: string; tag: string; color: string; children: React.ReactNode
+function TimelineEvent({
+  icon,
+  label,
+  tag,
+  color,
+  children,
+}: {
+  icon: string
+  label: string
+  tag: string
+  color: string
+  children: React.ReactNode
 }) {
   return (
     <div className="flex gap-3">
@@ -1070,14 +1174,20 @@ function BranchNode({ question, children }: { question: string; children: React.
         <span className="text-white/40 text-[10px]">↕</span>
         <p className="text-[11px] font-medium text-white/65 italic">{question}</p>
       </div>
-      <div className="grid grid-cols-2 divide-x divide-white/[0.05]">
-        {children}
-      </div>
+      <div className="grid grid-cols-2 divide-x divide-white/[0.05]">{children}</div>
     </div>
   )
 }
 
-function BranchPath({ color, label, children }: { color: 'green' | 'amber' | 'red'; label: string; children: React.ReactNode }) {
+function BranchPath({
+  color,
+  label,
+  children,
+}: {
+  color: 'green' | 'amber' | 'red'
+  label: string
+  children: React.ReactNode
+}) {
   const palette = {
     green: { dot: 'bg-[#5f8a6b]', label: 'text-[#5f8a6b]', bar: 'bg-[#5f8a6b]/20' },
     amber: { dot: 'bg-amber-400', label: 'text-amber-400', bar: 'bg-amber-950/30' },
@@ -1087,7 +1197,9 @@ function BranchPath({ color, label, children }: { color: 'green' | 'amber' | 're
     <div className={`p-3 flex flex-col gap-1.5 ${palette.bar}`}>
       <div className="flex items-center gap-1.5">
         <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${palette.dot}`} />
-        <span className={`text-[9px] font-mono uppercase tracking-wider ${palette.label}`}>{label}</span>
+        <span className={`text-[9px] font-mono uppercase tracking-wider ${palette.label}`}>
+          {label}
+        </span>
       </div>
       <p className="text-[10px] text-white/40 leading-snug">{children}</p>
     </div>
@@ -1132,30 +1244,63 @@ function WriterPreview({ stepIndex }: { stepIndex: number }) {
   ]
 
   const slackMessages = [
-    { from: 'Alex Rivera', initials: 'AR', color: 'bg-[#5f8a6b]/20 text-[#5f8a6b]', time: '9:03 AM', text: 'Buen día! Tu primer ticket ya está en el tablero. Es un bug de producción — no es urgente, pero sí importante.' },
-    { from: 'Alex Rivera', initials: 'AR', color: 'bg-[#5f8a6b]/20 text-[#5f8a6b]', time: '9:03 AM', text: 'Antes de arrancar: leé los comentarios anteriores del ticket. El contexto está ahí.' },
-    { from: 'Jordan Lee', initials: 'JL', color: 'bg-amber-950/40 text-amber-300', time: '9:07 AM', text: 'Ey! Bienvenide. Ese bug lo vi antes, si tenés dudas avisá 🙌' },
-    { from: 'Sarah Chen', initials: 'SC', color: 'bg-purple-950/40 text-purple-300', time: '9:12 AM', text: 'El carrito. Otra vez. Alguien tiene que refactorizar ese módulo de una vez.' },
+    {
+      from: 'Alex Rivera',
+      initials: 'AR',
+      color: 'bg-[#5f8a6b]/20 text-[#5f8a6b]',
+      time: '9:03 AM',
+      text: 'Buen día! Tu primer ticket ya está en el tablero. Es un bug de producción — no es urgente, pero sí importante.',
+    },
+    {
+      from: 'Alex Rivera',
+      initials: 'AR',
+      color: 'bg-[#5f8a6b]/20 text-[#5f8a6b]',
+      time: '9:03 AM',
+      text: 'Antes de arrancar: leé los comentarios anteriores del ticket. El contexto está ahí.',
+    },
+    {
+      from: 'Jordan Lee',
+      initials: 'JL',
+      color: 'bg-amber-950/40 text-amber-300',
+      time: '9:07 AM',
+      text: 'Ey! Bienvenide. Ese bug lo vi antes, si tenés dudas avisá 🙌',
+    },
+    {
+      from: 'Sarah Chen',
+      initials: 'SC',
+      color: 'bg-purple-950/40 text-purple-300',
+      time: '9:12 AM',
+      text: 'El carrito. Otra vez. Alguien tiene que refactorizar ese módulo de una vez.',
+    },
   ]
 
   if (stepIndex === 0) {
     // Character cards
     return (
-      <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 320 }}>
+      <div
+        className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+        style={{ minHeight: 320 }}
+      >
         <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01] flex items-center justify-between">
-          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Personajes del juego</span>
+          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+            Personajes del juego
+          </span>
           <span className="font-mono text-[8px] text-[#5f8a6b]/50">CHARACTER BIBLE</span>
         </div>
         <div className="flex-1 overflow-y-auto p-3 space-y-2.5 scrollbar-thin">
           {characters.map((c) => (
             <div key={c.name} className="p-3 rounded-sm border border-white/[0.04] bg-white/[0.01]">
               <div className="flex items-center gap-2.5 mb-2">
-                <div className={`w-7 h-7 rounded-sm border flex items-center justify-center text-[10px] font-mono font-bold shrink-0 ${c.color}`}>
+                <div
+                  className={`w-7 h-7 rounded-sm border flex items-center justify-center text-[10px] font-mono font-bold shrink-0 ${c.color}`}
+                >
                   {c.initials}
                 </div>
                 <div>
                   <p className="text-[12px] font-medium text-white/80 leading-none">{c.name}</p>
-                  <p className="text-[10px] text-white/30 mt-0.5">{c.role} · <span className="text-white/50">{c.tone}</span></p>
+                  <p className="text-[10px] text-white/30 mt-0.5">
+                    {c.role} · <span className="text-white/50">{c.tone}</span>
+                  </p>
                 </div>
               </div>
               <p className="text-[10px] text-white/25 leading-snug italic border-l border-white/[0.06] pl-2.5">
@@ -1167,28 +1312,46 @@ function WriterPreview({ stepIndex }: { stepIndex: number }) {
           {/* Personajes en desarrollo — opportunity for contributors */}
           <div className="mt-1 p-3 rounded-sm border border-dashed border-white/[0.07] bg-white/[0.005] space-y-2">
             <div className="flex items-center justify-between">
-              <span className="font-mono text-[8px] uppercase tracking-wider text-white/20">Personajes en desarrollo</span>
-              <span className="text-[7px] px-1.5 py-0.5 rounded-sm border border-amber-900/30 bg-amber-950/20 text-amber-400/70 font-mono uppercase">buscamos escritores</span>
+              <span className="font-mono text-[8px] uppercase tracking-wider text-white/20">
+                Personajes en desarrollo
+              </span>
+              <span className="text-[7px] px-1.5 py-0.5 rounded-sm border border-amber-900/30 bg-amber-950/20 text-amber-400/70 font-mono uppercase">
+                buscamos escritores
+              </span>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="p-2 rounded-sm border border-sky-900/20 bg-sky-950/[0.06] space-y-1">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-5 h-5 rounded-sm border border-sky-800/30 bg-sky-950/40 flex items-center justify-center text-[8px] font-mono font-bold text-sky-300 shrink-0">BL</div>
-                  <p className="text-[10px] font-semibold text-sky-300/80 leading-none">Bill Lumbergh</p>
+                  <div className="w-5 h-5 rounded-sm border border-sky-800/30 bg-sky-950/40 flex items-center justify-center text-[8px] font-mono font-bold text-sky-300 shrink-0">
+                    BL
+                  </div>
+                  <p className="text-[10px] font-semibold text-sky-300/80 leading-none">
+                    Bill Lumbergh
+                  </p>
                 </div>
-                <p className="text-[8.5px] text-white/25 leading-snug">VP con sonrisa de plomo. Siempre pide más, nunca con urgencia.
-Inspiración: <span className="italic text-white/35">Office Space</span>.</p>
+                <p className="text-[8.5px] text-white/25 leading-snug">
+                  VP con sonrisa de plomo. Siempre pide más, nunca con urgencia. Inspiración:{' '}
+                  <span className="italic text-white/35">Office Space</span>.
+                </p>
               </div>
               <div className="p-2 rounded-sm border border-rose-900/20 bg-rose-950/[0.06] space-y-1">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-5 h-5 rounded-sm border border-rose-800/30 bg-rose-950/40 flex items-center justify-center text-[8px] font-mono font-bold text-rose-300 shrink-0">MB</div>
-                  <p className="text-[10px] font-semibold text-rose-300/80 leading-none">Michael Bolton</p>
+                  <div className="w-5 h-5 rounded-sm border border-rose-800/30 bg-rose-950/40 flex items-center justify-center text-[8px] font-mono font-bold text-rose-300 shrink-0">
+                    MB
+                  </div>
+                  <p className="text-[10px] font-semibold text-rose-300/80 leading-none">
+                    Michael Bolton
+                  </p>
                 </div>
-                <p className="text-[8.5px] text-white/25 leading-snug">Backend dev resignado. Código impecable, fe en el sistema cero.
-Inspiración: <span className="italic text-white/35">Office Space</span>.</p>
+                <p className="text-[8.5px] text-white/25 leading-snug">
+                  Backend dev resignado. Código impecable, fe en el sistema cero. Inspiración:{' '}
+                  <span className="italic text-white/35">Office Space</span>.
+                </p>
               </div>
             </div>
-            <p className="text-[8px] text-white/15 font-mono">Proponerlos es una forma de contribuir — ver Paso 4.</p>
+            <p className="text-[8px] text-white/15 font-mono">
+              Proponerlos es una forma de contribuir — ver Paso 4.
+            </p>
           </div>
         </div>
       </div>
@@ -1199,59 +1362,71 @@ Inspiración: <span className="italic text-white/35">Office Space</span>.</p>
     // Ticket vs Scenario comparison
     return (
       <>
-      <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 320 }}>
-        <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01]">
-          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Tipos de aporte</span>
-        </div>
-        <div className="flex-1 p-3 grid grid-cols-2 gap-2.5">
-          {/* Ticket */}
-          <div className="flex flex-col gap-2 p-3 rounded-sm border border-blue-900/30 bg-blue-950/20">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-mono text-blue-400 uppercase tracking-wider">Ticket</span>
+        <div
+          className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+          style={{ minHeight: 320 }}
+        >
+          <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01]">
+            <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+              Tipos de aporte
+            </span>
+          </div>
+          <div className="flex-1 p-3 grid grid-cols-2 gap-2.5">
+            {/* Ticket */}
+            <div className="flex flex-col gap-2 p-3 rounded-sm border border-blue-900/30 bg-blue-950/20">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-mono text-blue-400 uppercase tracking-wider">
+                  Ticket
+                </span>
+              </div>
+              <div className="space-y-1.5 text-[10px] text-white/40 leading-snug">
+                <p>· Diálogo puntual (2–4 líneas)</p>
+                <p>· Un personaje, un mensaje</p>
+                <p>· Scope muy acotado</p>
+                <p>· Sin contexto previo</p>
+              </div>
+              <div className="mt-auto pt-2 border-t border-white/[0.05]">
+                <span className="text-[9px] text-blue-400/60 font-mono">~30 min de trabajo</span>
+              </div>
             </div>
-            <div className="space-y-1.5 text-[10px] text-white/40 leading-snug">
-              <p>· Diálogo puntual (2–4 líneas)</p>
-              <p>· Un personaje, un mensaje</p>
-              <p>· Scope muy acotado</p>
-              <p>· Sin contexto previo</p>
-            </div>
-            <div className="mt-auto pt-2 border-t border-white/[0.05]">
-              <span className="text-[9px] text-blue-400/60 font-mono">~30 min de trabajo</span>
+            {/* Scenario */}
+            <div className="flex flex-col gap-2 p-3 rounded-sm border border-[#5f8a6b]/25 bg-[#5f8a6b]/[0.06]">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-mono text-[#5f8a6b] uppercase tracking-wider">
+                  Escenario
+                </span>
+              </div>
+              <div className="space-y-1.5 text-[10px] text-white/40 leading-snug">
+                <p>· 20–50 líneas de diálogo</p>
+                <p>· 3+ personajes, arco narrativo</p>
+                <p>· Empresa, contexto, tensión</p>
+                <p>· Coherencia de principio a fin</p>
+              </div>
+              <div className="mt-auto pt-2 border-t border-white/[0.06]">
+                <span className="text-[9px] text-[#5f8a6b]/60 font-mono">~días de trabajo</span>
+              </div>
             </div>
           </div>
-          {/* Scenario */}
-          <div className="flex flex-col gap-2 p-3 rounded-sm border border-[#5f8a6b]/25 bg-[#5f8a6b]/[0.06]">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-mono text-[#5f8a6b] uppercase tracking-wider">Escenario</span>
-            </div>
-            <div className="space-y-1.5 text-[10px] text-white/40 leading-snug">
-              <p>· 20–50 líneas de diálogo</p>
-              <p>· 3+ personajes, arco narrativo</p>
-              <p>· Empresa, contexto, tensión</p>
-              <p>· Coherencia de principio a fin</p>
-            </div>
-            <div className="mt-auto pt-2 border-t border-white/[0.06]">
-              <span className="text-[9px] text-[#5f8a6b]/60 font-mono">~días de trabajo</span>
-            </div>
+          {/* CTA button */}
+          <div className="shrink-0 px-3 py-2.5 border-t border-white/[0.05] bg-white/[0.005]">
+            <button
+              onClick={() => setShowExample(true)}
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-sm border border-[#5f8a6b]/20 bg-[#5f8a6b]/[0.05] text-[#5f8a6b] hover:bg-[#5f8a6b]/[0.1] hover:border-[#5f8a6b]/35 transition-all text-[11px] font-mono cursor-pointer group"
+            >
+              <BookOpen size={12} className="shrink-0" />
+              Quiero ver un ejemplo completo
+              <ChevronRight
+                size={11}
+                className="shrink-0 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"
+              />
+            </button>
           </div>
         </div>
-        {/* CTA button */}
-        <div className="shrink-0 px-3 py-2.5 border-t border-white/[0.05] bg-white/[0.005]">
-          <button
-            onClick={() => setShowExample(true)}
-            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-sm border border-[#5f8a6b]/20 bg-[#5f8a6b]/[0.05] text-[#5f8a6b] hover:bg-[#5f8a6b]/[0.1] hover:border-[#5f8a6b]/35 transition-all text-[11px] font-mono cursor-pointer group"
-          >
-            <BookOpen size={12} className="shrink-0" />
-            Quiero ver un ejemplo completo
-            <ChevronRight size={11} className="shrink-0 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-          </button>
-        </div>
-      </div>
 
-      {/* Scenario example overlay */}
-      <AnimatePresence>
-        {showExample && <ScenarioExampleOverlay onClose={() => setShowExample(false)} />}
-      </AnimatePresence>
+        {/* Scenario example overlay */}
+        <AnimatePresence>
+          {showExample && <ScenarioExampleOverlay onClose={() => setShowExample(false)} />}
+        </AnimatePresence>
       </>
     )
   }
@@ -1259,7 +1434,10 @@ Inspiración: <span className="italic text-white/35">Office Space</span>.</p>
   if (stepIndex === 2) {
     // Slack-style in-game dialogue mock
     return (
-      <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 320 }}>
+      <div
+        className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+        style={{ minHeight: 320 }}
+      >
         <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01] flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-[#5f8a6b]/50" />
           <span className="font-mono text-[9px] text-white/30"># general · NovaTech Solutions</span>
@@ -1268,7 +1446,9 @@ Inspiración: <span className="italic text-white/35">Office Space</span>.</p>
         <div className="flex-1 overflow-y-auto p-3 space-y-3 scrollbar-thin">
           {slackMessages.map((msg, i) => (
             <div key={i} className="flex items-start gap-2.5">
-              <div className={`w-6 h-6 rounded-sm border flex items-center justify-center text-[9px] font-mono font-bold shrink-0 mt-0.5 ${msg.color}`}>
+              <div
+                className={`w-6 h-6 rounded-sm border flex items-center justify-center text-[9px] font-mono font-bold shrink-0 mt-0.5 ${msg.color}`}
+              >
                 {msg.initials}
               </div>
               <div className="min-w-0">
@@ -1292,17 +1472,28 @@ Inspiración: <span className="italic text-white/35">Office Space</span>.</p>
 
   // stepIndex === 3: Rich GitHub issue proposal mock
   return (
-    <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 360 }}>
+    <div
+      className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+      style={{ minHeight: 360 }}
+    >
       {/* Issue header */}
       <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01] flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
-          <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor" className="text-emerald-400 shrink-0">
+          <svg
+            viewBox="0 0 16 16"
+            width="12"
+            height="12"
+            fill="currentColor"
+            className="text-emerald-400 shrink-0"
+          >
             <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
             <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z" />
           </svg>
           <span className="font-mono text-[9px] text-emerald-400">Open</span>
           <span className="text-white/15 text-[9px]">|</span>
-          <span className="font-mono text-[9px] text-white/25 truncate">#037 · abierto hace 2 días por contrib-user</span>
+          <span className="font-mono text-[9px] text-white/25 truncate">
+            #037 · abierto hace 2 días por contrib-user
+          </span>
         </div>
         <span className="font-mono text-[8px] text-[#5f8a6b]/50 shrink-0">GITHUB ISSUE</span>
       </div>
@@ -1311,18 +1502,24 @@ Inspiración: <span className="italic text-white/35">Office Space</span>.</p>
         {/* Issue title & labels */}
         <div className="px-3 pt-3 pb-2 border-b border-white/[0.04] space-y-2">
           <h4 className="text-[13px] font-semibold text-white/85 leading-snug">
-            [Narrativa] Propuesta de personaje: <span className="text-sky-300">Bill Lumbergh</span> — VP Corp
+            [Narrativa] Propuesta de personaje: <span className="text-sky-300">Bill Lumbergh</span>{' '}
+            — VP Corp
           </h4>
           <div className="flex flex-wrap gap-1.5">
-            <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-purple-900/30 bg-purple-950/30 text-purple-400 font-mono uppercase">narrativa</span>
-            <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-sky-900/30 bg-sky-950/30 text-sky-400 font-mono uppercase">nuevo personaje</span>
-            <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-emerald-900/30 bg-emerald-950/30 text-emerald-400 font-mono uppercase">good first issue</span>
+            <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-purple-900/30 bg-purple-950/30 text-purple-400 font-mono uppercase">
+              narrativa
+            </span>
+            <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-sky-900/30 bg-sky-950/30 text-sky-400 font-mono uppercase">
+              nuevo personaje
+            </span>
+            <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-emerald-900/30 bg-emerald-950/30 text-emerald-400 font-mono uppercase">
+              good first issue
+            </span>
           </div>
         </div>
 
         {/* Issue body */}
         <div className="px-3 py-3 space-y-3">
-
           {/* Metadata row */}
           <div className="grid grid-cols-2 gap-2 text-[9px] font-mono">
             <div className="p-2 rounded-sm border border-white/[0.04] bg-white/[0.01] space-y-0.5">
@@ -1345,29 +1542,44 @@ Inspiración: <span className="italic text-white/35">Office Space</span>.</p>
 
           {/* Character description */}
           <div className="space-y-1">
-            <p className="font-mono text-[8px] text-white/20 uppercase tracking-wider">Descripción del personaje</p>
+            <p className="font-mono text-[8px] text-white/20 uppercase tracking-wider">
+              Descripción del personaje
+            </p>
             <p className="text-[10px] text-white/45 leading-relaxed">
-              VP de NovaTech Solutions. Nunca levanta la voz, nunca pide directamente. Sus requests llegan como sugerencias aménamente formuladas que son, en realidad, órdenes. Taza de café permanente. Sonrisa suave ante plazos imposibles.
+              VP de NovaTech Solutions. Nunca levanta la voz, nunca pide directamente. Sus requests
+              llegan como sugerencias aménamente formuladas que son, en realidad, órdenes. Taza de
+              café permanente. Sonrisa suave ante plazos imposibles.
             </p>
           </div>
 
           {/* Proposed dialogue block */}
           <div className="space-y-1.5">
-            <p className="font-mono text-[8px] text-white/20 uppercase tracking-wider">Diálogo propuesto</p>
+            <p className="font-mono text-[8px] text-white/20 uppercase tracking-wider">
+              Diálogo propuesto
+            </p>
             <div className="rounded-sm border border-white/[0.05] bg-black/30 p-2.5 space-y-2">
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 rounded-sm border border-sky-800/30 bg-sky-950/40 flex items-center justify-center text-[8px] font-mono font-bold text-sky-300 shrink-0 mt-0.5">BL</div>
+                <div className="w-5 h-5 rounded-sm border border-sky-800/30 bg-sky-950/40 flex items-center justify-center text-[8px] font-mono font-bold text-sky-300 shrink-0 mt-0.5">
+                  BL
+                </div>
                 <div className="min-w-0">
-                  <p className="text-[9px] font-semibold text-sky-300/70 mb-0.5">Bill Lumbergh <span className="text-white/15 font-normal">9:31 AM</span></p>
+                  <p className="text-[9px] font-semibold text-sky-300/70 mb-0.5">
+                    Bill Lumbergh <span className="text-white/15 font-normal">9:31 AM</span>
+                  </p>
                   <p className="text-[10px] text-white/50 leading-relaxed italic">
-                    "Yeah… si pudieras revisar ese ticket antes del viernes, sería genial. Oh, y también el de producción. Mmkay, gracias."
+                    "Yeah… si pudieras revisar ese ticket antes del viernes, sería genial. Oh, y
+                    también el de producción. Mmkay, gracias."
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 rounded-sm border border-rose-800/30 bg-rose-950/40 flex items-center justify-center text-[8px] font-mono font-bold text-rose-300 shrink-0 mt-0.5">MB</div>
+                <div className="w-5 h-5 rounded-sm border border-rose-800/30 bg-rose-950/40 flex items-center justify-center text-[8px] font-mono font-bold text-rose-300 shrink-0 mt-0.5">
+                  MB
+                </div>
                 <div className="min-w-0">
-                  <p className="text-[9px] font-semibold text-rose-300/70 mb-0.5">Michael Bolton <span className="text-white/15 font-normal">9:33 AM</span></p>
+                  <p className="text-[9px] font-semibold text-rose-300/70 mb-0.5">
+                    Michael Bolton <span className="text-white/15 font-normal">9:33 AM</span>
+                  </p>
                   <p className="text-[10px] text-white/50 leading-relaxed italic">
                     "Ambos. Claro. Por supuesto."
                   </p>
@@ -1378,16 +1590,24 @@ Inspiración: <span className="italic text-white/35">Office Space</span>.</p>
 
           {/* Mini comment thread */}
           <div className="space-y-1.5 pt-1 border-t border-white/[0.04]">
-            <p className="font-mono text-[8px] text-white/15 uppercase tracking-wider">1 comentario</p>
+            <p className="font-mono text-[8px] text-white/15 uppercase tracking-wider">
+              1 comentario
+            </p>
             <div className="flex items-start gap-2">
-              <div className="w-5 h-5 rounded-full border border-[#5f8a6b]/30 bg-[#5f8a6b]/10 flex items-center justify-center text-[7px] font-mono font-bold text-[#5f8a6b] shrink-0 mt-0.5">M</div>
+              <div className="w-5 h-5 rounded-full border border-[#5f8a6b]/30 bg-[#5f8a6b]/10 flex items-center justify-center text-[7px] font-mono font-bold text-[#5f8a6b] shrink-0 mt-0.5">
+                M
+              </div>
               <div className="flex-1 p-2 rounded-sm border border-white/[0.04] bg-white/[0.01] space-y-0.5">
-                <p className="text-[8.5px] font-semibold text-[#5f8a6b]/70">maintainer <span className="text-white/15 font-normal">hace 1 día</span></p>
-                <p className="text-[9px] text-white/35 leading-snug">Excelente propuesta. El tono encaja perfecto con la sátira corp del juego. Assignéte el issue si querés arrancar. 👏</p>
+                <p className="text-[8.5px] font-semibold text-[#5f8a6b]/70">
+                  maintainer <span className="text-white/15 font-normal">hace 1 día</span>
+                </p>
+                <p className="text-[9px] text-white/35 leading-snug">
+                  Excelente propuesta. El tono encaja perfecto con la sátira corp del juego.
+                  Assignéte el issue si querés arrancar. 👏
+                </p>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -1400,18 +1620,68 @@ Inspiración: <span className="italic text-white/35">Office Space</span>.</p>
 
 function SoundCatalogPreview({ stepIndex }: { stepIndex: number }) {
   const soundEvents = [
-    { id: 'boot', label: 'OS Boot sequence', context: 'Al arrancar el sistema operativo', quality: 'synth', qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30' },
-    { id: 'notify', label: 'Notificación de Slack', context: 'Cuando llega un mensaje nuevo', quality: 'synth', qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30' },
-    { id: 'keypress', label: 'Tipeo en el editor', context: 'Durante la fase de código', quality: 'synth', qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30' },
-    { id: 'success', label: 'Test pasado ✓', context: 'Al completar un checkpoint', quality: 'synth', qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30' },
-    { id: 'error', label: 'Error / fallo', context: 'Cuando algo sale mal', quality: 'synth', qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30' },
-    { id: 'transition', label: 'Transición de fase', context: 'Al avanzar entre fases del tour', quality: 'synth', qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30' },
-    { id: 'pr', label: 'PR mergeado', context: 'Al terminar el tour exitosamente', quality: 'synth', qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30' },
+    {
+      id: 'boot',
+      label: 'OS Boot sequence',
+      context: 'Al arrancar el sistema operativo',
+      quality: 'synth',
+      qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30',
+    },
+    {
+      id: 'notify',
+      label: 'Notificación de Slack',
+      context: 'Cuando llega un mensaje nuevo',
+      quality: 'synth',
+      qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30',
+    },
+    {
+      id: 'keypress',
+      label: 'Tipeo en el editor',
+      context: 'Durante la fase de código',
+      quality: 'synth',
+      qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30',
+    },
+    {
+      id: 'success',
+      label: 'Test pasado ✓',
+      context: 'Al completar un checkpoint',
+      quality: 'synth',
+      qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30',
+    },
+    {
+      id: 'error',
+      label: 'Error / fallo',
+      context: 'Cuando algo sale mal',
+      quality: 'synth',
+      qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30',
+    },
+    {
+      id: 'transition',
+      label: 'Transición de fase',
+      context: 'Al avanzar entre fases del tour',
+      quality: 'synth',
+      qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30',
+    },
+    {
+      id: 'pr',
+      label: 'PR mergeado',
+      context: 'Al terminar el tour exitosamente',
+      quality: 'synth',
+      qualityColor: 'text-amber-400 bg-amber-950/30 border-amber-900/30',
+    },
   ]
 
   const howToSteps = [
-    { step: '01', label: 'Escuchá', desc: 'Abrí el tour en Praxis y prestá atención a cada sonido' },
-    { step: '02', label: 'Grabá', desc: 'Usá tus herramientas (DAW, Audacity, etc.) para crear tu versión' },
+    {
+      step: '01',
+      label: 'Escuchá',
+      desc: 'Abrí el tour en Praxis y prestá atención a cada sonido',
+    },
+    {
+      step: '02',
+      label: 'Grabá',
+      desc: 'Usá tus herramientas (DAW, Audacity, etc.) para crear tu versión',
+    },
     { step: '03', label: 'Proponé', desc: 'Abrí un issue en GitHub y adjuntá el archivo de audio' },
     { step: '04', label: 'Se integra', desc: 'El equipo técnico lo incorpora al proyecto' },
   ]
@@ -1425,24 +1695,40 @@ function SoundCatalogPreview({ stepIndex }: { stepIndex: number }) {
 
   if (stepIndex === 0) {
     return (
-      <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 280 }}>
+      <div
+        className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+        style={{ minHeight: 280 }}
+      >
         <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01] flex items-center justify-between">
-          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Catálogo de audio</span>
+          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+            Catálogo de audio
+          </span>
           <span className="font-mono text-[8px] text-amber-500/50">PRAXIS SFX</span>
         </div>
         <div className="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-thin">
           {soundEvents.map((sfx) => (
-            <div key={sfx.id} className="flex items-center gap-3 px-2.5 py-2 rounded-sm border border-white/[0.03] bg-white/[0.01]">
-              <span className="font-mono text-[10px] text-white/60 flex-1 truncate">{sfx.label}</span>
-              <span className="text-[9px] text-white/20 truncate hidden sm:block max-w-[100px]">{sfx.context}</span>
-              <span className={`text-[8px] px-1.5 py-0.5 rounded-sm border font-mono uppercase tracking-wider shrink-0 ${sfx.qualityColor}`}>
+            <div
+              key={sfx.id}
+              className="flex items-center gap-3 px-2.5 py-2 rounded-sm border border-white/[0.03] bg-white/[0.01]"
+            >
+              <span className="font-mono text-[10px] text-white/60 flex-1 truncate">
+                {sfx.label}
+              </span>
+              <span className="text-[9px] text-white/20 truncate hidden sm:block max-w-[100px]">
+                {sfx.context}
+              </span>
+              <span
+                className={`text-[8px] px-1.5 py-0.5 rounded-sm border font-mono uppercase tracking-wider shrink-0 ${sfx.qualityColor}`}
+              >
                 {sfx.quality}
               </span>
             </div>
           ))}
         </div>
         <div className="shrink-0 px-3 py-2 border-t border-white/[0.04] bg-white/[0.005]">
-          <p className="text-[9px] text-white/20 font-mono">todos generados con Web Audio API · sin archivos pregrabados</p>
+          <p className="text-[9px] text-white/20 font-mono">
+            todos generados con Web Audio API · sin archivos pregrabados
+          </p>
         </div>
       </div>
     )
@@ -1450,9 +1736,14 @@ function SoundCatalogPreview({ stepIndex }: { stepIndex: number }) {
 
   if (stepIndex === 1) {
     return (
-      <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 280 }}>
+      <div
+        className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+        style={{ minHeight: 280 }}
+      >
         <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01]">
-          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Flujo de contribución</span>
+          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+            Flujo de contribución
+          </span>
         </div>
         <div className="flex-1 p-4 flex flex-col gap-3 justify-center">
           {howToSteps.map((s, i) => (
@@ -1470,14 +1761,22 @@ function SoundCatalogPreview({ stepIndex }: { stepIndex: number }) {
   }
 
   return (
-    <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 280 }}>
+    <div
+      className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+      style={{ minHeight: 280 }}
+    >
       <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01] flex items-center justify-between">
-        <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Referentes sonoros</span>
+        <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+          Referentes sonoros
+        </span>
         <span className="font-mono text-[8px] text-[#5f8a6b]/50">MOODBOARD</span>
       </div>
       <div className="flex-1 p-3 grid grid-cols-2 gap-2 content-start">
         {moodboard.map((m) => (
-          <div key={m.label} className="p-3 rounded-sm border border-white/[0.04] bg-white/[0.01] flex flex-col gap-1.5">
+          <div
+            key={m.label}
+            className="p-3 rounded-sm border border-white/[0.04] bg-white/[0.01] flex flex-col gap-1.5"
+          >
             <span className="text-xl">{m.emoji}</span>
             <span className="text-[11px] font-medium text-white/70">{m.label}</span>
             <span className="text-[9px] text-white/30 leading-snug italic">{m.vibe}</span>
@@ -1497,20 +1796,57 @@ function GameDesignPreview({ stepIndex }: { stepIndex: number }) {
   const [activeFunnelPhase, setActiveFunnelPhase] = useState<string>('code')
 
   // Step 1: Simulator states
-  const [autocompletado, setAutocompletado] = useState<'guiado' | 'equilibrado' | 'estricto'>('equilibrado')
+  const [autocompletado, setAutocompletado] = useState<'guiado' | 'equilibrado' | 'estricto'>(
+    'equilibrado'
+  )
   const [slackEvents, setSlackEvents] = useState<number>(40)
   const [dificultadTests, setDificultadTests] = useState<'baja' | 'media' | 'alta'>('media')
 
   // Funnel data
   const funnelPhases = [
-    { id: 'storyline', label: '1. Storyline (Slack)', rate: 100, status: 'Óptimo', color: 'text-[#5f8a6b] border-[#5f8a6b]/20 bg-[#5f8a6b]/5', desc: 'Fase de inmersión inicial. 100% de los usuarios entran y leen el lore sin problemas.' },
-    { id: 'ticket', label: '2. Ticket (Lectura)', rate: 96, status: 'Estable', color: 'text-[#5f8a6b] border-[#5f8a6b]/20 bg-[#5f8a6b]/5', desc: 'Comprensión correcta del bug. Muy baja fricción en la lectura del ticket.' },
-    { id: 'code', label: '3. Código (Editor)', rate: 68, status: 'Fricción Alta ⚠️', color: 'text-amber-400 border-amber-900/30 bg-amber-950/20', desc: 'Caída del 28%. Los usuarios se frustran por el autocompletado rígido y la falta de feedback intermedio.' },
-    { id: 'testing', label: '4. Testing (Runner)', rate: 58, status: 'Caída Residual', color: 'text-amber-500/70 border-amber-900/10 bg-amber-950/10', desc: 'Arrastre del paso anterior. Quienes pasan el código suelen completar los tests.' },
-    { id: 'pr', label: '5. PR (Sarah Chen)', rate: 54, status: 'Desafiante', color: 'text-cyan-400 border-cyan-900/20 bg-cyan-950/25', desc: 'Dificultad intencional. Los comentarios sarcásticos de Sarah causan un 4% de drop-off final.' },
+    {
+      id: 'storyline',
+      label: '1. Storyline (Slack)',
+      rate: 100,
+      status: 'Óptimo',
+      color: 'text-[#5f8a6b] border-[#5f8a6b]/20 bg-[#5f8a6b]/5',
+      desc: 'Fase de inmersión inicial. 100% de los usuarios entran y leen el lore sin problemas.',
+    },
+    {
+      id: 'ticket',
+      label: '2. Ticket (Lectura)',
+      rate: 96,
+      status: 'Estable',
+      color: 'text-[#5f8a6b] border-[#5f8a6b]/20 bg-[#5f8a6b]/5',
+      desc: 'Comprensión correcta del bug. Muy baja fricción en la lectura del ticket.',
+    },
+    {
+      id: 'code',
+      label: '3. Código (Editor)',
+      rate: 68,
+      status: 'Fricción Alta ⚠️',
+      color: 'text-amber-400 border-amber-900/30 bg-amber-950/20',
+      desc: 'Caída del 28%. Los usuarios se frustran por el autocompletado rígido y la falta de feedback intermedio.',
+    },
+    {
+      id: 'testing',
+      label: '4. Testing (Runner)',
+      rate: 58,
+      status: 'Caída Residual',
+      color: 'text-amber-500/70 border-amber-900/10 bg-amber-950/10',
+      desc: 'Arrastre del paso anterior. Quienes pasan el código suelen completar los tests.',
+    },
+    {
+      id: 'pr',
+      label: '5. PR (Sarah Chen)',
+      rate: 54,
+      status: 'Desafiante',
+      color: 'text-cyan-400 border-cyan-900/20 bg-cyan-950/25',
+      desc: 'Dificultad intencional. Los comentarios sarcásticos de Sarah causan un 4% de drop-off final.',
+    },
   ]
 
-  const activePhaseInfo = funnelPhases.find(p => p.id === activeFunnelPhase) || funnelPhases[2]
+  const activePhaseInfo = funnelPhases.find((p) => p.id === activeFunnelPhase) || funnelPhases[2]
 
   // Simulator calculations
   let retentionBonus = 70 // Base
@@ -1559,14 +1895,24 @@ function GameDesignPreview({ stepIndex }: { stepIndex: number }) {
   if (dificultadTests === 'baja') duration -= 2
 
   // Gauge coloring
-  const gaugeColor = finalRetention >= 75 ? 'text-[#5f8a6b]' : finalRetention >= 55 ? 'text-amber-400' : 'text-rose-400'
+  const gaugeColor =
+    finalRetention >= 75
+      ? 'text-[#5f8a6b]'
+      : finalRetention >= 55
+        ? 'text-amber-400'
+        : 'text-rose-400'
 
   if (stepIndex === 0) {
     // Paso 1: UX Funnel
     return (
-      <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 320 }}>
+      <div
+        className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+        style={{ minHeight: 320 }}
+      >
         <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01] flex items-center justify-between">
-          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Métricas de Experiencia</span>
+          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+            Métricas de Experiencia
+          </span>
           <span className="font-mono text-[8px] text-amber-400/60">ZONA DE FRICCIÓN DETECTADA</span>
         </div>
         <div className="flex-1 p-3 flex flex-col justify-between gap-3 overflow-y-auto scrollbar-thin">
@@ -1590,16 +1936,22 @@ function GameDesignPreview({ stepIndex }: { stepIndex: number }) {
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-0.5">
-                      <span className={`font-mono text-[10px] ${isActive ? 'text-white font-medium' : 'text-white/50'}`}>
+                      <span
+                        className={`font-mono text-[10px] ${isActive ? 'text-white font-medium' : 'text-white/50'}`}
+                      >
                         {p.label}
                       </span>
-                      <span className={`font-mono text-[9px] px-1.5 py-0.5 rounded-sm border uppercase scale-90 ${p.color}`}>
+                      <span
+                        className={`font-mono text-[9px] px-1.5 py-0.5 rounded-sm border uppercase scale-90 ${p.color}`}
+                      >
                         {p.status}
                       </span>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="font-mono text-[12px] font-semibold text-white/70">{p.rate}%</span>
+                    <span className="font-mono text-[12px] font-semibold text-white/70">
+                      {p.rate}%
+                    </span>
                     <span className="text-[8px] text-white/20 block leading-none">retención</span>
                   </div>
                 </div>
@@ -1612,9 +1964,7 @@ function GameDesignPreview({ stepIndex }: { stepIndex: number }) {
             <p className="font-mono text-[9px] uppercase tracking-wider text-[#5f8a6b] mb-1">
               DIAGNÓSTICO DEL DISEÑADOR:
             </p>
-            <p className="text-[11px] text-white/60 leading-relaxed">
-              {activePhaseInfo.desc}
-            </p>
+            <p className="text-[11px] text-white/60 leading-relaxed">{activePhaseInfo.desc}</p>
           </div>
         </div>
       </div>
@@ -1624,13 +1974,17 @@ function GameDesignPreview({ stepIndex }: { stepIndex: number }) {
   if (stepIndex === 1) {
     // Paso 2: Game Design Balance Simulator
     return (
-      <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 340 }}>
+      <div
+        className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+        style={{ minHeight: 340 }}
+      >
         <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01] flex items-center justify-between">
-          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Panel de Balance de Mecánicas</span>
+          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+            Panel de Balance de Mecánicas
+          </span>
           <span className="font-mono text-[8px] text-[#5f8a6b]/60">PLAYTEST SIMULATOR v1.0</span>
         </div>
         <div className="flex-1 p-3.5 space-y-4 overflow-y-auto scrollbar-thin">
-          
           {/* Inputs Section */}
           <div className="space-y-3">
             {/* Variable 1: Autocompletado */}
@@ -1708,7 +2062,9 @@ function GameDesignPreview({ stepIndex }: { stepIndex: number }) {
           <div className="grid grid-cols-3 gap-2">
             <div className="p-2 rounded-sm border border-white/[0.04] bg-white/[0.01] flex flex-col items-center justify-center text-center">
               <span className="text-[8px] font-mono text-white/30 uppercase mb-1">Retención</span>
-              <span className={`text-[15px] font-mono font-bold ${gaugeColor}`}>{finalRetention}%</span>
+              <span className={`text-[15px] font-mono font-bold ${gaugeColor}`}>
+                {finalRetention}%
+              </span>
               <span className="text-[7px] text-white/20 mt-0.5">proyectada</span>
             </div>
             <div className="p-2 rounded-sm border border-white/[0.04] bg-white/[0.01] flex flex-col items-center justify-center text-center">
@@ -1720,13 +2076,14 @@ function GameDesignPreview({ stepIndex }: { stepIndex: number }) {
               <span className="text-[8px] font-mono text-white/30 uppercase mb-1">Logro</span>
               <div className="flex gap-0.5 text-amber-400 text-[10px] my-0.5">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} className={i < stars ? 'text-amber-400' : 'text-white/10'}>★</span>
+                  <span key={i} className={i < stars ? 'text-amber-400' : 'text-white/10'}>
+                    ★
+                  </span>
                 ))}
               </div>
               <span className="text-[7px] text-white/20 mt-0.5">{satisfactionText}</span>
             </div>
           </div>
-
         </div>
       </div>
     )
@@ -1734,14 +2091,21 @@ function GameDesignPreview({ stepIndex }: { stepIndex: number }) {
 
   // Paso 3: GDD Document Template
   return (
-    <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 320 }}>
+    <div
+      className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+      style={{ minHeight: 320 }}
+    >
       <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01] flex items-center justify-between">
-        <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Borrador del Documento (GDD)</span>
+        <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+          Borrador del Documento (GDD)
+        </span>
         <span className="font-mono text-[8px] text-[#5f8a6b]/50">PROPOSAL LAB</span>
       </div>
       <div className="flex-1 overflow-y-auto p-3 space-y-3.5 scrollbar-thin">
         <div>
-          <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-[#5f8a6b]/35 bg-[#5f8a6b]/20 text-[#5f8a6b] font-mono uppercase font-semibold">propuesta de sistemas</span>
+          <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-[#5f8a6b]/35 bg-[#5f8a6b]/20 text-[#5f8a6b] font-mono uppercase font-semibold">
+            propuesta de sistemas
+          </span>
           <h4 className="text-[12px] text-white/85 font-medium mt-1.5 leading-snug">
             [GD-SYSTEMS] Rediseño del Ritmo e interactividad en Fase de Código
           </h4>
@@ -1749,27 +2113,48 @@ function GameDesignPreview({ stepIndex }: { stepIndex: number }) {
 
         <div className="space-y-2.5 text-[10px] text-white/50 leading-relaxed font-mono">
           <div className="border-l-2 border-white/[0.08] pl-2.5">
-            <p className="text-[8px] text-white/30 uppercase mb-0.5 font-bold">Problema Detectado:</p>
-            <p className="italic">"La Fase 3 (Código) presenta un drop-off del 28% debido a la rigidez mecánica de escribir código pre-generado línea a línea sin recompensas inmediatas."</p>
+            <p className="text-[8px] text-white/30 uppercase mb-0.5 font-bold">
+              Problema Detectado:
+            </p>
+            <p className="italic">
+              "La Fase 3 (Código) presenta un drop-off del 28% debido a la rigidez mecánica de
+              escribir código pre-generado línea a línea sin recompensas inmediatas."
+            </p>
           </div>
 
           <div className="border-l-2 border-[#5f8a6b]/40 pl-2.5">
-            <p className="text-[8px] text-[#5f8a6b] uppercase mb-0.5 font-bold">Solución Propuesta (Mini-Checkpoints):</p>
-            <p>1. Segmentar la escritura de código en 3 mini-bloques autónomos.<br />
-               2. Implementar un indicador sonoro táctil para cada línea completada.<br />
-               3. Intercalar 1 mensaje cómico de Slack del Tech Lead tras finalizar cada mini-bloque para aliviar la tensión cognitiva.</p>
+            <p className="text-[8px] text-[#5f8a6b] uppercase mb-0.5 font-bold">
+              Solución Propuesta (Mini-Checkpoints):
+            </p>
+            <p>
+              1. Segmentar la escritura de código en 3 mini-bloques autónomos.
+              <br />
+              2. Implementar un indicador sonoro táctil para cada línea completada.
+              <br />
+              3. Intercalar 1 mensaje cómico de Slack del Tech Lead tras finalizar cada mini-bloque
+              para aliviar la tensión cognitiva.
+            </p>
           </div>
 
           <div className="border-l-2 border-white/[0.08] pl-2.5">
-            <p className="text-[8px] text-white/30 uppercase mb-0.5 font-bold">Métricas Objetivo:</p>
-            <p>· Retención en Fase de Código: <span className="text-[#5f8a6b]">68% → 82% (+14%)</span><br />
-               · Satisfacción Lúdica: <span className="text-amber-400">★ ★ ★ → ★ ★ ★ ★ ★</span></p>
+            <p className="text-[8px] text-white/30 uppercase mb-0.5 font-bold">
+              Métricas Objetivo:
+            </p>
+            <p>
+              · Retención en Fase de Código:{' '}
+              <span className="text-[#5f8a6b]">68% → 82% (+14%)</span>
+              <br />· Satisfacción Lúdica: <span className="text-amber-400">★ ★ ★ → ★ ★ ★ ★ ★</span>
+            </p>
           </div>
         </div>
 
         <div className="pt-1 flex gap-1.5">
-          <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-purple-900/30 bg-purple-950/30 text-purple-300 font-mono uppercase">diseño de juego</span>
-          <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-amber-900/30 bg-amber-950/30 text-amber-400 font-mono uppercase font-semibold">fricción-alta</span>
+          <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-purple-900/30 bg-purple-950/30 text-purple-300 font-mono uppercase">
+            diseño de juego
+          </span>
+          <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-amber-900/30 bg-amber-950/30 text-amber-400 font-mono uppercase font-semibold">
+            fricción-alta
+          </span>
         </div>
       </div>
     </div>
@@ -1782,36 +2167,78 @@ function GameDesignPreview({ stepIndex }: { stepIndex: number }) {
 
 function ScenarioPreview({ stepIndex }: { stepIndex: number }) {
   const phases = [
-    { id: 'storyline', label: 'Storyline', color: 'text-purple-400', bg: 'bg-purple-950/30 border-purple-900/30' },
-    { id: 'ticket', label: 'Ticket', color: 'text-blue-400', bg: 'bg-blue-950/30 border-blue-900/30' },
-    { id: 'implement', label: 'Código', color: 'text-[#5f8a6b]', bg: 'bg-[#5f8a6b]/10 border-[#5f8a6b]/20' },
-    { id: 'testing', label: 'Testing', color: 'text-amber-400', bg: 'bg-amber-950/30 border-amber-900/30' },
-    { id: 'pr', label: 'Pull Request', color: 'text-cyan-400', bg: 'bg-cyan-950/30 border-cyan-900/30' },
-    { id: 'debrief', label: 'Debrief', color: 'text-rose-400', bg: 'bg-rose-950/30 border-rose-900/30' },
+    {
+      id: 'storyline',
+      label: 'Storyline',
+      color: 'text-purple-400',
+      bg: 'bg-purple-950/30 border-purple-900/30',
+    },
+    {
+      id: 'ticket',
+      label: 'Ticket',
+      color: 'text-blue-400',
+      bg: 'bg-blue-950/30 border-blue-900/30',
+    },
+    {
+      id: 'implement',
+      label: 'Código',
+      color: 'text-[#5f8a6b]',
+      bg: 'bg-[#5f8a6b]/10 border-[#5f8a6b]/20',
+    },
+    {
+      id: 'testing',
+      label: 'Testing',
+      color: 'text-amber-400',
+      bg: 'bg-amber-950/30 border-amber-900/30',
+    },
+    {
+      id: 'pr',
+      label: 'Pull Request',
+      color: 'text-cyan-400',
+      bg: 'bg-cyan-950/30 border-cyan-900/30',
+    },
+    {
+      id: 'debrief',
+      label: 'Debrief',
+      color: 'text-rose-400',
+      bg: 'bg-rose-950/30 border-rose-900/30',
+    },
   ]
 
   if (stepIndex === 0) {
     // Phase flow diagram
     return (
-      <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 280 }}>
+      <div
+        className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+        style={{ minHeight: 280 }}
+      >
         <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01] flex items-center justify-between">
-          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Flujo de un escenario</span>
+          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+            Flujo de un escenario
+          </span>
           <span className="font-mono text-[8px] text-[#5f8a6b]/50">SCN-008</span>
         </div>
         <div className="flex-1 p-4 flex flex-col gap-2 justify-center">
           {phases.map((phase, i) => (
             <div key={phase.id} className="flex items-center gap-2">
-              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-sm border text-[11px] font-mono flex-1 ${phase.bg} ${phase.color}`}>
+              <div
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-sm border text-[11px] font-mono flex-1 ${phase.bg} ${phase.color}`}
+              >
                 <span className="text-white/20 text-[9px]">0{i + 1}</span>
                 <span>{phase.label}</span>
               </div>
               {i < phases.length - 1 && (
-                <div className="w-px h-3 bg-white/[0.06] ml-auto mr-2" style={{ marginLeft: 'auto', marginRight: '0.5rem', display: 'none' }} />
+                <div
+                  className="w-px h-3 bg-white/[0.06] ml-auto mr-2"
+                  style={{ marginLeft: 'auto', marginRight: '0.5rem', display: 'none' }}
+                />
               )}
             </div>
           ))}
           <div className="mt-2 pt-2 border-t border-white/[0.04]">
-            <p className="text-[10px] text-white/20 font-mono text-center">~18 minutos de experiencia</p>
+            <p className="text-[10px] text-white/20 font-mono text-center">
+              ~18 minutos de experiencia
+            </p>
           </div>
         </div>
       </div>
@@ -1821,19 +2248,35 @@ function ScenarioPreview({ stepIndex }: { stepIndex: number }) {
   if (stepIndex === 1) {
     // Contribution types grid
     const types = [
-      { label: 'Variaciones de tickets', icon: '🎫', desc: 'Nuevas versiones del bug o feature a resolver' },
+      {
+        label: 'Variaciones de tickets',
+        icon: '🎫',
+        desc: 'Nuevas versiones del bug o feature a resolver',
+      },
       { label: 'Personajes', icon: '👤', desc: 'Nombres, roles, estilos de escritura únicos' },
       { label: 'Diálogos de Slack', icon: '💬', desc: 'Los mensajes que recibe el candidato' },
-      { label: 'Escenarios completos', icon: '🗺️', desc: 'Una empresa, un equipo, un contexto técnico' },
+      {
+        label: 'Escenarios completos',
+        icon: '🗺️',
+        desc: 'Una empresa, un equipo, un contexto técnico',
+      },
     ]
     return (
-      <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 280 }}>
+      <div
+        className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+        style={{ minHeight: 280 }}
+      >
         <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01]">
-          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Tipos de contribución</span>
+          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+            Tipos de contribución
+          </span>
         </div>
         <div className="flex-1 p-3 grid grid-cols-2 gap-2 content-start">
           {types.map((t) => (
-            <div key={t.label} className="p-3 rounded-sm border border-white/[0.04] bg-white/[0.01] flex flex-col gap-1.5">
+            <div
+              key={t.label}
+              className="p-3 rounded-sm border border-white/[0.04] bg-white/[0.01] flex flex-col gap-1.5"
+            >
               <span className="text-lg">{t.icon}</span>
               <span className="text-[11px] font-medium text-white/70">{t.label}</span>
               <span className="text-[10px] text-white/30 leading-snug">{t.desc}</span>
@@ -1846,9 +2289,14 @@ function ScenarioPreview({ stepIndex }: { stepIndex: number }) {
 
   // stepIndex === 2: Anatomy of a scenario (data structure preview)
   return (
-    <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 280 }}>
+    <div
+      className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+      style={{ minHeight: 280 }}
+    >
       <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01] flex items-center justify-between">
-        <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Anatomía de un escenario</span>
+        <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+          Anatomía de un escenario
+        </span>
         <span className="font-mono text-[8px] text-[#5f8a6b]/50">first-day-data.ts</span>
       </div>
       <div className="flex-1 overflow-y-auto p-3 space-y-1.5 scrollbar-thin">
@@ -1861,7 +2309,10 @@ function ScenarioPreview({ stepIndex }: { stepIndex: number }) {
           { key: 'pr.reviewers', value: '["Sarah Chen"]', color: 'text-cyan-400' },
           { key: 'debrief.mensajes', value: '[12 mensajes de Slack]', color: 'text-rose-400' },
         ].map((row) => (
-          <div key={row.key} className="flex items-center gap-2 px-2 py-1.5 rounded-sm bg-white/[0.01] border border-white/[0.03]">
+          <div
+            key={row.key}
+            className="flex items-center gap-2 px-2 py-1.5 rounded-sm bg-white/[0.01] border border-white/[0.03]"
+          >
             <span className="font-mono text-[10px] text-white/30 shrink-0">{row.key}:</span>
             <span className={`font-mono text-[10px] truncate ${row.color}`}>{row.value}</span>
           </div>
@@ -1870,7 +2321,6 @@ function ScenarioPreview({ stepIndex }: { stepIndex: number }) {
     </div>
   )
 }
-
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Artist Preview Component (for Artista UI / Pixel Art role)
@@ -1894,12 +2344,12 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
         terracotta: '#A86F44',
         background: '#050505',
         card: '#0B0B0B',
-        textMuted: '#8BA390'
+        textMuted: '#8BA390',
       },
       fonts: {
         serif: 'Merriweather / Outfit / Playfair Display',
-        monospace: 'Fira Code / JetBrains Mono / Consolas'
-      }
+        monospace: 'Fira Code / JetBrains Mono / Consolas',
+      },
     }
     navigator.clipboard.writeText(JSON.stringify(tokens, null, 2))
     setCopiedSystem(true)
@@ -1914,22 +2364,74 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
 
   // Palette data
   const designColors = [
-    { name: 'Sage Green (Acento)', hex: '#5F8A6B', desc: 'Acento principal, botones activos, bordes y foco retro.' },
-    { name: 'Terracota (Acento Landing)', hex: '#A86F44', desc: 'Acento secundario para CTAs de espera, botones y destacados.' },
-    { name: 'Dark Slate (Fondo)', hex: '#050505', desc: 'Fondo del OS, terminales y base general de la UI.' },
-    { name: 'Card Slate (Tarjetas)', hex: '#0B0B0B', desc: 'Contenedores flotantes, paneles y campos de código.' },
-    { name: 'Muted Sage (Textos)', hex: '#8BA390', desc: 'Subtítulos, paths de archivos y etiquetas secundarias.' },
+    {
+      name: 'Sage Green (Acento)',
+      hex: '#5F8A6B',
+      desc: 'Acento principal, botones activos, bordes y foco retro.',
+    },
+    {
+      name: 'Terracota (Acento Landing)',
+      hex: '#A86F44',
+      desc: 'Acento secundario para CTAs de espera, botones y destacados.',
+    },
+    {
+      name: 'Dark Slate (Fondo)',
+      hex: '#050505',
+      desc: 'Fondo del OS, terminales y base general de la UI.',
+    },
+    {
+      name: 'Card Slate (Tarjetas)',
+      hex: '#0B0B0B',
+      desc: 'Contenedores flotantes, paneles y campos de código.',
+    },
+    {
+      name: 'Muted Sage (Textos)',
+      hex: '#8BA390',
+      desc: 'Subtítulos, paths de archivos y etiquetas secundarias.',
+    },
   ]
 
   // Wishlist assets
   const wishlistAssets = [
-    { id: 'icons', label: '📟 Iconos del OS', dimensions: '32x32 px (o SVG)', format: 'PNG / SVG', desc: 'Iconos estilo retro-terminal de Slack, Editor de código, Explorador, Terminal y Ajustes para el escritorio virtual.', guide: 'Deben ser monocromáticos en paleta sage o blanco con opacidades para mantener la sobriedad técnica.' },
-    { id: 'avatars', label: '👤 Avatares de Personajes', dimensions: '64x64 px (128x128 max)', format: 'PNG transparente', desc: 'Diseño pixel art de Alex, Sarah, Jordan y otros personajes que envían mensajes por los canales de chat.', guide: 'Estilo pixel-art limpio de 1-2 bits con contorno oscuro definido. Colores sobrios pero distinguibles.' },
-    { id: 'wallpapers', label: '🌌 Fondos de Pantalla', dimensions: '1920x1080 px', format: 'PNG / JPG', desc: 'Wallpapers dithered intercambiables para el escritorio virtual del sistema operativo simulado.', guide: 'Diseños que incorporen dithering analógico, rejillas poligonales de bajo nivel o patrones abstractos.' },
-    { id: 'shaders', label: '👾 Efectos y Glitches', dimensions: 'Variables (CSS / GLSL)', format: 'CSS / Shaders', desc: 'Efectos visuales como escaneo CRT, temblor sutil ante compilación fallida, y shaders de transición.', guide: 'Sutileza extrema. Deben enriquecer la inmersión sin provocar fatiga visual ni caídas de rendimiento.' },
+    {
+      id: 'icons',
+      label: '📟 Iconos del OS',
+      dimensions: '32x32 px (o SVG)',
+      format: 'PNG / SVG',
+      desc: 'Iconos estilo retro-terminal de Slack, Editor de código, Explorador, Terminal y Ajustes para el escritorio virtual.',
+      guide:
+        'Deben ser monocromáticos en paleta sage o blanco con opacidades para mantener la sobriedad técnica.',
+    },
+    {
+      id: 'avatars',
+      label: '👤 Avatares de Personajes',
+      dimensions: '64x64 px (128x128 max)',
+      format: 'PNG transparente',
+      desc: 'Diseño pixel art de Alex, Sarah, Jordan y otros personajes que envían mensajes por los canales de chat.',
+      guide:
+        'Estilo pixel-art limpio de 1-2 bits con contorno oscuro definido. Colores sobrios pero distinguibles.',
+    },
+    {
+      id: 'wallpapers',
+      label: '🌌 Fondos de Pantalla',
+      dimensions: '1920x1080 px',
+      format: 'PNG / JPG',
+      desc: 'Wallpapers dithered intercambiables para el escritorio virtual del sistema operativo simulado.',
+      guide:
+        'Diseños que incorporen dithering analógico, rejillas poligonales de bajo nivel o patrones abstractos.',
+    },
+    {
+      id: 'shaders',
+      label: '👾 Efectos y Glitches',
+      dimensions: 'Variables (CSS / GLSL)',
+      format: 'CSS / Shaders',
+      desc: 'Efectos visuales como escaneo CRT, temblor sutil ante compilación fallida, y shaders de transición.',
+      guide:
+        'Sutileza extrema. Deben enriquecer la inmersión sin provocar fatiga visual ni caídas de rendimiento.',
+    },
   ]
 
-  const activeAssetInfo = wishlistAssets.find(a => a.id === selectedAsset) || wishlistAssets[0]
+  const activeAssetInfo = wishlistAssets.find((a) => a.id === selectedAsset) || wishlistAssets[0]
 
   // Floppy disk retro icon pixel matrix (8x8)
   // 0 = empty, 1 = sage active (#5f8a6b), 2 = white glow (white/30), 3 = dark shading (#3f5f47)
@@ -1947,28 +2449,44 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
   if (stepIndex === 0) {
     // Paso 1: Style Guide & Colors
     return (
-      <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 410 }}>
+      <div
+        className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+        style={{ minHeight: 410 }}
+      >
         <div className="shrink-0 px-3 py-2.5 border-b border-white/[0.05] bg-white/[0.01] flex items-center justify-between">
-          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Guía de Estilo & Tokens</span>
+          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+            Guía de Estilo & Tokens
+          </span>
           <span className="font-mono text-[8px] text-[#5f8a6b]/50">DESIGN SYSTEM</span>
         </div>
         <div className="flex-1 p-3.5 space-y-4 overflow-y-auto scrollbar-thin">
-          
           {/* Typography contrast preview */}
           <div className="p-3.5 rounded-sm border border-white/[0.04] bg-white/[0.005] space-y-2.5">
-            <span className="font-mono text-[8px] text-white/20 uppercase tracking-widest block font-bold">Contraste Tipográfico</span>
+            <span className="font-mono text-[8px] text-white/20 uppercase tracking-widest block font-bold">
+              Contraste Tipográfico
+            </span>
             <div className="space-y-1">
               <h4 className="font-serif text-[20px] text-white/85 leading-none">Praxis OS</h4>
-              <p className="font-mono text-[9px] text-[#5f8a6b] tracking-wider uppercase font-semibold">v1.2.0-stable · contribuciones</p>
+              <p className="font-mono text-[9px] text-[#5f8a6b] tracking-wider uppercase font-semibold">
+                v1.2.0-stable · contribuciones
+              </p>
             </div>
             <p className="text-[10px] text-white/45 leading-relaxed">
-              Mezclamos la elegancia intelectual de fuentes <span className="font-serif text-white/70 italic">Serif</span> con la precisión rígida de tipografías <span className="font-mono text-white/75 bg-white/[0.04] px-1 rounded-sm">Monospace</span>.
+              Mezclamos la elegancia intelectual de fuentes{' '}
+              <span className="font-serif text-white/70 italic">Serif</span> con la precisión rígida
+              de tipografías{' '}
+              <span className="font-mono text-white/75 bg-white/[0.04] px-1 rounded-sm">
+                Monospace
+              </span>
+              .
             </p>
           </div>
 
           {/* Color Palettes copyable list */}
           <div className="space-y-2">
-            <span className="font-mono text-[8px] text-white/20 uppercase tracking-widest block px-1 font-bold">Paleta de Colores Oficial</span>
+            <span className="font-mono text-[8px] text-white/20 uppercase tracking-widest block px-1 font-bold">
+              Paleta de Colores Oficial
+            </span>
             <div className="grid grid-cols-2 gap-2.5">
               {designColors.map((color) => {
                 const isCopied = copiedColor === color.hex
@@ -1984,15 +2502,21 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
                           className="w-3 h-3 rounded-sm border border-white/10 shrink-0"
                           style={{ backgroundColor: color.hex }}
                         />
-                        <span className="font-mono text-[9px] text-white/75 font-medium">{color.hex}</span>
+                        <span className="font-mono text-[9px] text-white/75 font-medium">
+                          {color.hex}
+                        </span>
                       </div>
                       <span className="text-[8px] font-mono text-[#5f8a6b] opacity-0 group-hover:opacity-100 transition-all uppercase">
                         {isCopied ? '¡Listo!' : 'Copiar'}
                       </span>
                     </div>
                     <div>
-                      <p className="text-[9px] font-semibold text-white/60 leading-none truncate">{color.name}</p>
-                      <p className="text-[8px] text-white/25 mt-1 leading-snug line-clamp-2">{color.desc}</p>
+                      <p className="text-[9px] font-semibold text-white/60 leading-none truncate">
+                        {color.name}
+                      </p>
+                      <p className="text-[8px] text-white/25 mt-1 leading-snug line-clamp-2">
+                        {color.desc}
+                      </p>
                     </div>
                   </div>
                 )
@@ -2006,7 +2530,17 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
               onClick={handleCopySystem}
               className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-sm border border-white/[0.06] bg-white/[0.015] hover:border-[#5f8a6b]/20 hover:bg-[#5f8a6b]/[0.03] text-white/50 hover:text-white/80 transition-all text-[10px] font-mono cursor-pointer"
             >
-              <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-white/40">
+              <svg
+                viewBox="0 0 24 24"
+                width="11"
+                height="11"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="shrink-0 text-white/40"
+              >
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
               </svg>
@@ -2023,14 +2557,23 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
               className="inline-flex items-center gap-1.5 text-[9px] font-mono text-white/20 hover:text-[#5f8a6b] hover:underline transition-all"
             >
               <span>Ver documentación de Design System en profundidad</span>
-              <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-white/30">
+              <svg
+                viewBox="0 0 24 24"
+                width="8"
+                height="8"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="shrink-0 text-white/30"
+              >
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                 <polyline points="15 3 21 3 21 9" />
                 <line x1="10" y1="14" x2="21" y2="3" />
               </svg>
             </a>
           </div>
-
         </div>
       </div>
     )
@@ -2039,9 +2582,14 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
   if (stepIndex === 1) {
     // Paso 2: Asset Wishlist Board
     return (
-      <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 410 }}>
+      <div
+        className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+        style={{ minHeight: 410 }}
+      >
         <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01] flex items-center justify-between">
-          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Catálogo de Assets Requeridos</span>
+          <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+            Catálogo de Assets Requeridos
+          </span>
           <span className="font-mono text-[8px] text-amber-500/50">WANTED GRAPHICS</span>
         </div>
         <div className="flex-1 p-3 flex flex-col justify-between gap-3 overflow-y-auto scrollbar-thin">
@@ -2058,9 +2606,15 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
                       : 'border-white/[0.03] bg-white/[0.005] hover:border-white/[0.08] hover:bg-white/[0.015]'
                   }`}
                 >
-                  <span className="text-[11px] font-semibold text-white/80 leading-none truncate">{asset.label}</span>
-                  <span className="text-[8px] font-mono text-white/30 leading-none">{asset.dimensions}</span>
-                  <p className="text-[8.5px] text-white/20 leading-snug line-clamp-2 mt-1 italic">{asset.desc}</p>
+                  <span className="text-[11px] font-semibold text-white/80 leading-none truncate">
+                    {asset.label}
+                  </span>
+                  <span className="text-[8px] font-mono text-white/30 leading-none">
+                    {asset.dimensions}
+                  </span>
+                  <p className="text-[8.5px] text-white/20 leading-snug line-clamp-2 mt-1 italic">
+                    {asset.desc}
+                  </p>
                 </div>
               )
             })}
@@ -2069,12 +2623,12 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
           {/* Active Asset Specification Card */}
           <div className="p-3 rounded-sm border border-white/[0.05] bg-white/[0.01] transition-all space-y-1.5 flex-1 overflow-y-auto scrollbar-thin">
             <div className="flex justify-between items-center border-b border-white/[0.04] pb-1.5">
-              <span className="font-mono text-[9px] uppercase tracking-wider text-[#5f8a6b]">ESPECIFICACIONES TÉCNICAS:</span>
+              <span className="font-mono text-[9px] uppercase tracking-wider text-[#5f8a6b]">
+                ESPECIFICACIONES TÉCNICAS:
+              </span>
               <span className="font-mono text-[8px] text-white/30">{activeAssetInfo.format}</span>
             </div>
-            <p className="text-[10px] text-white/50 leading-relaxed">
-              {activeAssetInfo.guide}
-            </p>
+            <p className="text-[10px] text-white/50 leading-relaxed">{activeAssetInfo.guide}</p>
 
             {/* Avatars specific visual gallery & local profile document links */}
             {selectedAsset === 'avatars' && (
@@ -2090,7 +2644,9 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
                         className="w-10 h-10 rounded-sm mx-auto object-cover border border-white/10"
                         alt="Alex"
                       />
-                      <span className="text-[8.5px] text-white/50 block mt-1 truncate">Alex Rivera</span>
+                      <span className="text-[8.5px] text-white/50 block mt-1 truncate">
+                        Alex Rivera
+                      </span>
                     </div>
                     <div className="p-1.5 rounded-sm border border-white/[0.03] bg-white/[0.005] text-center">
                       <img
@@ -2098,7 +2654,9 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
                         className="w-10 h-10 rounded-sm mx-auto object-cover border border-white/10"
                         alt="Sarah"
                       />
-                      <span className="text-[8.5px] text-white/50 block mt-1 truncate">Sarah Chen</span>
+                      <span className="text-[8.5px] text-white/50 block mt-1 truncate">
+                        Sarah Chen
+                      </span>
                     </div>
                     <div className="p-1.5 rounded-sm border border-white/[0.03] bg-white/[0.005] text-center">
                       <img
@@ -2106,7 +2664,9 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
                         className="w-10 h-10 rounded-sm mx-auto object-cover border border-white/10"
                         alt="Jordan"
                       />
-                      <span className="text-[8.5px] text-white/50 block mt-1 truncate">Jordan Lee</span>
+                      <span className="text-[8.5px] text-white/50 block mt-1 truncate">
+                        Jordan Lee
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -2124,13 +2684,19 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
                           src="/references/lumbergh.gif"
                           className="w-full h-full object-cover"
                           alt="Bill Lumbergh reference"
-                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                          onError={(e) => {
+                            ;(e.target as HTMLImageElement).style.display = 'none'
+                          }}
                         />
-                        <span className="absolute text-[9px] text-sky-400/30 font-mono italic">lumbergh.gif</span>
                       </div>
                       <div className="px-2 py-1.5 space-y-0.5">
-                        <p className="font-mono text-[9px] text-sky-300/70 font-semibold">Bill Lumbergh · VP</p>
-                        <p className="text-[8px] text-white/30 leading-snug">Camisa blanca, tiradores celestes, lentes de montura fina, taza de café permanente. Postura de superioridad pasiva.</p>
+                        <p className="font-mono text-[9px] text-sky-300/70 font-semibold">
+                          Bill Lumbergh · VP
+                        </p>
+                        <p className="text-[8px] text-white/30 leading-snug">
+                          Camisa blanca, tiradores celestes, lentes de montura fina, taza de café
+                          permanente. Postura de superioridad pasiva.
+                        </p>
                       </div>
                     </div>
                     {/* Bolton */}
@@ -2140,17 +2706,26 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
                           src="/references/bolton.gif"
                           className="w-full h-full object-cover"
                           alt="Michael Bolton reference"
-                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                          onError={(e) => {
+                            ;(e.target as HTMLImageElement).style.display = 'none'
+                          }}
                         />
-                        <span className="absolute text-[9px] text-rose-400/30 font-mono italic">bolton.gif</span>
                       </div>
                       <div className="px-2 py-1.5 space-y-0.5">
-                        <p className="font-mono text-[9px] text-rose-300/70 font-semibold">Michael Bolton · Backend</p>
-                        <p className="text-[8px] text-white/30 leading-snug">Ropa casual corp, expresión resignada, aire de alguien que sabe demasiado. Sin corbata, con credencial.</p>
+                        <p className="font-mono text-[9px] text-rose-300/70 font-semibold">
+                          Michael Bolton · Backend
+                        </p>
+                        <p className="text-[8px] text-white/30 leading-snug">
+                          Ropa casual corp, expresión resignada, aire de alguien que sabe demasiado.
+                          Sin corbata, con credencial.
+                        </p>
                       </div>
                     </div>
                   </div>
-                  <p className="text-[8px] text-white/15 font-mono italic">Inspiración: <span className="text-white/25">Office Space (1999)</span> · estilo 8–16bit, corp vibe</p>
+                  <p className="text-[8px] text-white/15 font-mono italic">
+                    Inspiración: <span className="text-white/25">Office Space (1999)</span> · estilo
+                    8–16bit, corp vibe
+                  </p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-2 mt-3 pt-1">
@@ -2169,7 +2744,17 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
                     rel="noopener noreferrer"
                     className="flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-sm border border-white/[0.08] bg-white/[0.02] text-white/50 hover:text-white/80 hover:bg-white/[0.04] hover:border-white/15 transition-all text-[9.5px] font-mono cursor-pointer"
                   >
-                    <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-white/40">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="10"
+                      height="10"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="shrink-0 text-white/40"
+                    >
                       <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
                     </svg>
                     Ver carpeta de Avatars
@@ -2185,9 +2770,14 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
 
   // Paso 3: Interactive Pixel Grid & PR Simulator
   return (
-    <div className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col" style={{ minHeight: 410 }}>
+    <div
+      className="rounded-sm border border-white/[0.06] bg-[#060606] overflow-hidden flex flex-col"
+      style={{ minHeight: 410 }}
+    >
       <div className="shrink-0 px-3 py-2 border-b border-white/[0.05] bg-white/[0.01] flex items-center justify-between">
-        <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">Inspector de Assets Visuales</span>
+        <span className="font-mono text-[9px] uppercase tracking-wider text-white/30">
+          Inspector de Assets Visuales
+        </span>
         <button
           onClick={() => setShowPixelGrid(!showPixelGrid)}
           className="py-0.5 px-2 rounded-sm border border-white/[0.08] bg-white/[0.02] text-[8px] font-mono uppercase tracking-wider text-white/40 hover:bg-white/[0.05] hover:text-white/60 transition-all cursor-pointer"
@@ -2197,17 +2787,19 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
       </div>
 
       <div className="flex-1 p-3 flex flex-col sm:flex-row gap-3.5 items-center justify-center min-h-0">
-        
         {/* Pixel Art 8x8 Canvas Visualizer */}
         <div className="shrink-0 p-3 rounded-sm border border-white/[0.06] bg-black/40 flex items-center justify-center shadow-lg">
           <div className="grid grid-cols-8 gap-[1px]" style={{ width: 144, height: 144 }}>
             {floppyDiskPixels.flatMap((row, rIdx) =>
               row.map((val, cIdx) => {
                 const colorClass =
-                  val === 1 ? 'bg-[#5f8a6b]'
-                  : val === 2 ? 'bg-white/55'
-                  : val === 3 ? 'bg-[#3c5643]'
-                  : 'bg-transparent'
+                  val === 1
+                    ? 'bg-[#5f8a6b]'
+                    : val === 2
+                      ? 'bg-white/55'
+                      : val === 3
+                        ? 'bg-[#3c5643]'
+                        : 'bg-transparent'
                 return (
                   <div
                     key={`${rIdx}-${cIdx}`}
@@ -2223,7 +2815,9 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
         {/* PR manifest description */}
         <div className="flex-1 min-w-0 space-y-3">
           <div>
-            <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-cyan-900/30 bg-cyan-950/20 text-cyan-400 font-mono uppercase">pull request #421</span>
+            <span className="text-[8px] px-1.5 py-0.5 rounded-sm border border-cyan-900/30 bg-cyan-950/20 text-cyan-400 font-mono uppercase">
+              pull request #421
+            </span>
             <h4 className="text-[12px] text-white/85 font-medium mt-1 leading-snug truncate">
               [UI/ART] Custom pixel-art icons for OS desk
             </h4>
@@ -2249,10 +2843,10 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
           </div>
 
           <p className="text-[9px] text-white/20 italic leading-snug">
-            * Los cambios se aprueban tras corroborar que encajan con la iluminación ambiental sage del OS.
+            * Los cambios se aprueban tras corroborar que encajan con la iluminación ambiental sage
+            del OS.
           </p>
         </div>
-
       </div>
     </div>
   )
@@ -2263,7 +2857,6 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function IssuesList() {
-
   const issues = [
     {
       id: 1,
@@ -2317,16 +2910,22 @@ function IssuesList() {
             className="block p-3 rounded-sm border border-white/[0.04] bg-white/[0.01] hover:border-[#5f8a6b]/20 hover:bg-[#5f8a6b]/[0.02] transition-all group"
           >
             <div className="flex items-start gap-2.5">
-              <span className="text-[#5f8a6b] shrink-0 mt-0.5 font-mono text-[11px]">#0{issue.id}</span>
+              <span className="text-[#5f8a6b] shrink-0 mt-0.5 font-mono text-[11px]">
+                #0{issue.id}
+              </span>
               <div className="space-y-1.5 min-w-0">
                 <h4 className="text-[12px] font-medium text-white/70 group-hover:text-white transition-colors truncate leading-tight">
                   {issue.title}
                 </h4>
                 <div className="flex flex-wrap gap-1.5">
-                  <span className={`text-[8px] px-1.5 py-0.5 rounded-sm border ${issue.labelColor} font-mono uppercase tracking-wider`}>
+                  <span
+                    className={`text-[8px] px-1.5 py-0.5 rounded-sm border ${issue.labelColor} font-mono uppercase tracking-wider`}
+                  >
                     {issue.label}
                   </span>
-                  <span className={`text-[8px] px-1.5 py-0.5 rounded-sm border ${issue.diffColor} font-mono uppercase tracking-wider`}>
+                  <span
+                    className={`text-[8px] px-1.5 py-0.5 rounded-sm border ${issue.diffColor} font-mono uppercase tracking-wider`}
+                  >
                     {issue.difficulty}
                   </span>
                 </div>
@@ -2414,11 +3013,7 @@ function getHighlightedPaths(label: string): string[] {
     case 'Bases de Datos & SQL':
       return ['Praxis/supabase']
     case 'DevOps & Infra':
-      return [
-        'Praxis/.github/workflows/ci.yml',
-        'Praxis/next.config.mjs',
-        'Praxis/package.json',
-      ]
+      return ['Praxis/.github/workflows/ci.yml', 'Praxis/next.config.mjs', 'Praxis/package.json']
     case 'Full Stack':
       return ['Praxis/app', 'Praxis/components', 'Praxis/lib', 'Praxis/supabase']
     case 'Resolver Issues & Bugs':
