@@ -1,12 +1,14 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
 import {
   ArrowLeft, Save, Trash2, Wifi, Volume2, Search, Bluetooth,
   BatteryCharging, CircleDashed, RefreshCw, Plus, Monitor,
-  Maximize, Minimize, X, Settings, Shield, FileText, Link as LinkIcon
+  Maximize, Minimize, X, Settings, Shield, FileText, Link as LinkIcon,
+  Loader2, Check
 } from "lucide-react"
+import { toast } from "sonner"
 import { Dithering } from "@paper-design/shaders-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { createClient } from "@/utils/supabase/client"
@@ -91,6 +93,9 @@ export default function DesktopOrchestrator({ scenario, initialProgress }: Deskt
 
   const [initialized, setInitialized] = useState(false)
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; items: ContextMenuItem[] } | null>(null)
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'unsaved' | 'error'>('idle')
+
+  const hasChangesRef = useRef(false)
 
   useEffect(() => {
     if (!initialized) {
@@ -118,8 +123,62 @@ export default function DesktopOrchestrator({ scenario, initialProgress }: Deskt
   }, [scenario, initialProgress, initialized, setCurrentScenario, setCodeState, setCheckpointsPassed, setWindows])
 
   const handleSave = useCallback(async () => {
-    // TODO: Persist state to Supabase
-  }, [codeState, checkpointsPassed])
+    if (!initialProgress) return
+    setSyncStatus('syncing')
+    try {
+      const { error } = await supabase
+        .from('scenario_progress')
+        .update({
+          current_code_state: codeState,
+          checkpoints_passed: checkpointsPassed,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('scenario_id', scenario.id)
+        .eq('user_id', initialProgress.user_id)
+
+      if (error) throw error
+
+      setSyncStatus('synced')
+      hasChangesRef.current = false
+      toast.success('Workspace Synced', {
+        description: 'Your progress and code state are saved in the cloud.',
+      })
+    } catch (err: any) {
+      console.error('Save error:', err)
+      setSyncStatus('error')
+      toast.error('Sync Failed', {
+        description: err.message || 'Could not persist workspace data.',
+      })
+    }
+  }, [codeState, checkpointsPassed, scenario.id, initialProgress, supabase])
+
+  // Debounced auto-save hook
+  useEffect(() => {
+    if (!initialized) return
+
+    // On codeState / checkpointsPassed change, if we were synced/idle, switch to unsaved
+    if (hasChangesRef.current) {
+      setSyncStatus('unsaved')
+      const timer = setTimeout(() => {
+        handleSave()
+      }, 5000)
+
+      return () => clearTimeout(timer)
+    } else {
+      // First change sets the flag so subsequent changes trigger the debounced save
+      hasChangesRef.current = true
+    }
+  }, [codeState, checkpointsPassed, initialized, handleSave])
+
+  // Sync state visual reset
+  useEffect(() => {
+    if (syncStatus === 'synced') {
+      const timer = setTimeout(() => {
+        setSyncStatus('idle')
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [syncStatus])
 
   const handleCodeChange = useCallback((path: string, code: string) => {
     updateCodeFile(path, code)
@@ -186,9 +245,37 @@ export default function DesktopOrchestrator({ scenario, initialProgress }: Deskt
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <button onClick={handleSave} className="flex items-center gap-2 text-white/40 hover:text-white transition-colors group">
-                <Save size={12} />
-                <span className="font-mono text-[9px] uppercase tracking-widest">Sync Changes</span>
+              <button
+                onClick={handleSave}
+                disabled={syncStatus === 'syncing'}
+                className={`flex items-center gap-2 transition-colors group px-2 py-0.5 rounded-sm border border-transparent ${
+                  syncStatus === 'syncing'
+                    ? 'text-white/30 cursor-not-allowed'
+                    : syncStatus === 'synced'
+                      ? 'text-emerald-400 border-emerald-500/20 bg-emerald-500/5'
+                      : syncStatus === 'unsaved'
+                        ? 'text-amber-400 border-amber-500/20 bg-amber-500/5 hover:text-amber-300'
+                        : 'text-white/40 hover:text-white'
+                }`}
+              >
+                {syncStatus === 'syncing' ? (
+                  <>
+                    <Loader2 size={12} className="animate-spin" />
+                    <span className="font-mono text-[9px] uppercase tracking-widest">Syncing...</span>
+                  </>
+                ) : syncStatus === 'synced' ? (
+                  <>
+                    <Check size={12} className="text-emerald-400" />
+                    <span className="font-mono text-[9px] uppercase tracking-widest">Synced</span>
+                  </>
+                ) : (
+                  <>
+                    <Save size={12} className={syncStatus === 'unsaved' ? 'animate-pulse' : ''} />
+                    <span className="font-mono text-[9px] uppercase tracking-widest">
+                      {syncStatus === 'unsaved' ? 'Save Changes' : 'Sync Changes'}
+                    </span>
+                  </>
+                )}
               </button>
             </div>
           </div>

@@ -20,9 +20,14 @@ import {
   CheckCircle,
   Bot,
   Send,
+  Loader2,
+  Play,
 } from 'lucide-react'
 import type { ScenarioTicket, ScenarioCheckpoint, AITeam } from '@/lib/scenario-types'
 import { motion } from 'framer-motion'
+import { useMissionStore } from '@/lib/store/mission-store'
+import { toast } from 'sonner'
+import { useChat } from 'ai/react'
 
 // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -192,7 +197,34 @@ export default function DynamicIDE({
   const filePaths = Object.keys(files)
   const [activeFile, setActiveFile] = useState(filePaths[0] ?? '')
   const [openTabs, setOpenTabs] = useState<string[]>([])
-  const [msg, setMsg] = useState('')
+  const [validatingId, setValidatingId] = useState<string | null>(null)
+
+  const { setCheckpointsPassed } = useMissionStore()
+
+  // Get first AI team member for the chat
+  const firstTeamMember = Object.entries(aiTeam)[0]
+  const persona = firstTeamMember ? {
+    name: firstTeamMember[1].name,
+    role: firstTeamMember[0],
+    communicationStyle: "helpful but professional senior developer colleague, staying in-character"
+  } : { name: "Senior Dev", role: "senior_dev", communicationStyle: "professional" }
+
+  const { messages, input, handleInputChange, handleSubmit: handleChatSubmit, isLoading: isChatLoading, setMessages } = useChat({
+    api: '/api/chat',
+    body: {
+      persona,
+      scenarioContext: {
+        title: ticket.title,
+        ticketKey: ticket.key,
+        checkpointsPassed
+      }
+    },
+    onError: (err) => {
+      toast.error('Chat error', {
+        description: err.message || 'Failed to stream response.'
+      })
+    }
+  })
 
   const [terminalLines, setTerminalLines] = useState<string[]>([
     'Integrated Terminal Ready.',
@@ -274,18 +306,73 @@ export default function DynamicIDE({
     }
   }
 
+  const handleValidateCheckpoint = async (checkpoint: ScenarioCheckpoint) => {
+    if (validatingId) return
+    setValidatingId(checkpoint.id)
+    setTerminalLines((prev) => [
+      ...prev,
+      `$ validate-checkpoint --id=${checkpoint.id}`,
+      `Running validator for: "${checkpoint.title}"...`,
+    ])
+
+    try {
+      const res = await fetch('/api/scenario/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          codeState: files,
+          checkpoint,
+        }),
+      })
+
+      if (!res.ok) {
+        throw new Error(await res.text())
+      }
+
+      const data = await res.json()
+      if (data.passed) {
+        setCheckpointsPassed([...checkpointsPassed, checkpoint.id])
+        setTerminalLines((prev) => [
+          ...prev,
+          `✓ Success: ${data.message}`,
+          `XP Awarded: Partial progress recorded.`,
+          '',
+        ])
+        toast.success(`Checkpoint passed: ${checkpoint.title}`, {
+          description: data.message,
+        })
+      } else {
+        setTerminalLines((prev) => [
+          ...prev,
+          `✗ Failed: ${data.message}`,
+          'Verify your code modifications and try again.',
+          '',
+        ])
+        toast.error(`Validation failed: ${checkpoint.title}`, {
+          description: data.message,
+        })
+      }
+    } catch (err: any) {
+      console.error(err)
+      setTerminalLines((prev) => [
+        ...prev,
+        `✗ Error: ${err.message || 'Failed to communicate with validation engine.'}`,
+        '',
+      ])
+      toast.error('Validation error', {
+        description: err.message || 'Failed to run validation.',
+      })
+    } finally {
+      setValidatingId(null)
+    }
+  }
+
   const doneCount = checkpointsPassed.length
   const progress = checkpoints.length > 0 ? (doneCount / checkpoints.length) * 100 : 0
 
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!msg.trim()) return
-    // Simple mock: clear message and show a toast or system log
-    setMsg('')
-  }
 
-  // Get first AI team member for the hint
-  const firstTeamMember = Object.entries(aiTeam)[0]
 
   return (
     <div className="flex-1 flex min-h-0">
@@ -462,24 +549,48 @@ export default function DynamicIDE({
               style={{ width: `${progress}%` }}
             />
           </div>
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             {checkpoints.map((cp) => {
               const done = checkpointsPassed.includes(cp.id)
+              const isValidating = validatingId === cp.id
               return (
                 <div
                   key={cp.id}
-                  className={`flex items-start gap-2.5 p-2 rounded-sm ${done ? 'opacity-40' : 'hover:bg-secondary/50'}`}
+                  className={`flex flex-col gap-1.5 p-2 rounded-sm border border-transparent transition-all ${done ? 'opacity-40 bg-secondary/10' : 'bg-secondary/20 hover:border-white/[0.06] hover:bg-secondary/35'}`}
                 >
-                  {done ? (
-                    <CheckCircle className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" />
-                  ) : (
-                    <Circle className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="flex items-start gap-2.5">
+                    {done ? (
+                      <CheckCircle className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" />
+                    ) : (
+                      <Circle className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                    )}
+                    <span
+                      className={`text-xs leading-relaxed flex-1 ${done ? 'line-through text-muted-foreground' : 'text-foreground'}`}
+                    >
+                      {cp.title}
+                    </span>
+                  </div>
+                  {!done && (
+                    <div className="flex justify-end pl-6">
+                      <button
+                        onClick={() => handleValidateCheckpoint(cp)}
+                        disabled={!!validatingId}
+                        className="flex items-center gap-1.5 px-2 py-0.5 bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 text-[9px] font-mono uppercase tracking-wider rounded-sm cursor-pointer transition-colors"
+                      >
+                        {isValidating ? (
+                          <>
+                            <Loader2 className="w-2.5 h-2.5 animate-spin" />
+                            Verifying...
+                          </>
+                        ) : (
+                          <>
+                            <Play className="w-2 h-2 fill-current" />
+                            Verify
+                          </>
+                        )}
+                      </button>
+                    </div>
                   )}
-                  <span
-                    className={`text-xs leading-relaxed ${done ? 'line-through text-muted-foreground' : 'text-foreground'}`}
-                  >
-                    {cp.title}
-                  </span>
                 </div>
               )
             })}
@@ -487,26 +598,68 @@ export default function DynamicIDE({
         </div>
 
         {/* AI Chat Input */}
-        <div className="p-3 border-t border-border">
-          {firstTeamMember && (
-            <div className="rounded-sm border border-border bg-secondary/30 p-3 mb-3">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-6 h-6 rounded-sm bg-secondary border border-border flex items-center justify-center font-mono text-[9px]">
-                  {firstTeamMember[1].name
-                    .split(' ')
-                    .map((n) => n[0])
-                    .join('')}
-                </div>
-                <span className="text-[11px] font-medium text-foreground">
-                  @{firstTeamMember[0].replace(/_/g, ' ')}
+        <div className="p-3 border-t border-border flex flex-col min-h-[160px] max-h-[300px]">
+          {messages.length > 0 ? (
+            <div className="flex-1 flex flex-col min-h-0 mb-3">
+              <div className="flex items-center justify-between mb-1.5 shrink-0">
+                <span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                  Conversation with @{firstTeamMember ? firstTeamMember[0].replace(/_/g, ' ') : 'senior'}
                 </span>
+                <button
+                  onClick={() => setMessages([])}
+                  className="font-mono text-[8px] uppercase tracking-widest text-red-400 hover:text-red-300 hover:underline transition-colors"
+                >
+                  Clear
+                </button>
               </div>
-              <p className="font-mono text-[11px] text-muted-foreground leading-relaxed italic">
-                &ldquo;{firstTeamMember[1].persona.slice(0, 80)}...&rdquo;
-              </p>
+              <div className="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-thin">
+                {messages.map((m) => {
+                  const isUser = m.role === 'user'
+                  return (
+                    <div
+                      key={m.id}
+                      className={`p-2 rounded-sm text-xs leading-relaxed max-w-[90%] font-mono ${
+                        isUser
+                          ? 'bg-blue-900/20 border border-blue-500/20 text-blue-200 self-end ml-auto'
+                          : 'bg-secondary/40 border border-white/[0.04] text-muted-foreground'
+                      }`}
+                    >
+                      <span className="font-bold block text-[9px] mb-0.5 opacity-60">
+                        {isUser ? 'YOU' : firstTeamMember ? firstTeamMember[1].name.toUpperCase() : 'COLEAGUE'}
+                      </span>
+                      {m.content}
+                    </div>
+                  )
+                })}
+                {isChatLoading && (
+                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-mono italic animate-pulse">
+                    <Loader2 className="w-3 h-3 animate-spin text-blue-400" />
+                    Typing...
+                  </div>
+                )}
+              </div>
             </div>
+          ) : (
+            firstTeamMember && (
+              <div className="rounded-sm border border-border bg-secondary/30 p-3 mb-3 shrink-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-6 h-6 rounded-sm bg-secondary border border-border flex items-center justify-center font-mono text-[9px]">
+                    {firstTeamMember[1].name
+                      .split(' ')
+                      .map((n) => n[0])
+                      .join('')}
+                  </div>
+                  <span className="text-[11px] font-medium text-foreground">
+                    @{firstTeamMember[0].replace(/_/g, ' ')}
+                  </span>
+                </div>
+                <p className="font-mono text-[11px] text-muted-foreground leading-relaxed italic">
+                  &ldquo;{firstTeamMember[1].persona.slice(0, 80)}...&rdquo;
+                </p>
+              </div>
+            )
           )}
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-2 shrink-0">
             <div className="flex items-center gap-1.5">
               <Bot className="w-3 h-3 text-blue-400" />
               <span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
@@ -517,25 +670,31 @@ export default function DynamicIDE({
               {[1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={i}
-                  className={`w-1.5 h-1.5 rounded-full ${i <= 2 ? 'bg-blue-400' : 'bg-secondary border border-border'}`}
+                  className={`w-1.5 h-1.5 rounded-full ${i <= 3 ? 'bg-blue-400' : 'bg-secondary border border-border'}`}
                 />
               ))}
-              <span className="font-mono text-[9px] text-muted-foreground ml-1">3 left</span>
+              <span className="font-mono text-[9px] text-muted-foreground ml-1">Unlimited</span>
             </div>
           </div>
-          <form onSubmit={handleSendMessage} className="flex gap-2">
+          <form onSubmit={handleChatSubmit} className="flex gap-2 shrink-0">
             <input
               type="text"
               placeholder="Ask your team..."
-              value={msg}
-              onChange={(e) => setMsg(e.target.value)}
-              className="flex-1 h-8 px-3 rounded-sm border border-border bg-secondary text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-blue-400/50 transition-colors"
+              value={input}
+              onChange={handleInputChange}
+              disabled={isChatLoading}
+              className="flex-1 h-8 px-3 rounded-sm border border-border bg-secondary text-xs text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-blue-400/50 disabled:opacity-50 transition-colors"
             />
             <button
               type="submit"
-              className="h-8 w-8 flex items-center justify-center rounded-sm bg-foreground text-background hover:bg-foreground/90 cursor-pointer shrink-0"
+              disabled={isChatLoading}
+              className="h-8 w-8 flex items-center justify-center rounded-sm bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 cursor-pointer shrink-0"
             >
-              <Send className="w-3.5 h-3.5" />
+              {isChatLoading ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Send className="w-3.5 h-3.5" />
+              )}
             </button>
           </form>
         </div>
