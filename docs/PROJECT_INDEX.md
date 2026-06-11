@@ -8,9 +8,11 @@
 
 ## What Is Praxis?
 
-Praxis es un simulador de rol técnico e inmersivo para desarrolladores de software. En lugar de resolver acertijos lógicos aislados, el usuario experimenta el día a día real de un ingeniero: resolver tickets de negocio, codificar en bases de código realistas dentro de una estación de trabajo virtual, interactuar con colegas y bots simulados (Slack/correo), y someter sus cambios a revisiones de código dinámicas con feedback contextual.
+Praxis es un simulador de rol técnico e inmersivo para desarrolladores de software ambientado en una estación de trabajo virtual de la empresa **Hell Corp**. En lugar de resolver acertijos lógicos aislados, el usuario experimenta el día a día real de un ingeniero contratado:
+- **Estado Idle:** Explora el sistema operativo, lee correos, chatea de forma libre con sus compañeros de IA y navega por el código base estable de la empresa en la rama `main`.
+- **Estado Working:** Desde la aplicación **GitLab.exe**, el usuario se asigna **Issues** (escenarios simples o complejos de bug fixing, testing o configuración) o inicia **Campaigns** (historias end-to-end de refactorización multi-capítulo). Al activarse, la terminal clona y cambia de rama al IDE, activando checklists y disparando eventos interactivos de sus compañeros virtuales.
 
-La plataforma fomenta la gamificación a través de la simulación diegética y el autodesarrollo, recompensando al jugador con la generación automatizada de un CV o currículum interactivo verificado con sus logros prácticos en el simulador.
+La plataforma fomenta la gamificación a través de la simulación diegética, recompensando al jugador con la generación automatizada de un CV verificado con sus logros prácticos logrados dentro de la simulación.
 
 ---
 

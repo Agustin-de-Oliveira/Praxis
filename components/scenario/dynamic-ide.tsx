@@ -27,7 +27,7 @@ import type { ScenarioTicket, ScenarioCheckpoint, AITeam } from '@/lib/scenario-
 import { motion } from 'framer-motion'
 import { useMissionStore } from '@/lib/store/mission-store'
 import { toast } from 'sonner'
-import { useChat } from 'ai/react'
+import { useChat } from '@ai-sdk/react'
 
 // ── Props ────────────────────────────────────────────────────────────────────
 

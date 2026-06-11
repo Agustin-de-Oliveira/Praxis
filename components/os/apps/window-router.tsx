@@ -12,6 +12,7 @@ import DynamicIDE from '../../scenario/dynamic-ide'
 import TeamView from '../../scenario/team-view'
 import MarketplaceApp from './marketplace-app'
 import TourChat from './tour-chat'
+import GitLabApp from './gitlab-app'
 import { ResumeStudio } from '@/components/resume/resume-studio'
 import { Scenario } from '@/lib/scenario-types'
 import { UserProfile } from '@/lib/os-types'
@@ -131,6 +132,8 @@ export function WindowRouter({
       return <MarketplaceApp installedApps={installedApps} setInstalledApps={setInstalledApps} />
     case 'tour':
       return <TourChat />
+    case 'gitlab':
+      return <GitLabApp />
     case 'trash':
       return (
         <div className="flex-1 flex flex-col items-center justify-center text-white/20 gap-4">

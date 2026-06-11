@@ -20,10 +20,27 @@ export default async function RealScenarioPage({ params }: ScenarioPageProps) {
   const supabase = createClient(cookieStore)
 
   // 1. Auth
-  const {
+  let {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+
+  const isDev = process.env.NODE_ENV === 'development'
+
+  if (!user) {
+    if (isDev) {
+      user = {
+        id: '00000000-0000-0000-0000-000000000000',
+        email: 'dev@praxis-os.space',
+        created_at: new Date().toISOString(),
+        app_metadata: {},
+        user_metadata: {},
+        aud: 'authenticated',
+        role: 'authenticated'
+      } as any
+    } else {
+      redirect('/login')
+    }
+  }
 
   // 2. Fetch scenario
   const { data: rawScenario, error } = await supabase

@@ -171,32 +171,40 @@ Checkpoints will be validated server-side via custom validator scripts. Each sce
 
 ---
 
-## Data Flow: Scenario Execution
+## Data Flow: OS Modes & Execution
 
 ```
-1. User opens /scenario/[id]
-   └── Page fetches scenario + user progress from DB (Server Component)
-       └── Renders <ScenarioBoard> with initial data
+1. User boots Praxis OS (Idle State)
+   ├── Loads user profile & general workspace state from DB
+   └── IDE loads the company's main branch (read-only / main)
 
-2. User interacts with the scenario
-   └── State managed locally in ScenarioBoard
-   └── Actions (e.g., checkpoint submission) call Server Actions
+2. User opens GitLab.exe
+   ├── Queries published scenarios (Issues / Campaigns)
+   └── User clicks "Assign & Start Working" -> Switches OS to Working State
 
-3. Checkpoint validation
-   └── Server Action runs validation script against user's code/state
-   └── Updates scenario_progress in DB
-   └── Returns checkpoint result to client
+3. Transition to Working State
+   ├── Server fetches scenario data & initializes progress row
+   ├── IDE clones / loads the specific branch for the Issue / Campaign
+   └── Kanban Board, Mail, and AI Chat load the context of the ticket
 
-4. AI team interaction
-   └── User clicks "Ask team"
-   └── Server Action sends message + scenario context to AI inference API
-   └── Decrements ai_usage counter
-   └── Streams response back to client
+4. Checkpoint validation during Work
+   ├── User modifies code in Monaco -> Debounced autosave (5s) persists to DB
+   ├── User clicks "Verify" in IDE Checkpoints sidebar
+   ├── POST request sent to /api/scenario/validate with code state & checkpoint rules
+   └── On Success:
+       ├── Updates checkpoints_passed array in scenario_progress DB table
+       └── Prints success log to integrated terminal and fires sonner toast
 
-5. Scenario completion
-   └── All checkpoints passed → trigger debrief generation
-   └── Update scenario_progress status → "completed"
-   └── Award XP + update skill levels
+5. AI team interaction
+   ├── User sends message to teammate in IDE sidebar
+   └── Client calls /api/chat with messages + persona + ticket context to Together AI
+       └── Streams response back to chat logs container
+
+6. Completion & Release
+   ├── All checkpoints verified -> GitLab.exe enables "Merge Pull Request"
+   ├── Clicking Merge sets scenario_progress status -> "completed"
+   ├── Awards XP, increments user level, updates skill dossier
+   └── OS transitions back to Idle State (IDE returns to main branch)
 ```
 
 ---

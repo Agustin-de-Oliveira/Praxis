@@ -35,8 +35,6 @@ function isProtectedPath(pathname: string): boolean {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Restrict all routes other than landing page (/), public tour (/tour*), and API routes (/api/*) for the public launch.
-  // Static assets with extensions are bypassed to ensure they load correctly.
   const hasFileExtension = /\.[a-zA-Z0-9]+$/.test(pathname)
   const isPublicPath =
     pathname === '/' ||
@@ -44,7 +42,9 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/tour/') ||
     pathname === '/contribute' ||
     pathname.startsWith('/api/')
-  if (!isPublicPath && !hasFileExtension) {
+
+  const isDev = process.env.NODE_ENV === 'development'
+  if (!isDev && !isPublicPath && !hasFileExtension) {
     const landingUrl = request.nextUrl.clone()
     landingUrl.pathname = '/'
     landingUrl.search = ''
@@ -78,7 +78,7 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (isProtectedPath(pathname) && !user) {
+  if (!isDev && isProtectedPath(pathname) && !user) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/login'
     return NextResponse.redirect(loginUrl)

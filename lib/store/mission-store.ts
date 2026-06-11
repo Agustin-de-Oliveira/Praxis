@@ -1,11 +1,16 @@
 import { create } from 'zustand'
-import { Scenario } from '@/lib/scenario-types'
+import { Scenario, ScenarioProgress } from '@/lib/scenario-types'
 
 interface MissionState {
+  // Configured scenario details (when working)
   currentScenario: Scenario | null
   codeState: Record<string, string>
   isRepoCloned: boolean
   checkpointsPassed: string[]
+
+  // Core dual-state tracking
+  activeProgress: ScenarioProgress | null
+  activeScenario: Scenario | null
 
   setCurrentScenario: (scenario: Scenario | null) => void
   setCodeState: (
@@ -14,6 +19,10 @@ interface MissionState {
   setIsRepoCloned: (isRepoCloned: boolean) => void
   setCheckpointsPassed: (checkpoints: string[]) => void
   updateCodeFile: (path: string, code: string) => void
+  
+  // Actions to transition states
+  startWork: (scenario: Scenario, progress: ScenarioProgress) => void
+  stopWork: () => void
 }
 
 export const useMissionStore = create<MissionState>((set) => ({
@@ -21,6 +30,9 @@ export const useMissionStore = create<MissionState>((set) => ({
   codeState: {},
   isRepoCloned: false,
   checkpointsPassed: [],
+
+  activeProgress: null,
+  activeScenario: null,
 
   setCurrentScenario: (currentScenario) => set({ currentScenario }),
   setCodeState: (codeState) =>
@@ -33,4 +45,24 @@ export const useMissionStore = create<MissionState>((set) => ({
     set((state) => ({
       codeState: { ...state.codeState, [path]: code },
     })),
+
+  startWork: (scenario, progress) =>
+    set({
+      activeScenario: scenario,
+      activeProgress: progress,
+      currentScenario: scenario,
+      codeState: progress.current_code_state || {},
+      checkpointsPassed: progress.checkpoints_passed || [],
+      isRepoCloned: true,
+    }),
+
+  stopWork: () =>
+    set({
+      activeScenario: null,
+      activeProgress: null,
+      currentScenario: null,
+      codeState: {},
+      checkpointsPassed: [],
+      isRepoCloned: false,
+    }),
 }))
