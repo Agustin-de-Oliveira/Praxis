@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Noto_Serif, JetBrains_Mono, Tiny5 } from 'next/font/google'
+import { Inter, Noto_Serif, JetBrains_Mono, Tiny5, Press_Start_2P } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
@@ -24,6 +24,12 @@ const tiny5 = Tiny5({
   subsets: ['latin'],
   weight: '400',
   variable: '--font-tiny5',
+})
+
+const pressStart2P = Press_Start_2P({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-press-start',
 })
 
 export const metadata: Metadata = {
@@ -56,7 +62,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark bg-background">
       <body
-        className={`${inter.variable} ${notoSerif.variable} ${jetbrainsMono.variable} ${tiny5.variable} font-sans antialiased`}
+        className={`${inter.variable} ${notoSerif.variable} ${jetbrainsMono.variable} ${tiny5.variable} ${pressStart2P.variable} font-sans antialiased`}
       >
         <SmoothScroll />
         {children}

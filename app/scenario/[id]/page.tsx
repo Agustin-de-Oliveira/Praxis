@@ -19,28 +19,25 @@ export default async function RealScenarioPage({ params }: ScenarioPageProps) {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
-  // 1. Auth
-  let {
-    data: { user },
+  const {
+    data: { user: rawUser },
   } = await supabase.auth.getUser()
 
   const isDev = process.env.NODE_ENV === 'development'
 
-  if (!user) {
-    if (isDev) {
-      user = {
-        id: '00000000-0000-0000-0000-000000000000',
-        email: 'dev@praxis-os.space',
-        created_at: new Date().toISOString(),
-        app_metadata: {},
-        user_metadata: {},
-        aud: 'authenticated',
-        role: 'authenticated'
-      } as any
-    } else {
-      redirect('/login')
-    }
+  if (!rawUser && !isDev) {
+    redirect('/login')
   }
+
+  const user = rawUser ?? {
+    id: '00000000-0000-0000-0000-000000000000',
+    email: 'dev@praxis-os.space',
+    created_at: new Date().toISOString(),
+    app_metadata: {},
+    user_metadata: {},
+    aud: 'authenticated',
+    role: 'authenticated',
+  } as NonNullable<typeof rawUser>
 
   // 2. Fetch scenario
   const { data: rawScenario, error } = await supabase

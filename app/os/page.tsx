@@ -25,33 +25,30 @@ export default async function OSPage({
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
-  let {
-    data: { user },
+  const {
+    data: { user: rawUser },
   } = await supabase.auth.getUser()
 
   const isDev = process.env.NODE_ENV === 'development'
-  
-  if (!user) {
-    if (isDev) {
-      // Bypass auth in development environment
-      user = {
-        id: '00000000-0000-0000-0000-000000000000',
-        email: 'dev@praxis-os.space',
-        created_at: new Date().toISOString(),
-        app_metadata: {},
-        user_metadata: {},
-        aud: 'authenticated',
-        role: 'authenticated'
-      } as any
-    } else {
-      redirect('/login')
-    }
+
+  if (!rawUser && !isDev) {
+    redirect('/login')
   }
+
+  const resolvedUser = rawUser ?? {
+    id: '00000000-0000-0000-0000-000000000000',
+    email: 'dev@praxis-os.space',
+    created_at: new Date().toISOString(),
+    app_metadata: {},
+    user_metadata: {},
+    aud: 'authenticated',
+    role: 'authenticated',
+  } as NonNullable<typeof rawUser>
 
   const { data: profileData } = await supabase
     .from('profiles')
     .select('id, username, role, level, total_xp, onboarding_completed')
-    .eq('id', user.id)
+    .eq('id', resolvedUser.id)
     .maybeSingle()
 
   const resumeIncomplete = !profileData?.onboarding_completed
@@ -63,7 +60,7 @@ export default async function OSPage({
           (profileData as { os_tutorial_completed?: boolean }).os_tutorial_completed ?? false,
       }
     : {
-        id: user.id,
+        id: resolvedUser.id,
         username: null,
         role: null,
         level: 1,
@@ -75,7 +72,7 @@ export default async function OSPage({
   const { data: activeProgressData } = await supabase
     .from('scenario_progress')
     .select('*')
-    .eq('user_id', user.id)
+    .eq('user_id', resolvedUser.id)
     .eq('status', 'in_progress')
     .maybeSingle()
 
@@ -101,7 +98,7 @@ export default async function OSPage({
   return (
     <PraxisDesktop
       profile={profile}
-      email={user.email ?? ''}
+      email={resolvedUser.email ?? ''}
       scenarios={scenariosData ?? []}
       activeScenario={activeScenario}
       activeProgress={activeProgressData ?? null}
