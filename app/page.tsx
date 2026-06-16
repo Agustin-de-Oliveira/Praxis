@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { Spotlight } from '@/components/ui/spotlight'
 import { useState, useEffect, useRef } from 'react'
 import { sfx } from '@/lib/audio'
+import { useScramble } from 'use-scramble'
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
@@ -29,59 +30,31 @@ const fadeUp: Variants = {
 }
 
 function ScrambleText({ text, trigger }: { text: string; trigger: any }) {
-  const containerRef = useRef<HTMLSpanElement>(null)
+  const { ref, replay } = useScramble({
+    text,
+    speed: 1, // maximum framerate (60fps)
+    tick: 1,  // redraw every frame
+    step: 3,  // reveal 3 characters at once (even faster)
+    scramble: 2, // randomize characters 2 times (snappier transition)
+    seed: 3,
+    chance: 1,
+    overdrive: false,
+    overflow: false, // keep exact text boundaries (looks cleaner)
+    playOnMount: false, // do not trigger automatically on mount
+  })
+
+  const isFirstRender = useRef(true)
 
   useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    replay()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trigger])
 
-    const charsList = text.split('')
-    const totalSteps = charsList.length
-    const increment = Math.max(1.5, totalSteps / 12)
-    const randomChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    
-    const childSpans = Array.from(container.children) as HTMLSpanElement[]
-    if (childSpans.length !== totalSteps) return
-
-    let iteration = 0
-
-    const interval = setInterval(() => {
-      for (let i = 0; i < totalSteps; i++) {
-        const span = childSpans[i]
-        const originalChar = charsList[i]
-
-        if (originalChar === ' ') {
-          span.innerText = ' '
-          span.className = ''
-        } else if (i < iteration) {
-          span.innerText = originalChar
-          span.className = ''
-        } else {
-          span.innerText = randomChars[Math.floor(Math.random() * randomChars.length)]
-          span.className = 'font-mono opacity-65 inline-block min-w-[1ch]'
-        }
-      }
-
-      if (iteration >= totalSteps) {
-        clearInterval(interval)
-        for (let i = 0; i < totalSteps; i++) {
-          childSpans[i].innerText = charsList[i]
-          childSpans[i].className = ''
-        }
-      }
-      iteration += increment
-    }, 15) // 15ms direct DOM manipulation is extremely lightweight and runs at 66 FPS buttery smooth
-
-    return () => clearInterval(interval)
-  }, [trigger, text])
-
-  return (
-    <span ref={containerRef} className="inline-block">
-      {text.split('').map((char, index) => (
-        <span key={index}>{char}</span>
-      ))}
-    </span>
-  )
+  return <span ref={ref} />
 }
 
 /* ── Animated counter that rolls up from 0 ── */
@@ -331,6 +304,9 @@ export default function StealthLandingPage() {
       >
         <div
           className={`w-full max-w-2xl flex flex-col items-center text-center transition-all duration-300 ${isVibrating ? 'animate-vibrate' : ''}`}
+          style={{
+            '--vibrate-scale': Math.min(1 + logoClicks * 4, 30)
+          } as React.CSSProperties}
         >
           {/* Logo + wordmark */}
           <motion.div
@@ -399,7 +375,12 @@ export default function StealthLandingPage() {
             initial="hidden"
             animate="visible"
           >
-            <ScrambleText text="Simulaciones reales de ingeniería." trigger={isEasterEgg} />
+            <span className="block">
+              <ScrambleText text="Simulaciones reales" trigger={isEasterEgg} />
+            </span>
+            <span className="block">
+              <ScrambleText text="de ingeniería." trigger={isEasterEgg} />
+            </span>
           </motion.h1>
 
           {/* Subtext */}
@@ -410,10 +391,18 @@ export default function StealthLandingPage() {
             initial="hidden"
             animate="visible"
           >
-            <ScrambleText
-              text="Medí el criterio técnico de tus candidatos con entornos reales de trabajo, no acertijos de código."
-              trigger={isEasterEgg}
-            />
+            <span className="block">
+              <ScrambleText
+                text="Medí el criterio técnico de tus candidatos con entornos reales"
+                trigger={isEasterEgg}
+              />
+            </span>
+            <span className="block">
+              <ScrambleText
+                text="de trabajo, no acertijos de código."
+                trigger={isEasterEgg}
+              />
+            </span>
           </motion.p>
 
           {/* ── Enhanced Waitlist CTA ── */}
@@ -548,16 +537,16 @@ export default function StealthLandingPage() {
                 {/* Secondary Demo CTA */}
                 <div className="mt-8 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="text-left">
-                    <p className="text-[12px] text-white/50 font-medium">
+                    <p className={`text-[12px] text-white/50 font-medium ${fontClass}`}>
                       ¿Quieres probar la simulación?
                     </p>
-                    <p className="text-[10px] text-white/25 mt-0.5">
+                    <p className={`text-[10px] text-white/25 mt-0.5 ${fontClass}`}>
                       Experimenta el Modo Tour interactivo ahora.
                     </p>
                   </div>
                   <Link
                     href="/tour/SCN-008"
-                    className="group shimmer-sweep inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm border border-white/10 bg-white/[0.03] text-[11px] uppercase tracking-[0.2em] font-sans font-semibold text-white/80 hover:text-white hover:bg-white/[0.08] hover:border-white/20 active:scale-[0.98] transition-all duration-300 cursor-pointer w-full sm:w-auto"
+                    className={`group shimmer-sweep inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-sm border border-white/10 bg-white/[0.03] text-[11px] uppercase tracking-[0.2em] ${fontClass} font-semibold text-white/80 hover:text-white hover:bg-white/[0.08] hover:border-white/20 active:scale-[0.98] transition-all duration-300 cursor-pointer w-full sm:w-auto`}
                   >
                     <span>Probar Demo</span>
                     <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
