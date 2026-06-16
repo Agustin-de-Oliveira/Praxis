@@ -13,7 +13,6 @@ import { Dithering } from '@paper-design/shaders-react'
 import Link from 'next/link'
 import { Spotlight } from '@/components/ui/spotlight'
 import { useState, useEffect, useRef } from 'react'
-import { createClient } from '@/utils/supabase/client'
 import { sfx } from '@/lib/audio'
 
 const fadeUp: Variants = {
@@ -202,6 +201,11 @@ export default function StealthLandingPage() {
       return
     }
 
+    if (email.length > 320) {
+      setEmailError('El correo electrónico es demasiado largo.')
+      return
+    }
+
     if (!validateEmail(email)) {
       setEmailError('Por favor, ingresá una dirección de correo válida.')
       return
@@ -211,17 +215,25 @@ export default function StealthLandingPage() {
     setFormState('loading')
 
     try {
-      const supabase = createClient()
-      const { error } = await supabase.from('waitlist').insert([{ email, source: 'landing' }])
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, source: 'landing' }),
+      })
 
-      if (error) {
-        console.error('Waitlist error:', error)
+      const data = await res.json()
+
+      if (!res.ok) {
+        setEmailError(data.error || 'Hubo un problema al registrar tu correo.')
         setFormState('error')
       } else {
         setFormState('success')
       }
     } catch (err) {
-      console.error('Waitlist catch:', err)
+      console.error('Waitlist submit catch:', err)
+      setEmailError('Ocurrió un error al procesar tu solicitud.')
       setFormState('error')
     }
   }
@@ -478,6 +490,7 @@ export default function StealthLandingPage() {
                             onFocus={() => setIsFocused(true)}
                             onBlur={() => setIsFocused(false)}
                             placeholder="tu@empresa.com"
+                            maxLength={320}
                             className={`w-full px-4 py-3 text-sm ${fontClass} bg-white/[0.03] border border-white/[0.08] rounded-sm focus:outline-none focus:border-[#a86f44]/40 focus:bg-white/[0.05] text-white/90 placeholder:text-white/20 transition-all duration-300`}
                           />
                         </div>

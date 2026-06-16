@@ -35,16 +35,19 @@ function isProtectedPath(pathname: string): boolean {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Restrict all routes other than landing page (/), public tour (/tour*), and API routes (/api/*) for the public launch.
+  // Restrict all page routes other than landing page (/), public tour (/tour*), and contribute (/contribute) for the public launch.
   // Static assets with extensions are bypassed to ensure they load correctly.
   const hasFileExtension = /\.[a-zA-Z0-9]+$/.test(pathname)
-  const isPublicPath =
+  const isPublicPage =
     pathname === '/' ||
     pathname === '/tour' ||
     pathname.startsWith('/tour/') ||
-    pathname === '/contribute' ||
-    pathname.startsWith('/api/')
-  if (!isPublicPath && !hasFileExtension) {
+    pathname === '/contribute'
+
+  const isApiRoute = pathname.startsWith('/api/')
+
+  // Redirect any unauthorized page requests (non-public, non-api, no-extension) to the landing page.
+  if (!isApiRoute && !isPublicPage && !hasFileExtension) {
     const landingUrl = request.nextUrl.clone()
     landingUrl.pathname = '/'
     landingUrl.search = ''
@@ -77,6 +80,13 @@ export async function proxy(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
+  // Protect all API routes (except the waitlist submission API) from unauthenticated access.
+  if (isApiRoute && pathname !== '/api/waitlist') {
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+  }
 
   if (isProtectedPath(pathname) && !user) {
     const loginUrl = request.nextUrl.clone()
