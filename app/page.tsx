@@ -29,53 +29,58 @@ const fadeUp: Variants = {
 }
 
 function ScrambleText({ text, trigger }: { text: string; trigger: any }) {
-  const [displayedText, setDisplayedText] = useState(text)
-  const [scrambleProgress, setScrambleProgress] = useState(0)
-  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  const containerRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
-    let iteration = 0
-    const totalSteps = text.length
+    const container = containerRef.current
+    if (!container) return
+
+    const charsList = text.split('')
+    const totalSteps = charsList.length
     const increment = Math.max(1.5, totalSteps / 12)
+    const randomChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    
+    const childSpans = Array.from(container.children) as HTMLSpanElement[]
+    if (childSpans.length !== totalSteps) return
+
+    let iteration = 0
 
     const interval = setInterval(() => {
-      setScrambleProgress(iteration)
-      setDisplayedText(
-        text
-          .split('')
-          .map((char, index) => {
-            if (char === ' ') return ' '
-            if (index < iteration) {
-              return text[index]
-            }
-            return chars[Math.floor(Math.random() * chars.length)]
-          })
-          .join('')
-      )
+      for (let i = 0; i < totalSteps; i++) {
+        const span = childSpans[i]
+        const originalChar = charsList[i]
+
+        if (originalChar === ' ') {
+          span.innerText = ' '
+          span.className = ''
+        } else if (i < iteration) {
+          span.innerText = originalChar
+          span.className = ''
+        } else {
+          span.innerText = randomChars[Math.floor(Math.random() * randomChars.length)]
+          span.className = 'font-mono opacity-65 inline-block min-w-[1ch]'
+        }
+      }
 
       if (iteration >= totalSteps) {
         clearInterval(interval)
+        for (let i = 0; i < totalSteps; i++) {
+          childSpans[i].innerText = charsList[i]
+          childSpans[i].className = ''
+        }
       }
       iteration += increment
-    }, 15)
+    }, 15) // 15ms direct DOM manipulation is extremely lightweight and runs at 66 FPS buttery smooth
 
     return () => clearInterval(interval)
   }, [trigger, text])
 
   return (
-    <>
-      {displayedText.split('').map((char, index) => {
-        const isScrambled = index >= scrambleProgress && char !== ' '
-        return (
-          <span
-            key={index}
-            className={isScrambled ? 'font-mono opacity-65 inline-block min-w-[1ch]' : ''}
-          >
-            {char}
-          </span>
-        )
-      })}
-    </>
+    <span ref={containerRef} className="inline-block">
+      {text.split('').map((char, index) => (
+        <span key={index}>{char}</span>
+      ))}
+    </span>
   )
 }
 
