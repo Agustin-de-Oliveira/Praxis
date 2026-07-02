@@ -97,7 +97,7 @@ export interface TourScenario {
 export const TOUR_TEAM: TeamMember[] = [
   {
     handle: 'pm_bot',
-    name: 'Alex Rivera',
+    name: 'Santiago Rivera',
     role: 'Product Manager',
     color: 'bg-orange-500/15 border-orange-500/25',
     textColor: 'text-orange-400',
@@ -105,7 +105,7 @@ export const TOUR_TEAM: TeamMember[] = [
   },
   {
     handle: 'senior_dev',
-    name: 'Sarah Chen',
+    name: 'Sofía Rodríguez',
     role: 'Senior Engineer',
     color: 'bg-emerald-500/15 border-emerald-500/25',
     textColor: 'text-emerald-400',
@@ -113,11 +113,19 @@ export const TOUR_TEAM: TeamMember[] = [
   },
   {
     handle: 'frontend_dev',
-    name: 'Jordan Park',
+    name: 'Nicolás Álvarez',
     role: 'Frontend Engineer',
     color: 'bg-sky-500/15 border-sky-500/25',
     textColor: 'text-sky-400',
     avatarUrl: '/avatars/jordan.png',
+  },
+  {
+    handle: 'dinesh',
+    name: 'Dinesh Patel',
+    role: 'DevOps Engineer',
+    color: 'bg-purple-500/15 border-purple-500/25',
+    textColor: 'text-purple-400',
+    avatarUrl: '/avatars/dinesh.png',
   },
 ]
 
@@ -146,7 +154,7 @@ const SCN008: TourScenario = {
       {
         handle: 'senior_dev',
         time: '9:02 AM',
-        text: 'Por ahora es solo un stub. @jordan, haré que {username} se encargue de esto esta mañana. Es una tarea perfecta para empezar.',
+        text: 'Por ahora es solo un stub. @nico, haré que {username} se encargue de esto esta mañana. Es una tarea perfecta para empezar.',
       },
     ],
     dmGreeting: '¡Hola! Te doy la bienvenida al equipo. ¿Listo para empezar con tu primera tarea?',
@@ -154,7 +162,7 @@ const SCN008: TourScenario = {
     ticketLabel: 'TICK-042',
     ticketTitle: 'TICK-042: Crear Endpoint del Perfil de Usuario',
     userOptions: [
-      '¡Claro que sí, Sarah! ¿Qué tengo que hacer?',
+      '¡Claro que sí, Sofía! ¿Qué tengo que hacer?',
       'Listo cuando quieras. Envíame los detalles.',
       '¡Con muchas ganas de empezar! ¿Cuál es la prioridad?',
     ],
@@ -165,7 +173,7 @@ const SCN008: TourScenario = {
     channel: '# eng-backend',
     timestamp: '9:03 AM',
     subject: 'Endpoint de página de perfil requerido',
-    body: `Como discutimos en el canal, Jordan está teniendo un 404 al intentar conectar la página de Perfil porque nos falta el endpoint **GET /api/profile**. Necesitamos implementarlo para retornar la información básica del usuario actual (nombre, email, fecha de ingreso, url_avatar).\n\nEl middleware de autenticación ya está listo — solo asegúrate de que funcione con la configuración de JWT existente.`,
+    body: `Como discutimos en el canal, Nico está teniendo un 404 al intentar conectar la página de Perfil porque nos falta el endpoint **GET /api/profile**. Necesitamos implementarlo para retornar la información básica del usuario actual (nombre, email, fecha de ingreso, url_avatar).\n\nEl middleware de autenticación ya está listo — solo asegúrate de que funcione con la configuración de JWT existente.`,
     acceptanceCriteria: [
       'El endpoint retorna 401 para peticiones no autenticadas',
       'Las peticiones autenticadas retornan los datos correctos del usuario (nombre, email, etc.)',
@@ -261,7 +269,7 @@ const SCN008: TourScenario = {
       "Te generé el acceso para que completes el registro de ingreso y guardes tu progreso. ¡Hablamos el lunes!",
     ],
     dmOptions: [
-      "¡Muchas gracias, Sarah! Nos vemos el lunes.",
+      "¡Muchas gracias, Sofía! Nos vemos el lunes.",
       "¡Excelente primera jornada! Que tengas buen fin de semana.",
       "¡Perfecto! Quedo a la espera. Muchas gracias por todo.",
     ],
@@ -415,7 +423,7 @@ const SCN009: TourScenario = {
       "Te generé el acceso para que completes el registro y guardes tu progreso. ¡Hablamos el lunes!",
     ],
     dmOptions: [
-      "¡Muchas gracias, Sarah! Fue un desafío interesante.",
+      "¡Muchas gracias, Sofía! Fue un desafío interesante.",
       "¡Genial! Me gustó mucho trabajar con Tailwind así. Que tengas buen finde.",
       "¡Perfecto! Quedo a la espera para el próximo sprint. ¡Gracias!",
     ],
@@ -436,7 +444,7 @@ const SCN010: TourScenario = {
     channelName: 'infra-alerts',
     channelMessages: [
       {
-        handle: 'frontend_dev',
+        handle: 'dinesh',
         time: '9:00 AM',
         text: '🚨 El deploy de `auth-service` falló de nuevo. El pipeline de CI está en rojo desde las 8:47 AM.',
       },
@@ -446,7 +454,7 @@ const SCN010: TourScenario = {
         text: 'Esto bloquea el release de hoy. Necesitamos el auth-service en producción para la demo con el cliente.',
       },
       {
-        handle: 'senior_dev',
+        handle: 'dinesh',
         time: '9:02 AM',
         text: 'El error es en el step de deploy — falta una variable de entorno en el workflow. También aprovechemos para optimizar el Dockerfile, está usando `node:latest` y la imagen pesa 800MB. Le paso el diagnóstico a {username}.',
       },
@@ -463,7 +471,7 @@ const SCN010: TourScenario = {
   },
   ticket: {
     id: 'INFRA-031',
-    from: 'senior_dev',
+    from: 'dinesh',
     channel: '# infra-alerts',
     timestamp: '9:05 AM',
     subject: 'Fix pipeline CI/CD + optimizar Dockerfile de auth-service',

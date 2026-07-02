@@ -711,6 +711,8 @@ const CODEBASE_TREE: FileNode = {
           children: [
             { name: 'alex.png', path: 'Praxis/public/avatars/alex.png' },
             { name: 'sarah.png', path: 'Praxis/public/avatars/sarah.png' },
+            { name: 'jordan.png', path: 'Praxis/public/avatars/jordan.png' },
+            { name: 'dinesh.png', path: 'Praxis/public/avatars/dinesh.png' },
           ],
         },
         { name: 'logo.png', path: 'Praxis/public/logo.png' },
@@ -874,22 +876,22 @@ function FileExplorer({ highlightedPaths }: { highlightedPaths: string[] }) {
 function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
   const cast = [
     {
-      initials: 'AR',
-      name: 'Alex Rivera',
+      initials: 'SR',
+      name: 'Santiago Rivera',
       role: 'Tech Lead',
       color: 'bg-[#5f8a6b]/20 text-[#5f8a6b] border-[#5f8a6b]/30',
       desc: 'Tu guía. Paciente, exigente a largo plazo.',
     },
     {
-      initials: 'SC',
-      name: 'Sarah Chen',
+      initials: 'SO',
+      name: 'Sofía Rodríguez',
       role: 'Senior Dev',
       color: 'bg-purple-950/40 text-purple-300 border-purple-800/30',
       desc: 'Revisará tu PR. Brillante y directa.',
     },
     {
-      initials: 'JL',
-      name: 'Jordan Lee',
+      initials: 'NA',
+      name: 'Nicolás Álvarez',
       role: 'Junior Dev',
       color: 'bg-amber-950/40 text-amber-300 border-amber-800/30',
       desc: 'El aliado inesperado. Ansioso pero solidario.',
@@ -1000,8 +1002,8 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
                 tag="canal #general"
                 color="text-purple-400"
               >
-                El equipo da la bienvenida. Alex explica la cultura del equipo. Jordan hace una
-                pregunta nerviosa. Sarah apenas responde.
+                El equipo da la bienvenida. Santiago explica la cultura del equipo. Nicolás hace una
+                pregunta nerviosa. Sofía apenas responde.
               </TimelineEvent>
               <TimelineEvent icon="📋" label="TICKET" tag="BUG-4421" color="text-blue-400">
                 <span className="font-medium text-white/60">Cart total wrong on coupon</span> — el
@@ -1013,7 +1015,7 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
           {/* Branch 1 */}
           <BranchNode question="¿Leés los comentarios del ticket antes de arrancar?">
             <BranchPath color="green" label="Sí, los leés">
-              Jordan te manda un DM privado:{' '}
+              Nicolás te manda un DM privado:{' '}
               <em>
                 "El módulo de descuentos tiene un bug conocido en calculateTotal(). Fijate ahí
                 primero."
@@ -1022,7 +1024,7 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
             </BranchPath>
             <BranchPath color="amber" label="No, arrancás directo">
               Vas por el camino equivocado. Perdés 10 minutos antes de encontrar la pista real.
-              Sarah lo va a notar en el PR.
+              Sofía lo va a notar en el PR.
             </BranchPath>
           </BranchNode>
 
@@ -1078,22 +1080,22 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
               </span>
               <div className="h-px flex-1 bg-white/[0.05]" />
             </div>
-            <TimelineEvent icon="🔍" label="CODE REVIEW" tag="Sarah Chen" color="text-purple-400">
-              Sarah deja dos comentarios duros.{' '}
+            <TimelineEvent icon="🔍" label="CODE REVIEW" tag="Sofía Rodríguez" color="text-purple-400">
+              Sofía deja dos comentarios duros.{' '}
               <em>"¿Por qué usás parseInt acá? Esto puede fallar con decimales."</em> Y{' '}
               <em>"Este test no cubre el edge case del cupón vacío."</em>
             </TimelineEvent>
           </section>
 
           {/* Branch 3 */}
-          <BranchNode question="¿Cómo respondés a los comentarios de Sarah?">
+          <BranchNode question="¿Cómo respondés a los comentarios de Sofía?">
             <BranchPath color="green" label="Con curiosidad">
-              Preguntás, entendés, corregís. Sarah responde: <em>"Está bien. Mergeá."</em> — su
+              Preguntás, entendés, corregís. Sofía responde: <em>"Está bien. Mergeá."</em> — su
               versión de un cumplido.
             </BranchPath>
             <BranchPath color="red" label="Defendiendo el ego">
-              Argumentás que tu solución también funciona. Sarah cierra los comentarios sin
-              responder y escala a Alex. Segunda vuelta de review.
+              Argumentás que tu solución también funciona. Sofía cierra los comentarios sin
+              responder y escala a Santiago. Segunda vuelta de review.
             </BranchPath>
           </BranchNode>
 
@@ -1112,7 +1114,7 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
                   Final A — Éxito limpio
                 </p>
                 <p className="text-[11px] text-white/50 leading-relaxed">
-                  El equipo celebra en Slack. Alex escribe:{' '}
+                  El equipo celebra en Slack. Santiago escribe:{' '}
                   <em>"Fue el mejor primer día que vi en mucho tiempo."</em> El bug está cerrado en
                   producción.
                 </p>
@@ -1122,7 +1124,7 @@ function ScenarioExampleOverlay({ onClose }: { onClose: () => void }) {
                   Final B — Éxito con turbulencia
                 </p>
                 <p className="text-[11px] text-white/50 leading-relaxed">
-                  Funcionó, pero quedaron roces. Alex te manda un DM:{' '}
+                  Funcionó, pero quedaron roces. Santiago te manda un DM:{' '}
                   <em>"Buen trabajo hoy. La próxima, animate a preguntar más temprano."</em>
                 </p>
               </div>
@@ -1215,27 +1217,27 @@ function WriterPreview({ stepIndex }: { stepIndex: number }) {
 
   const characters = [
     {
-      name: 'Alex Rivera',
+      name: 'Santiago Rivera',
       role: 'Tech Lead',
-      initials: 'AR',
+      initials: 'SR',
       color: 'bg-[#5f8a6b]/20 text-[#5f8a6b] border-[#5f8a6b]/30',
       tone: 'Mentor paciente',
       style: 'Claro, alentador, nunca subestima',
       quote: '"Antes de arrancar, leé el ticket completo. El contexto está en los comentarios."',
     },
     {
-      name: 'Sarah Chen',
+      name: 'Sofía Rodríguez',
       role: 'Senior Dev',
-      initials: 'SC',
+      initials: 'SO',
       color: 'bg-purple-950/40 text-purple-300 border-purple-800/30',
       tone: 'Sarcasmo técnico',
       style: 'Directa, exigente, aprecio escondido',
       quote: '"No está mal. Podrías haberlo resuelto en la mitad de líneas, pero no está mal."',
     },
     {
-      name: 'Jordan Lee',
+      name: 'Nicolás Álvarez',
       role: 'Junior Dev',
-      initials: 'JL',
+      initials: 'NA',
       color: 'bg-amber-950/40 text-amber-300 border-amber-800/30',
       tone: 'Junior ansioso',
       style: 'Entusiasta, un poco nervioso, solidario',
@@ -1245,29 +1247,29 @@ function WriterPreview({ stepIndex }: { stepIndex: number }) {
 
   const slackMessages = [
     {
-      from: 'Alex Rivera',
-      initials: 'AR',
+      from: 'Santiago Rivera',
+      initials: 'SR',
       color: 'bg-[#5f8a6b]/20 text-[#5f8a6b]',
       time: '9:03 AM',
       text: 'Buen día! Tu primer ticket ya está en el tablero. Es un bug de producción — no es urgente, pero sí importante.',
     },
     {
-      from: 'Alex Rivera',
-      initials: 'AR',
+      from: 'Santiago Rivera',
+      initials: 'SR',
       color: 'bg-[#5f8a6b]/20 text-[#5f8a6b]',
       time: '9:03 AM',
       text: 'Antes de arrancar: leé los comentarios anteriores del ticket. El contexto está ahí.',
     },
     {
-      from: 'Jordan Lee',
-      initials: 'JL',
+      from: 'Nicolás Álvarez',
+      initials: 'NA',
       color: 'bg-amber-950/40 text-amber-300',
       time: '9:07 AM',
       text: 'Ey! Bienvenide. Ese bug lo vi antes, si tenés dudas avisá 🙌',
     },
     {
-      from: 'Sarah Chen',
-      initials: 'SC',
+      from: 'Sofía Rodríguez',
+      initials: 'SO',
       color: 'bg-purple-950/40 text-purple-300',
       time: '9:12 AM',
       text: 'El carrito. Otra vez. Alguien tiene que refactorizar ese módulo de una vez.',
@@ -1838,11 +1840,11 @@ function GameDesignPreview({ stepIndex }: { stepIndex: number }) {
     },
     {
       id: 'pr',
-      label: '5. PR (Sarah Chen)',
+      label: '5. PR (Sofía Rodríguez)',
       rate: 54,
       status: 'Desafiante',
       color: 'text-cyan-400 border-cyan-900/20 bg-cyan-950/25',
-      desc: 'Dificultad intencional. Los comentarios sarcásticos de Sarah causan un 4% de drop-off final.',
+      desc: 'Dificultad intencional. Los comentarios de Sofía causan un 4% de drop-off final.',
     },
   ]
 
@@ -2302,11 +2304,11 @@ function ScenarioPreview({ stepIndex }: { stepIndex: number }) {
       <div className="flex-1 overflow-y-auto p-3 space-y-1.5 scrollbar-thin">
         {[
           { key: 'empresa', value: '"NovaTech Solutions"', color: 'text-amber-400' },
-          { key: 'equipo', value: '[Alex, Sarah, Jordan]', color: 'text-purple-400' },
+          { key: 'equipo', value: '[Santiago, Sofía, Nicolás, Dinesh]', color: 'text-purple-400' },
           { key: 'ticket.id', value: '"BUG-4421"', color: 'text-blue-400' },
           { key: 'ticket.titulo', value: '"Cart total wrong on coupon"', color: 'text-blue-400' },
           { key: 'checkpoints', value: '[5 validaciones]', color: 'text-[#5f8a6b]' },
-          { key: 'pr.reviewers', value: '["Sarah Chen"]', color: 'text-cyan-400' },
+          { key: 'pr.reviewers', value: '["Sofía Rodríguez"]', color: 'text-cyan-400' },
           { key: 'debrief.mensajes', value: '[12 mensajes de Slack]', color: 'text-rose-400' },
         ].map((row) => (
           <div
@@ -2407,7 +2409,7 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
       label: '👤 Avatares de Personajes',
       dimensions: '64x64 px (128x128 max)',
       format: 'PNG transparente',
-      desc: 'Diseño pixel art de Alex, Sarah, Jordan y otros personajes que envían mensajes por los canales de chat.',
+      desc: 'Diseño pixel art de Santiago, Sofía, Nicolás, Dinesh y otros personajes que envían mensajes por los canales de chat.',
       guide:
         'Estilo pixel-art limpio de 1-2 bits con contorno oscuro definido. Colores sobrios pero distinguibles.',
     },
@@ -2637,35 +2639,45 @@ function ArtistPreview({ stepIndex }: { stepIndex: number }) {
                   <span className="font-mono text-[8px] text-white/30 uppercase tracking-wider block font-bold">
                     Avatares del AI Team actuales (IA):
                   </span>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-4 gap-2">
                     <div className="p-1.5 rounded-sm border border-white/[0.03] bg-white/[0.005] text-center">
                       <img
                         src="/avatars/alex.png"
                         className="w-10 h-10 rounded-sm mx-auto object-cover border border-white/10"
-                        alt="Alex"
+                        alt="Santiago"
                       />
                       <span className="text-[8.5px] text-white/50 block mt-1 truncate">
-                        Alex Rivera
+                        Santiago Rivera
                       </span>
                     </div>
                     <div className="p-1.5 rounded-sm border border-white/[0.03] bg-white/[0.005] text-center">
                       <img
                         src="/avatars/sarah.png"
                         className="w-10 h-10 rounded-sm mx-auto object-cover border border-white/10"
-                        alt="Sarah"
+                        alt="Sofía"
                       />
                       <span className="text-[8.5px] text-white/50 block mt-1 truncate">
-                        Sarah Chen
+                        Sofía Rodríguez
                       </span>
                     </div>
                     <div className="p-1.5 rounded-sm border border-white/[0.03] bg-white/[0.005] text-center">
                       <img
                         src="/avatars/jordan.png"
                         className="w-10 h-10 rounded-sm mx-auto object-cover border border-white/10"
-                        alt="Jordan"
+                        alt="Nicolás"
                       />
                       <span className="text-[8.5px] text-white/50 block mt-1 truncate">
-                        Jordan Lee
+                        Nicolás Álvarez
+                      </span>
+                    </div>
+                    <div className="p-1.5 rounded-sm border border-white/[0.03] bg-white/[0.005] text-center">
+                      <img
+                        src="/avatars/dinesh.png"
+                        className="w-10 h-10 rounded-sm mx-auto object-cover border border-white/10 animate-pixelate"
+                        alt="Dinesh"
+                      />
+                      <span className="text-[8.5px] text-white/50 block mt-1 truncate">
+                        Dinesh Patel
                       </span>
                     </div>
                   </div>

@@ -75,7 +75,7 @@ const tickets: Ticket[] = [
     branch: true,
     priority: 'medium',
     description: 'Users stay on protected routes after session expires. Needs middleware fix.',
-    assignee: { avatar: 'SC', name: 'Sarah' },
+    assignee: { avatar: 'SO', name: 'Sofía' },
   },
   {
     id: 'PRX-147',
@@ -97,7 +97,7 @@ const tickets: Ticket[] = [
     time: '2h',
     comments: 4,
     description: 'Add preferences JSONB column to users table. Migration tested.',
-    assignee: { avatar: 'JK', name: 'Jordan' },
+    assignee: { avatar: 'NA', name: 'Nicolás' },
   },
 ]
 
@@ -108,10 +108,10 @@ const priorityDot: Record<string, string> = {
 }
 
 const team = [
-  { name: 'Sarah Chen', role: 'Tech Lead', avatar: 'SC', color: 'bg-emerald-500' },
+  { name: 'Sofía Rodríguez', role: 'Tech Lead', avatar: 'SO', color: 'bg-emerald-500' },
   { name: 'Marcus Webb', role: 'QA', avatar: 'MW', color: 'bg-emerald-500' },
-  { name: 'Alex Rivera', role: 'Product', avatar: 'AR', color: 'bg-orange-500' },
-  { name: 'Jordan Kim', role: 'Backend', avatar: 'JK', color: 'bg-red-500' },
+  { name: 'Santiago Rivera', role: 'Product', avatar: 'SR', color: 'bg-orange-500' },
+  { name: 'Nicolás Álvarez', role: 'Frontend', avatar: 'NA', color: 'bg-sky-500' },
 ]
 
 const roadmap = [
@@ -133,14 +133,14 @@ const ticketComments: Record<
 > = {
   'PRX-142': [
     {
-      author: 'Sarah Chen',
-      avatar: 'SC',
+      author: 'Sofía Rodríguez',
+      avatar: 'SO',
       time: '2h ago',
       text: 'Use passport.js for the OAuth providers. We already have it as a dependency. Make sure to handle the callback URL for both dev and prod environments.',
     },
     {
-      author: 'Alex Rivera',
-      avatar: 'AR',
+      author: 'Santiago Rivera',
+      avatar: 'SR',
       time: '5h ago',
       text: 'Client specifically asked for Google and GitHub. Apple can wait for v2.',
     },
@@ -159,24 +159,24 @@ const ticketComments: Record<
       text: "This is blocking my test suite. The session middleware doesn't check expiry before passing to the next handler.",
     },
     {
-      author: 'Sarah Chen',
-      avatar: 'SC',
+      author: 'Sofía Rodríguez',
+      avatar: 'SO',
       time: '1h ago',
       text: 'Check the auth middleware in /src/middleware/session.ts. The issue is in the verify callback.',
     },
   ],
   'PRX-145': [
     {
-      author: 'Sarah Chen',
-      avatar: 'SC',
+      author: 'Sofía Rodríguez',
+      avatar: 'SO',
       time: '3h ago',
       text: "Use a sliding window algorithm. Fixed window has edge cases at boundaries that we don't want in production.",
     },
   ],
   'PRX-147': [
     {
-      author: 'Jordan Kim',
-      avatar: 'JK',
+      author: 'Nicolás Álvarez',
+      avatar: 'NA',
       time: '1d ago',
       text: "The current avatar component doesn't handle missing images well. Needs a proper fallback chain.",
     },
@@ -435,12 +435,12 @@ function Toast({ onClose }: { onClose: () => void }) {
           <div className="flex items-start gap-3 mb-3">
             <Avatar className="h-8 w-8 rounded-sm shrink-0">
               <AvatarFallback className="rounded-sm bg-secondary text-[9px] font-mono font-bold">
-                SC
+                SO
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-foreground">Sarah Chen</span>
+                <span className="text-xs font-medium text-foreground">Sofía Rodríguez</span>
                 <Button variant="ghost" size="icon-sm" onClick={onClose} className="h-6 w-6">
                   <X size={12} />
                 </Button>

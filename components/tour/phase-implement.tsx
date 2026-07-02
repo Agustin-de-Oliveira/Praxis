@@ -451,11 +451,11 @@ export default function PhaseImplement({ onContinue }: PhaseImplementProps) {
                 {/* Sarah's Avatar */}
                 <img
                   src="/avatars/sarah.png"
-                  alt="Sarah Chen"
+                  alt="Sofía Rodríguez"
                   className="w-18 h-18 object-cover rendering-pixelated mx-auto mb-3"
                 />
 
-                <h3 className="text-sm font-bold text-white mb-2">Sarah Chen (Senior Dev)</h3>
+                <h3 className="text-sm font-bold text-white mb-2">Sofía Rodríguez (Senior Dev)</h3>
                 <p className="text-xs text-white/50 leading-relaxed mb-6 italic">
                   "¡Buen trabajo! La implementación se ve sólida y la lógica está limpia. Antes de
                   pasar esto a producción, ¿querés implementar las pruebas unitarias ahora o se lo

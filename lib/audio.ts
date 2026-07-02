@@ -47,7 +47,7 @@ class SoundEffects {
     osc.stop(now + 0.35)
   }
 
-  playTyping(character?: 'pm_bot' | 'senior_dev' | 'frontend_dev' | 'you') {
+  playTyping(character?: 'pm_bot' | 'senior_dev' | 'frontend_dev' | 'dinesh' | 'you') {
     this.init()
     if (!this.ctx) return
     
@@ -65,26 +65,33 @@ class SoundEffects {
     let volume = 0.05
 
     if (character === 'senior_dev') {
-      // Sarah Chen: Clear, high-pitched calm tone
+      // Sofía Rodríguez: Clear, high-pitched calm tone
       baseFreq = 280
       rangeFreq = 45
       type = 'triangle'
       duration = 0.045
       volume = 0.045
     } else if (character === 'pm_bot') {
-      // Alex Rivera: Mid-pitched, clean sine wave beeps
+      // Santiago Rivera: Mid-pitched, clean sine wave beeps
       baseFreq = 190
       rangeFreq = 50
       type = 'sine'
       duration = 0.045
       volume = 0.05
     } else if (character === 'frontend_dev') {
-      // Jordan Park: Mid-pitch, retro game square wave bleeps
+      // Nicolás Álvarez: Mid-pitch, retro game square wave bleeps
       baseFreq = 150
       rangeFreq = 50
       type = 'square'
       duration = 0.045
       volume = 0.02
+    } else if (character === 'dinesh') {
+      // Dinesh Patel: Low-mid pitch, deep retro triangle wave
+      baseFreq = 120
+      rangeFreq = 40
+      type = 'triangle'
+      duration = 0.05
+      volume = 0.04
     } else if (character === 'you') {
       // Player typing
       baseFreq = 190

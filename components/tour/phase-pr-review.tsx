@@ -176,7 +176,7 @@ export default function PhasePRReview({ prReview, onContinue }: PhasePRReviewPro
               <div className="flex items-center gap-2 mb-2">
                 <Lightbulb size={16} className="text-[#a86f44]" />
                 <span className="font-mono text-[9px] uppercase tracking-widest text-[#a86f44]">
-                  Consejo de Sarah: Conventional Commits
+                  Consejo de Sofía: Conventional Commits
                 </span>
               </div>
               <p className="text-[11px] text-white/40 leading-relaxed italic">
@@ -336,7 +336,7 @@ export default function PhasePRReview({ prReview, onContinue }: PhasePRReviewPro
                     <Clock size={14} className="text-[#a86f44]" />
                   )}
                   <span className="text-[11px] text-white/80">
-                    Aprobación Senior Pendiente (@sarah)
+                    Aprobación Senior Pendiente (@sofi_rod)
                   </span>
                 </div>
               </div>
@@ -355,11 +355,11 @@ export default function PhasePRReview({ prReview, onContinue }: PhasePRReviewPro
                         className="w-full h-full object-cover rendering-pixelated"
                       />
                     ) : (
-                      <span className="font-mono text-[10px] font-bold text-emerald-400">SC</span>
+                      <span className="font-mono text-[10px] font-bold text-emerald-400">SR</span>
                     )}
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-bold text-white">Sarah Chen</p>
+                    <p className="text-xs font-bold text-white">{senior.name}</p>
                     <p className="text-[10px] text-white/30">Líder Senior · Ingeniería</p>
                   </div>
                   {prState === 'approved' && <ShieldCheck size={18} className="text-emerald-500" />}
@@ -471,13 +471,13 @@ export default function PhasePRReview({ prReview, onContinue }: PhasePRReviewPro
                               />
                             ) : (
                               <span className="font-mono text-[10px] font-bold text-emerald-400">
-                                SC
+                                SR
                               </span>
                             )}
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xs font-bold text-white">Sarah Chen</span>
+                              <span className="text-xs font-bold text-white">{senior.name}</span>
                               <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-mono text-[8px] uppercase tracking-tighter">
                                 Revisión Senior
                               </span>

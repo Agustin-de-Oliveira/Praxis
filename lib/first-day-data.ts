@@ -166,7 +166,7 @@ export const SCN008_META = {
 export const SCN008_TEAM: TeamMember[] = [
   {
     handle: 'pm_bot',
-    name: 'Alex Rivera',
+    name: 'Santiago Rivera',
     role: 'Product Manager',
     color: 'bg-orange-500/15 border-orange-500/25',
     textColor: 'text-orange-400',
@@ -174,7 +174,7 @@ export const SCN008_TEAM: TeamMember[] = [
   },
   {
     handle: 'senior_dev',
-    name: 'Sarah Chen',
+    name: 'Sofía Rodríguez',
     role: 'Senior Engineer',
     color: 'bg-emerald-500/15 border-emerald-500/25',
     textColor: 'text-emerald-400',
@@ -182,11 +182,19 @@ export const SCN008_TEAM: TeamMember[] = [
   },
   {
     handle: 'frontend_dev',
-    name: 'Jordan Park',
+    name: 'Nicolás Álvarez',
     role: 'Frontend Engineer',
     color: 'bg-sky-500/15 border-sky-500/25',
     textColor: 'text-sky-400',
     avatarUrl: '/avatars/jordan.png',
+  },
+  {
+    handle: 'dinesh',
+    name: 'Dinesh Patel',
+    role: 'DevOps Engineer',
+    color: 'bg-purple-500/15 border-purple-500/25',
+    textColor: 'text-purple-400',
+    avatarUrl: '/avatars/dinesh.png',
   },
 ]
 
@@ -288,7 +296,7 @@ export const SCN008_TICKET = {
   channel: '# eng-backend',
   timestamp: '9:03 AM',
   subject: 'Endpoint de página de perfil requerido',
-  body: `Como discutimos en el canal, Jordan está teniendo un 404 al intentar conectar la página de Perfil porque nos falta el endpoint **GET /api/profile**. Necesitamos implementarlo para retornar la información básica del usuario actual (nombre, email, fecha de ingreso, url_avatar).
+  body: `Como discutimos en el canal, Nico está teniendo un 404 al intentar conectar la página de Perfil porque nos falta el endpoint **GET /api/profile**. Necesitamos implementarlo para retornar la información básica del usuario actual (nombre, email, fecha de ingreso, url_avatar).
 
 El middleware de autenticación ya está listo — solo asegúrate de que funcione con la configuración de JWT existente.`,
   acceptanceCriteria: [

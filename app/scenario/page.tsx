@@ -21,9 +21,9 @@ import { Dithering } from '@paper-design/shaders-react'
 type ViewMode = 'hub' | 'board' | 'ide' | 'team'
 
 const team = [
-  { name: 'Sarah Chen', role: 'Tech Lead', avatar: 'SC', color: 'bg-emerald-500' },
+  { name: 'Sofía Rodríguez', role: 'Tech Lead', avatar: 'SO', color: 'bg-emerald-500' },
   { name: 'Marcus Webb', role: 'QA Engineer', avatar: 'MW', color: 'bg-emerald-500' },
-  { name: 'Alex Rivera', role: 'Product Owner', avatar: 'AR', color: 'bg-orange-500' },
+  { name: 'Santiago Rivera', role: 'Product Owner', avatar: 'SR', color: 'bg-orange-500' },
 ]
 
 function HubView({ onNavigate }: { onNavigate: (v: ViewMode) => void }) {
@@ -67,11 +67,11 @@ function HubView({ onNavigate }: { onNavigate: (v: ViewMode) => void }) {
               {/* PM message */}
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-sm bg-orange-500/10 border border-orange-500/20 flex items-center justify-center font-mono text-[9px] font-bold text-orange-400 shrink-0 mt-0.5">
-                  AR
+                  SR
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-bold text-foreground">Alex Rivera</span>
+                    <span className="text-xs font-bold text-foreground">Santiago Rivera</span>
                     <span className="font-serif text-[9px] text-muted-foreground/60">
                       Product Owner · 2:47 PM
                     </span>
@@ -93,11 +93,11 @@ function HubView({ onNavigate }: { onNavigate: (v: ViewMode) => void }) {
               {/* Tech Lead response */}
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-sm bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center font-mono text-[9px] font-bold text-emerald-400 shrink-0 mt-0.5">
-                  SC
+                  SO
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-bold text-foreground">Sarah Chen</span>
+                    <span className="text-xs font-bold text-foreground">Sofía Rodríguez</span>
                     <span className="font-serif text-[9px] text-muted-foreground/60">
                       Tech Lead · 2:49 PM
                     </span>
@@ -140,7 +140,7 @@ function HubView({ onNavigate }: { onNavigate: (v: ViewMode) => void }) {
             <span className="text-foreground font-medium">
               3 hours and 10 minutes until deploy.
             </span>{' '}
-            The ticket's been assigned. Sarah's expecting a PR. And you have a feeling this won't be
+            The ticket's been assigned. Sofía's expecting a PR. And you have a feeling this won't be
             as straightforward as it sounds.
           </p>
         </div>

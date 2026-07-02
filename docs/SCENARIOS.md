@@ -177,9 +177,9 @@ Express API with `src/middleware/auth.ts` already implemented. `src/routes/profi
 
 ### AI Team
 
-**@pm_bot (Alex Rivera):** Briefing and ticket assignment.
+**@pm_bot (Santiago Rivera):** Briefing and ticket assignment.
 
-**@senior_dev (Sarah Chen):** Codebase orientation, interactive implementation guidance (ghost text), and final PR approval.
+**@senior_dev (Sofía Rodríguez):** Codebase orientation, interactive implementation guidance (ghost text), and final PR approval.
 
 ### Debrief
 

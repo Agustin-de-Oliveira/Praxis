@@ -708,13 +708,13 @@ export default function PhaseImplementFrontend({ onContinue }: PhaseImplementFro
                   {/* Avatar */}
                   <div className="relative shrink-0 pl-2">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-400 to-[#c87a53] flex items-center justify-center ring-2 ring-blue-100">
-                      <span className="font-bold text-white text-xs">JP</span>
+                      <span className="font-bold text-white text-xs">NA</span>
                     </div>
                   </div>
 
                   {/* Text (No "Engineer"!) */}
                   <div className="flex-1 min-w-0 pl-1">
-                    <p className="font-semibold text-gray-900 text-xs">Jordan Park</p>
+                    <p className="font-semibold text-gray-900 text-xs">Nicolás Álvarez</p>
                     <p className="text-[10px] text-gray-500 font-medium">Frontend</p>
                   </div>
 
@@ -803,7 +803,7 @@ export default function PhaseImplementFrontend({ onContinue }: PhaseImplementFro
                           animate={{ opacity: 1, y: 0 }}
                           className="space-y-0.5"
                         >
-                          <p className="font-semibold text-gray-900 text-xs">Jordan Park</p>
+                          <p className="font-semibold text-gray-900 text-xs">Nicolás Álvarez</p>
                           <p className="text-[10px] text-gray-500 font-medium">Frontend</p>
                         </motion.div>
                       )}

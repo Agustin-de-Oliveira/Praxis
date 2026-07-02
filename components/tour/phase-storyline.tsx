@@ -912,7 +912,7 @@ export default function PhaseStoryline({
   const headerSub =
     view === 'channel'
       ? 'El equipo está discutiendo las prioridades del día en el canal de ingeniería.'
-      : `${userName}, tu líder de ingeniería, Sarah, se está comunicando contigo para que comiences.`
+      : `${userName}, tu líder de ingeniería, ${sarah.name.split(' ')[0]}, se está comunicando contigo para que comiences.`
 
   return (
     <motion.div
@@ -940,7 +940,7 @@ export default function PhaseStoryline({
             <div className="flex items-center gap-1.5 text-white/40">
               {view === 'channel' ? <Hash size={14} /> : <User size={14} />}
               <span className="font-mono text-[10px] uppercase tracking-widest">
-                {view === 'channel' ? channelName : `Sarah Chen`}
+                {view === 'channel' ? channelName : sarah.name}
               </span>
             </div>
             <span className="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]" />

@@ -408,7 +408,7 @@ export default function PhaseDebrief({ debrief }: PhaseDebriefProps) {
         </h2>
         <p className="text-sm text-white/40 max-w-md leading-relaxed">
           {activeDm === 'sarah'
-            ? 'Tu Pull Request ha sido aprobada e integrada con éxito. Sarah se comunica contigo para cerrar el sprint.'
+            ? `Tu Pull Request ha sido aprobada e integrada con éxito. ${sarah.name.split(' ')[0]} se comunica contigo para cerrar el sprint.`
             : 'Tu jornada laboral ha finalizado. Praxis Bot se conecta para recibir tus comentarios de cierre.'}
         </p>
       </div>
@@ -423,7 +423,7 @@ export default function PhaseDebrief({ debrief }: PhaseDebriefProps) {
                 <>
                   <User size={14} />
                   <span className="font-mono text-[10px] uppercase tracking-widest">
-                    Sarah Chen
+                    {sarah.name}
                   </span>
                 </>
               ) : (

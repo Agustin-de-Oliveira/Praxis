@@ -80,7 +80,7 @@ Elena`,
       ? [
           {
             id: 0,
-            from: 'Sarah Chen',
+            from: 'Sofía Rodríguez',
             role: 'Senior Developer',
             subject: `Project Access Provisioned: ${scenario.ticket.key}`,
             time: '10:42 AM',
@@ -97,7 +97,7 @@ Git Repo: praxis-internal/${scenario.ticket.key.toLowerCase()}
 Branch: feature/fix-hydration
 
 Good luck,
-Sarah`,
+Sofía`,
             attachments: ['spec_brief.pdf', 'access_keys.gpg'],
           },
           ...defaultEmails.map((e) => ({ ...e, id: e.id + 1 })),

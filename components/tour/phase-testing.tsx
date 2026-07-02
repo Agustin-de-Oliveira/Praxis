@@ -394,7 +394,7 @@ export default function PhaseTesting({ onContinue }: PhaseTestingProps) {
         </p>
         <h2 className="font-serif text-3xl font-medium text-white mb-3">Validá tu Lógica</h2>
         <p className="text-sm text-white/40 max-w-lg mx-auto leading-relaxed">
-          Sarah recomendó agregar pruebas. Usa Jest y Supertest para verificar la seguridad y comportamiento de tu nuevo endpoint.
+          Sofía recomendó agregar pruebas. Usa Jest y Supertest para verificar la seguridad y comportamiento de tu nuevo endpoint.
         </p>
       </div>
 

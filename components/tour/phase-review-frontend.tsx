@@ -50,11 +50,11 @@ function MiniCard({ compact = false, showFocus = false, isFollowing = false, onT
   return (
     <div className={`bg-white rounded-xl border border-gray-100 shadow-sm ${compact ? 'p-3' : 'p-4'} flex items-center gap-3`}>
       <div className={`${compact ? 'w-8 h-8' : 'w-12 h-12'} rounded-full bg-gradient-to-br from-indigo-400 to-[#c87a53] flex items-center justify-center ring-2 ring-blue-100 shrink-0`}>
-        <span className={`font-bold text-white ${compact ? 'text-[9px]' : 'text-sm'}`}>JP</span>
+        <span className={`font-bold text-white ${compact ? 'text-[9px]' : 'text-sm'}`}>NA</span>
       </div>
       {!compact && (
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-gray-900 text-sm truncate">Jordan Park</p>
+          <p className="font-semibold text-gray-900 text-sm truncate">Nicolás Álvarez</p>
           <p className="text-xs text-gray-500">Frontend Engineer</p>
         </div>
       )}

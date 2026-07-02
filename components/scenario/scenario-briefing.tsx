@@ -69,7 +69,7 @@ export default function ScenarioBriefing({ scenario, onComplete }: BriefingProps
             {
               type: 'message',
               role: 'Product Manager',
-              name: 'Alex Rivera',
+              name: 'Santiago Rivera',
               content:
                 "Hey team, looking at the logs for the production environment. We've got a weird edge case popping up in the frontend. 🧐",
               view: 'channel',
@@ -77,7 +77,7 @@ export default function ScenarioBriefing({ scenario, onComplete }: BriefingProps
             {
               type: 'message',
               role: 'Senior Dev',
-              name: 'Sarah Chen',
+              name: 'Sofía Rodríguez',
               content:
                 'I see it too. Looks like a state hydration mismatch. We need someone to jump in and verify the fix.',
               view: 'channel',
@@ -85,14 +85,14 @@ export default function ScenarioBriefing({ scenario, onComplete }: BriefingProps
             {
               type: 'message',
               role: 'Product Manager',
-              name: 'Alex Rivera',
+              name: 'Santiago Rivera',
               content: "Who's available? This is high priority. 🚨",
               view: 'channel',
             },
             {
               type: 'message',
               role: 'Senior Dev',
-              name: 'Sarah Chen',
+              name: 'Sofía Rodríguez',
               content:
                 "I'll ask our new engineer to handle it. They've been crushing the onboarding tickets.",
               view: 'channel',
@@ -100,7 +100,7 @@ export default function ScenarioBriefing({ scenario, onComplete }: BriefingProps
             {
               type: 'message',
               role: 'Senior Dev',
-              name: 'Sarah Chen',
+              name: 'Sofía Rodríguez',
               content:
                 "@new_engineer Check your internal mail. I've sent the provision details and the spec brief there. 📧",
               view: 'channel',
@@ -273,10 +273,10 @@ export default function ScenarioBriefing({ scenario, onComplete }: BriefingProps
               ) : (
                 <div className="flex items-center gap-2.5">
                   <div className="w-5 h-5 rounded-sm bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-[9px] font-bold text-emerald-400">
-                    SC
+                    SO
                   </div>
                   <span className="font-mono text-[10px] uppercase tracking-widest text-white/60">
-                    Sarah Chen
+                    Sofía Rodríguez
                   </span>
                 </div>
               )}
@@ -381,7 +381,7 @@ export default function ScenarioBriefing({ scenario, onComplete }: BriefingProps
                     </div>
                   </div>
                   <div className="mt-2 text-[10px] font-mono text-white/20 uppercase tracking-widest animate-pulse">
-                    {view === 'channel' ? 'Team is typing...' : 'Sarah is typing...'}
+                    {view === 'channel' ? 'Team is typing...' : 'Sofía is typing...'}
                   </div>
                 </motion.div>
               )}

@@ -36,7 +36,7 @@ Los avatares de los AI teammates actuales están ubicados en `public/avatars/`.
 - **Formato**: Archivos PNG con transparencia.
 - **Dimensiones**: 64x64 píxeles reales.
 - **Estilo**: Estética pixel art de 8 bits con paleta de colores compacta.
-- **Cómo colaborar**: Puedes proponer rediseños de los avatares existentes (Sarah, Alex, Jordan) o proponer retratos para futuros roles directamente reemplazando o añadiendo archivos en la carpeta `public/avatars/`.
+- **Cómo colaborar**: Puedes proponer rediseños de los avatares existentes (Santiago, Sofía, Nicolás, Dinesh) o proponer retratos para futuros roles directamente reemplazando o añadiendo archivos en la carpeta `public/avatars/`.
 
 ### Efectos de sonido (SFX)
 Los efectos de sonido de Praxis se sintetizan en tiempo real usando la API de Web Audio en `lib/audio.ts` para evitar la carga de archivos de audio tradicionales.

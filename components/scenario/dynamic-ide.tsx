@@ -27,7 +27,8 @@ import type { ScenarioTicket, ScenarioCheckpoint, AITeam } from '@/lib/scenario-
 import { motion } from 'framer-motion'
 import { useMissionStore } from '@/lib/store/mission-store'
 import { toast } from 'sonner'
-import { useChat } from 'ai/react'
+import { useChat } from '@ai-sdk/react'
+import { HttpChatTransport } from 'ai'
 
 // ── Props ────────────────────────────────────────────────────────────────────
 
@@ -209,22 +210,39 @@ export default function DynamicIDE({
     communicationStyle: "helpful but professional senior developer colleague, staying in-character"
   } : { name: "Senior Dev", role: "senior_dev", communicationStyle: "professional" }
 
-  const { messages, input, handleInputChange, handleSubmit: handleChatSubmit, isLoading: isChatLoading, setMessages } = useChat({
-    api: '/api/chat',
-    body: {
-      persona,
-      scenarioContext: {
-        title: ticket.title,
-        ticketKey: ticket.key,
-        checkpointsPassed
+  const [input, setInput] = useState('')
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value)
+  }
+
+  const { messages, sendMessage, status, setMessages } = useChat({
+    transport: new HttpChatTransport({
+      api: '/api/chat',
+      body: {
+        persona,
+        scenarioContext: {
+          title: ticket.title,
+          ticketKey: ticket.key,
+          checkpointsPassed
+        }
       }
-    },
+    }),
     onError: (err) => {
       toast.error('Chat error', {
         description: err.message || 'Failed to stream response.'
       })
     }
   })
+
+  const isChatLoading = status === 'submitted' || status === 'streaming'
+
+  const handleChatSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!input.trim()) return
+    const text = input
+    setInput('')
+    sendMessage({ text })
+  }
 
   const [terminalLines, setTerminalLines] = useState<string[]>([
     'Integrated Terminal Ready.',
